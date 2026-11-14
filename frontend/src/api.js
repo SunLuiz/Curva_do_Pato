@@ -1,4 +1,4 @@
-const API_BASE = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
+export const API_BASE = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
 
 async function fetchJsonWithTimeout(url, timeoutMs = 10000) {
   const controller = new AbortController();
@@ -66,4 +66,48 @@ export function getSpaceWeather() {
 
 export function getCmrEvidence() {
   return fetchWithFallback("/api/cmr-evidence", "/cache/cmr_evidence.json", 5000);
+}
+
+/**
+ * Queries the live backend directly (never silently falling back to static cache)
+ * and compares live slope_per_decade / p_value against the frozen 2026-11-14 snapshot.
+ */
+export async function verifyTrendLive({ region = "campinas", variable = "T2M" } = {}) {
+  try {
+    const health = await fetchJsonWithTimeout(`${API_BASE}/healthz`, 4000);
+    if (health?.status !== "ok") {
+      return {
+        ok: false,
+        live: false,
+        message: "Health endpoint did not confirm live status; frozen snapshot remains active.",
+      };
+    }
+
+    const params = new URLSearchParams({
+      region,
+      variable,
+      start: "1984",
+      end: "2025",
+    });
+    const [liveData, cachedData] = await Promise.all([
+      fetchJsonWithTimeout(`${API_BASE}/api/trend?${params.toString()}`, 12000),
+      fetchJsonWithTimeout(`/cache/trend_${region}_${variable}.json`, 5000),
+    ]);
+
+    const liveSlope = Number(liveData?.stats?.slope_per_decade ?? 0);
+    const cacheSlope = Number(cachedData?.stats?.slope_per_decade ?? 0);
+    const delta = (liveSlope - cacheSlope).toFixed(4);
+    return {
+      ok: true,
+      live: true,
+      service: health.service || "Cockpit-OMNI",
+      message: `${region}/${variable}: live backend slope = ${liveSlope} vs frozen snapshot = ${cacheSlope} (delta ${Number(delta) >= 0 ? "+" : ""}${delta}/decade · n=${liveData?.stats?.n ?? "?"}).`,
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      live: false,
+      message: `Live backend unavailable (${err?.message || "unreachable"}). Verified 2026-11-14 15:04 UTC snapshot remains active.`,
+    };
+  }
 }

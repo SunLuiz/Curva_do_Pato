@@ -1,116 +1,188 @@
-import React, { useEffect, useState } from "react";
-import { Activity, Compass, Layers } from "lucide-react";
-import LandingPage from "./pages/LandingPage";
-import TrendPage from "./pages/TrendPage";
-import AttributionPage from "./pages/AttributionPage";
-import { getFires, getSpaceWeather } from "./api";
+import React, { useCallback, useEffect, useState } from "react";
+import AppShell from "./components/AppShell";
+import AskPanel from "./components/AskPanel";
+import StoryPage from "./pages/StoryPage";
+import AcademyPage from "./pages/AcademyPage";
+import CockpitPage from "./pages/CockpitPage";
+import { API_BASE, getFires, getSpaceWeather, verifyTrendLive } from "./api";
+import { probeBackend } from "./engine/trend";
+import {
+  forgetProfile,
+  loadHallOfFame,
+  loadProfile,
+  saveProfile,
+} from "./academy/storage";
 
-const ROUTES = ["/", "/trend", "/attribution"];
+const VALID_ROUTES = ["/", "/academy", "/cockpit"];
+const VALID_TABS = ["trend", "attribution", "sources", "live"];
+const ALIAS_MAP = {
+  "/trend": "/cockpit?tab=trend",
+  "/attribution": "/cockpit?tab=attribution",
+};
 
-function normalizeRoute(pathname) {
-  return ROUTES.includes(pathname) ? pathname : "/";
+function parseLocation() {
+  if (typeof window === "undefined") {
+    return { route: "/", tab: "trend", normalized: null };
+  }
+  const rawPath = window.location.pathname || "/";
+  if (ALIAS_MAP[rawPath]) {
+    const target = ALIAS_MAP[rawPath];
+    const url = new URL(target, window.location.origin);
+    return {
+      route: "/cockpit",
+      tab: url.searchParams.get("tab") || "trend",
+      normalized: target,
+    };
+  }
+  const route = VALID_ROUTES.includes(rawPath) ? rawPath : "/";
+  const params = new URLSearchParams(window.location.search);
+  const tabParam = params.get("tab");
+  const tab = VALID_TABS.includes(tabParam) ? tabParam : "trend";
+  return { route, tab, normalized: rawPath !== route ? "/" : null };
 }
 
 export default function App() {
-  const [route, setRoute] = useState(() => normalizeRoute(window.location.pathname));
+  const initial = parseLocation();
+  const [route, setRoute] = useState(initial.route);
+  const [cockpitTab, setCockpitTab] = useState(initial.tab);
   const [region, setRegion] = useState("campinas");
+  const [variable, setVariable] = useState("T2M");
   const [fires, setFires] = useState(null);
   const [spaceWeather, setSpaceWeather] = useState(null);
+  const [backendStatus, setBackendStatus] = useState({ live: false, reason: "checking" });
+  const [profile, setProfile] = useState(() => loadProfile());
+  const [hallOfFame, setHallOfFame] = useState(() => loadHallOfFame());
 
   useEffect(() => {
-    const onPop = () => setRoute(normalizeRoute(window.location.pathname));
+    if (initial.normalized) {
+      window.history.replaceState({}, "", initial.normalized);
+    }
+  }, []);
+
+  useEffect(() => {
+    const onPop = () => {
+      const parsed = parseLocation();
+      setRoute(parsed.route);
+      setCockpitTab(parsed.tab);
+      if (parsed.normalized) {
+        window.history.replaceState({}, "", parsed.normalized);
+      }
+    };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
   useEffect(() => {
-    getFires().then(setFires).catch(() => null);
-    getSpaceWeather().then(setSpaceWeather).catch(() => null);
+    probeBackend(API_BASE).then(setBackendStatus);
+    getFires().then(setFires).catch(() => {});
+    getSpaceWeather().then(setSpaceWeather).catch(() => {});
   }, []);
 
-  const navigate = (path) => {
-    const clean = normalizeRoute(path);
-    if (clean !== window.location.pathname) {
-      window.history.pushState({}, "", clean);
+  const navigate = useCallback((rawTarget) => {
+    const url = new URL(rawTarget, window.location.origin);
+    const aliased = ALIAS_MAP[url.pathname];
+    if (aliased) {
+      const targetUrl = new URL(aliased, window.location.origin);
+      window.history.replaceState({}, "", aliased);
+      setRoute("/cockpit");
+      setCockpitTab(targetUrl.searchParams.get("tab") || "trend");
+      window.scrollTo(0, 0);
+      return;
     }
-    setRoute(clean);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+
+    const nextRoute = VALID_ROUTES.includes(url.pathname) ? url.pathname : "/";
+    const tabParam = url.searchParams.get("tab");
+    const nextTab = VALID_TABS.includes(tabParam) ? tabParam : "trend";
+    const fullTarget =
+      nextRoute === "/cockpit" && tabParam ? `/cockpit?tab=${nextTab}` : nextRoute;
+
+    if (fullTarget !== `${window.location.pathname}${window.location.search}`) {
+      window.history.pushState({}, "", fullTarget);
+    }
+    setRoute(nextRoute);
+    if (nextRoute === "/cockpit") {
+      setCockpitTab(nextTab);
+    }
+    window.scrollTo(0, 0);
+  }, []);
+
+  const handleSetTab = useCallback((nextTab) => {
+    const valid = VALID_TABS.includes(nextTab) ? nextTab : "trend";
+    setCockpitTab(valid);
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", `/cockpit?tab=${valid}`);
+    }
+  }, []);
+
+  const handleCockpitAction = useCallback(
+    ({ tab = "trend", region: r, variable: v }) => {
+      if (r) setRegion(r);
+      if (v) setVariable(v);
+      navigate(`/cockpit?tab=${tab}`);
+    },
+    [navigate]
+  );
+
+  const handleVerifyLive = useCallback(async ({ region: r, variable: v }) => {
+    const result = await verifyTrendLive({ region: r, variable: v });
+    setBackendStatus(
+      result.live
+        ? { live: true, service: result.service }
+        : { live: false, reason: "offline" }
+    );
+    return result;
+  }, []);
+
+  const handleSaveProfile = useCallback((next) => {
+    const saved = saveProfile(next);
+    setProfile(saved);
+    setHallOfFame(loadHallOfFame());
+  }, []);
+
+  const handleForgetProfile = useCallback(() => {
+    const cleared = forgetProfile(profile.name);
+    setProfile(cleared);
+    setHallOfFame(loadHallOfFame());
+  }, [profile.name]);
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="topbar-inner">
-          <div className="brand" onClick={() => navigate("/")} role="button" tabIndex={0}>
-            <div className="brand-mark" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="9" />
-                <ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(-28 12 12)" />
-                <circle cx="12" cy="12" r="2" fill="currentColor" />
-              </svg>
-            </div>
-            <div>
-              <span className="brand-title">Cockpit-OMNI · Team Curva do Pato</span>
-              <span className="brand-sub">Be An Earth System Trend Detective! · Space Apps 2026</span>
-            </div>
-          </div>
+    <AppShell route={route} onNavigate={navigate} fullBleed={route === "/"}>
+      {route === "/" && <StoryPage onNavigate={navigate} />}
 
-          <nav className="nav-links" aria-label="Primary Navigation">
-            <button className={`nav-btn ${route === "/" ? "active" : ""}`} onClick={() => navigate("/")}>
-              <Compass size={16} /> Overview
-            </button>
-            <button className={`nav-btn ${route === "/trend" ? "active" : ""}`} onClick={() => navigate("/trend")}>
-              <Activity size={16} /> Trend Engine
-            </button>
-            <button className={`nav-btn ${route === "/attribution" ? "active" : ""}`} onClick={() => navigate("/attribution")}>
-              <Layers size={16} /> Attribution &amp; Sources
-            </button>
-          </nav>
-        </div>
-      </header>
+      {route === "/academy" && (
+        <AcademyPage
+          profile={profile}
+          hallOfFame={hallOfFame}
+          onSaveProfile={handleSaveProfile}
+          onForgetProfile={handleForgetProfile}
+          onOpenCockpit={handleCockpitAction}
+        />
+      )}
 
-      <main className="main-container">
-        {route === "/" && (
-          <LandingPage onNavigate={navigate} fires={fires} spaceWeather={spaceWeather} />
-        )}
-        {route === "/trend" && (
-          <TrendPage region={region} setRegion={setRegion} onNavigate={navigate} />
-        )}
-        {route === "/attribution" && (
-          <AttributionPage region={region} setRegion={setRegion} />
-        )}
-      </main>
+      {route === "/cockpit" && (
+        <CockpitPage
+          region={region}
+          setRegion={setRegion}
+          variable={variable}
+          setVariable={setVariable}
+          tab={cockpitTab}
+          setTab={handleSetTab}
+          fires={fires}
+          spaceWeather={spaceWeather}
+          backendStatus={backendStatus}
+          onVerifyLive={handleVerifyLive}
+        />
+      )}
 
-      <footer className="footer">
-        <div className="footer-inner">
-          <div>
-            <strong>Team Curva do Pato (Luiz Antonio Gois Junior) · Built at NASA Space Apps Challenge 2026 — Campinas, SP, Brazil</strong> · No NASA logo or insignia is used; all NASA datasets are cited directly below.
-          </div>
-          <div>
-            Sources: NASA POWER (MERRA-2 / CERES), NASA FIRMS (VIIRS NOAA-21 NRT), NASA DONKI, NASA Earthdata CMR MCP (C3264430167-LANCEMODIS, NISAR_L2_GUNW_PROVISIONAL_V1), and{" "}
-            <a href="https://github.com/bilawalsidhu/gods-eye-view" target="_blank" rel="noreferrer">
-              God's Eye View (MIT / TeleGeography CC BY-NC-SA carve-out)
-            </a>
-            .
-          </div>
-          <div>
-            Live demo:{" "}
-            <a href="https://frontend-rho-seven-69.vercel.app" target="_blank" rel="noreferrer">
-              frontend-rho-seven-69.vercel.app
-            </a>
-            {" · "}
-            Source:{" "}
-            <a href="https://github.com/SunLuiz/Curva_do_Pato" target="_blank" rel="noreferrer">
-              github.com/SunLuiz/Curva_do_Pato
-            </a>
-            {" · "}
-            License: MIT
-          </div>
-          <div style={{ color: "#64748b" }}>
-            Prototype Notice: Trend estimates and attribution summaries are comparative statistical calculations over historical open NASA datasets (1984–2025) and are not certified operational forecasts.
-          </div>
-        </div>
-      </footer>
-    </div>
+      {(route === "/cockpit" || route === "/academy") && (
+        <AskPanel
+          profile={profile}
+          backendStatus={backendStatus}
+          apiBase={API_BASE}
+          currentRoute={route}
+          onNavigateAction={handleCockpitAction}
+        />
+      )}
+    </AppShell>
   );
 }

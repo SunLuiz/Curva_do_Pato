@@ -31,14 +31,15 @@ All external datasets, APIs, and open-source components used or referenced in **
 
 ## 2. Brazilian Grid & Open Visual Components
 
-- **ONS Dados Abertos (Operador Nacional do Sistema Elétrico)**  
+- **ONS Open Data (Brazilian National Electric System Operator)**  
   - CKAN open energy catalog (`https://dados.ons.org.br/`).
 
 - **God's Eye View (`bilawalsidhu/gods-eye-view`)** — Optional 3D Globe Showcase  
   - Repository: https://github.com/bilawalsidhu/gods-eye-view (MIT License).  
   - **Third-Party Carve-Out Notice:** Includes TeleGeography submarine cable/landing datasets licensed under **CC BY-NC-SA** (non-commercial, attribution required, share-alike). Attribution and source notices are preserved intact.
 
-## 3. Core Scientific & Web Libraries
+## 3. Pedagogy, Core Scientific & Web Libraries
 
+- **HKUDS/DeepTutor (`HKUDS/DeepTutor`):** Pedagogy inspiration for Cockpit-OMNI Academy's unassisted mastery gate, recency weighting, and auditable 3-layer browser memory (https://github.com/HKUDS/DeepTutor, **Apache-2.0 License**).
 - **Python:** `FastAPI`, `Uvicorn`, `httpx`, `pandas`, `numpy`, `scipy` (`theilslopes`), `pymannkendall` (`original_test`, `seasonal_test`), `statsmodels`, `pydantic`.
-- **Frontend:** `Vite` / `React`.
+- **Frontend:** `Vite`, `React`, `lucide-react`, plus browser-native `<canvas>` diploma rendering and pure JavaScript Seasonal Mann-Kendall + Theil-Sen engine (`frontend/src/engine/trend.js`). Typography: Google Fonts (`Fraunces`, `DM Sans`, `JetBrains Mono`).

@@ -169,3 +169,56 @@ def test_api_fires_spaceweather_and_attribution() -> None:
         assert vectors["fire_aerosol"]["details"]["nearby_24h_detections"] == 1
         assert vectors["heliophysical"]["status"] == "live"
         assert vectors["geothermal_deformation"]["status"] == "roadmap"
+
+
+def test_api_ask_grounded_and_rate_limit(monkeypatch: pytest.MonkeyPatch) -> None:
+    app_main._ASK_RATE_LIMIT.clear()
+    monkeypatch.setenv("GROQ_API_KEY", "test-groq-key")
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+
+    mock_resp = MagicMock()
+    mock_resp.raise_for_status.return_value = None
+    mock_resp.json.return_value = {
+        "choices": [{"message": {"content": "Campinas warmed +0.4091 C/decade (p < 1e-16)."}}]
+    }
+
+    client = TestClient(app_main.app)
+    with patch("app.main.httpx.post", return_value=mock_resp) as post_mock:
+        res = client.post(
+            "/api/ask",
+            json={
+                "question": "Is Campinas warming?",
+                "name": "Ada",
+                "depth": "analyst",
+                "summary": "Track: analyst | Mastered: M1 (92%)",
+            },
+        )
+        assert res.status_code == 200
+        body = res.json()
+        assert body["provider"] == "groq"
+        assert "+0.4091" in body["answer"]
+        sent_messages = post_mock.call_args.kwargs["json"]["messages"]
+        assert "0.4091" in sent_messages[0]["content"]
+        assert "Mastered: M1 (92%)" in sent_messages[1]["content"]
+
+        # Exhaust remaining 4 requests in 60s window, 6th triggers 429
+        for _ in range(4):
+            assert client.post("/api/ask", json={"question": "Repeat?"}).status_code == 200
+        limited = client.post("/api/ask", json={"question": "Overflow?"})
+        assert limited.status_code == 429
+
+
+def test_api_ask_validation_and_no_keys(monkeypatch: pytest.MonkeyPatch) -> None:
+    app_main._ASK_RATE_LIMIT.clear()
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+
+    client = TestClient(app_main.app)
+    bad_depth = client.post("/api/ask", json={"question": "Hi?", "depth": "wizard"})
+    assert bad_depth.status_code == 400
+
+    blank_q = client.post("/api/ask", json={"question": "   "})
+    assert blank_q.status_code == 400
+
+    missing_keys = client.post("/api/ask", json={"question": "Is Manaus drying?"})
+    assert missing_keys.status_code == 503

@@ -3,14 +3,18 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 import json
+import os
 from pathlib import Path
+import time
 from typing import Any, Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+import httpx
 import numpy as np
 import pandas as pd
+from pydantic import BaseModel, Field
 
 # Always load cockpit-omni/.env regardless of launch cwd
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -383,4 +387,144 @@ def get_attribution(
         "period": f"{start}-{end}",
         "headline_temperature": t2m_stats,
         "vectors": vectors,
+    }
+
+
+_ASK_RATE_LIMIT: dict[str, list[float]] = {}
+_ASK_MAX_PER_MIN = 5
+_VALID_DEPTHS = {"explorer", "analyst", "specialist"}
+
+
+class AskRequest(BaseModel):
+    question: str = Field(..., min_length=1, max_length=300)
+    name: str = Field(default="Visitor", max_length=40)
+    depth: str = Field(default="explorer")
+    summary: str = Field(default="", max_length=400)
+    route: str = Field(default="/cockpit", max_length=60)
+
+
+def _check_ask_rate_limit(client_ip: str, now: Optional[float] = None) -> None:
+    ts = now if now is not None else time.monotonic()
+    recent = [t for t in _ASK_RATE_LIMIT.get(client_ip, []) if ts - t < 60.0]
+    if len(recent) >= _ASK_MAX_PER_MIN:
+        _ASK_RATE_LIMIT[client_ip] = recent
+        raise HTTPException(
+            status_code=429,
+            detail="Rate limit exceeded (max 5 live questions per minute per IP).",
+        )
+    recent.append(ts)
+    _ASK_RATE_LIMIT[client_ip] = recent
+
+
+def _build_grounded_context() -> str:
+    """Summarize verified local frozen telemetry stats so live LLM answers never hallucinate numbers."""
+    lines = [
+        "Verified Cockpit-OMNI Telemetry (NASA POWER MERRA-2/CERES 1984-2025, n=504, Seasonal MK alpha=0.05):"
+    ]
+    for reg in ("campinas", "petrolina", "manaus"):
+        for var in ("T2M", "PRECTOTCORR", "ALLSKY_SFC_SW_DWN", "CLRSKY_SFC_SW_DWN", "CLOUD_ATTEN_PCT", "RH2M", "WS2M"):
+            cached = _read_cached_json(f"trend_{reg}_{var}.json")
+            if not cached or not cached.get("stats"):
+                continue
+            st = cached["stats"]
+            lines.append(
+                f"- {reg}/{var}: slope={st.get('slope_per_decade')}/dec, "
+                f"total={st.get('total_change')}, p={st.get('p_value')}, "
+                f"tau={st.get('tau')}, sig={st.get('significant_5pct')}, ci95={st.get('ci_95_per_decade')}"
+            )
+    fires_cache = _read_cached_json("fires_br_1d.geojson")
+    if fires_cache:
+        lines.append(
+            f"- FIRMS frozen snapshot: count={fires_cache.get('count')}, "
+            f"returned_features={fires_cache.get('returned_features')}, mean_frp_mw={fires_cache.get('mean_frp_mw')}"
+        )
+    lines.append(
+        "- Explicit scope bounds: WS2M monthly 2m wind has NO significant trend across all 3 biomes (p>=0.17) and cannot predict sub-hourly wind ramps; NISAR & ECOSTRESS are CMR-cataloged roadmap only."
+    )
+    return "\n".join(lines)
+
+
+def _call_llm_provider(system_prompt: str, user_prompt: str) -> tuple[str, str, str]:
+    providers = [
+        (
+            "groq",
+            os.getenv("GROQ_API_KEY", "").strip(),
+            "https://api.groq.com/openai/v1/chat/completions",
+            os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+        ),
+        (
+            "openrouter",
+            os.getenv("OPENROUTER_API_KEY", "").strip(),
+            "https://openrouter.ai/api/v1/chat/completions",
+            os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free"),
+        ),
+    ]
+    configured = [p for p in providers if p[1]]
+    if not configured:
+        raise HTTPException(
+            status_code=503,
+            detail="No live LLM provider key configured on server; use the 10 verified local FAQ answers.",
+        )
+
+    last_err = "provider unreachable"
+    for name, api_key, endpoint, model in configured:
+        try:
+            resp = httpx.post(
+                endpoint,
+                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                json={
+                    "model": model,
+                    "temperature": 0.2,
+                    "max_tokens": 350,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                },
+                timeout=12.0,
+            )
+            resp.raise_for_status()
+            payload = resp.json()
+            text = payload["choices"][0]["message"]["content"].strip()
+            if text:
+                return text, name, model
+        except Exception as exc:
+            last_err = str(exc)
+
+    raise HTTPException(status_code=502, detail=f"Upstream tutor providers failed: {last_err}")
+
+
+@app.post("/api/ask")
+def ask_detective(body: AskRequest, request: Request) -> dict[str, Any]:
+    clean_question = body.question.strip()
+    if not clean_question:
+        raise HTTPException(status_code=400, detail="'question' must not be blank.")
+    if body.depth not in _VALID_DEPTHS:
+        raise HTTPException(status_code=400, detail=f"'depth' must be one of {sorted(_VALID_DEPTHS)}")
+
+    client_ip = request.client.host if request.client else "unknown"
+    _check_ask_rate_limit(client_ip)
+
+    safe_name = " ".join(body.name.strip().split()) or "Visitor"
+    grounded = _build_grounded_context()
+    system_prompt = (
+        "You are the Cockpit-OMNI Data Detective Tutor (NASA Space Apps 2026). "
+        "Obey scientific honesty: cite ONLY numbers from the verified telemetry block below, "
+        "state p-values and null findings clearly, never invent data for roadmap instruments (NISAR/ECOSTRESS), "
+        "and keep answers concise (<= 5 sentences) tailored to the visitor's track.\n\n"
+        f"{grounded}"
+    )
+    user_prompt = (
+        f"Detective: {safe_name}\n"
+        f"Reasoning depth: {body.depth}\n"
+        f"Current page: {body.route}\n"
+        f"Learning memory summary: {body.summary or 'none'}\n\n"
+        f"Question: {clean_question}"
+    )
+    answer, provider, model = _call_llm_provider(system_prompt, user_prompt)
+    return {
+        "answer": answer,
+        "provider": provider,
+        "model": model,
+        "depth": body.depth,
     }

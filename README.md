@@ -67,6 +67,14 @@ Instead of treating trends as isolated numbers, Cockpit-OMNI evaluates four phys
 
 ---
 
+## Three-Intent Interface: `Story · Academy · Cockpit`
+
+1. **Story (`/`):** Full-screen presentation notebook (`frontend/src/content/story.js`, single source also generating `docs/pitch_deck.html`) with continuous interpolated SVG curve, opt-in autoplay, swipe/keyboard controls, and Present mode (`F`) revealing live pitch evidence slides.
+2. **Academy (`/academy`):** Zero-login, browser-local (`localStorage`) Detective training across 5 real-data modules (`M1–M5`), reasoning depth tracks (`Explorer | Analyst | Specialist`), DeepTutor-inspired (`Apache-2.0`) unassisted mastery gate (`>= 0.80` recency-weighted accuracy + zero-hint critical falsification/limit checks), 3-layer auditable memory, merit badges, 1200x800 PNG `<canvas>` diploma, `"Forget me"` privacy wipe, and an explicit `"This device only — no account, no tracking"` Hall of Fame.
+3. **Cockpit (`/cockpit`):** Scientific workbench (`Trend engine | Attribution | Sources | Live`) running client-side Seasonal Mann-Kendall & Deseasonalized Theil-Sen (~50 ms per 504-month series) with decade sliders & month filters, `Chart | Raw data | Source` tabs per chart (100-row paginated table + CSV/JSON download), transparent `Live backend connected` vs. `Showing frozen snapshot — 2026-11-14 15:04 UTC` banner with `"Verify against NASA now"` probe, and shared `<AskPanel />` (10 cache-verified answers offline + server-grounded `POST /api/ask` when a live backend is connected). Legacy `/trend` and `/attribution` routes resolve cleanly to `/cockpit?tab=...`.
+
+---
+
 ## Verified Benchmark Results (NASA POWER, 1984–2025, n = 504 months)
 
 Using Seasonal Mann-Kendall (`period=12`) and deseasonalized Theil-Sen anomalies (`α = 0.05`):
@@ -84,11 +92,12 @@ Curva_do_Pato/                     # repository root (this is what you clone)
 │   ├── app/
 │   │   ├── clients/               # NASA POWER, FIRMS, DONKI, MEDA, JPL Horizons, ONS
 │   │   ├── trend.py               # Mann-Kendall + deseasonalized Theil-Sen engine
-│   │   └── main.py                # FastAPI endpoints (/healthz, /api/trend, /api/fires, /api/spaceweather, /api/attribution)
+│   │   └── main.py                # FastAPI endpoints (/healthz, /api/trend, /api/fires, /api/spaceweather, /api/attribution, /api/ask)
 │   └── tests/                     # API & statistical engine tests
 ├── data/                          # Sample & frozen fallback JSON/CSV snapshots
-├── frontend/                      # Vite web dashboard
-├── docs/pitch_deck.html           # 7-slide demo deck
+├── frontend/                      # Vite + React app (Story · Academy · Cockpit + AskPanel + JS trend/mastery engines)
+├── scripts/                       # build_deck.mjs, check_contrast.mjs (WCAG AA), verify_answers.mjs
+├── docs/pitch_deck.html           # 7-slide demo deck (generated from frontend/src/content/story.js)
 ├── Dockerfile                     # Hugging Face Space (Docker, port 7860)
 ├── requirements.txt
 ├── REFERENCES.md                  # Full NASA & external dataset citations
@@ -108,10 +117,13 @@ cp .env.example .env           # Add NASA_API_KEY and FIRMS_MAP_KEY (free keys)
 .venv/Scripts/python.exe -m uvicorn app.main:app --app-dir backend --reload --port 8000
 ```
 
-Run tests:
+Run tests & verification checks:
 
 ```bash
 .venv/Scripts/python.exe -m pytest backend/tests -q
+node --test frontend/src/content/story.test.mjs frontend/src/engine/trend.test.mjs frontend/src/academy/mastery.test.mjs
+node scripts/check_contrast.mjs --css frontend/src/styles.css
+node scripts/verify_answers.mjs
 ```
 
 ---

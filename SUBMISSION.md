@@ -11,7 +11,7 @@
 ## 1. Project Summary (Ready to Paste)
 
 **High-Level Summary (280 chars):**  
-Cockpit-OMNI retrieves 42-year NASA POWER time series (1984–2025), proves statistical significance with Seasonal Mann-Kendall and deseasonalized Theil-Sen slopes (95% CI), and attributes shifts across hydrometeorological, fire/aerosol, space weather, and roadmap deformation vectors.
+Cockpit-OMNI turns 42 years of NASA telemetry (1984–2025) into an audited Story, offline Mastery Academy, and interactive Earth System Cockpit — proving trends via Seasonal Mann-Kendall + Theil-Sen (95% CI) while flagging null signals & roadmap boundaries honestly.
 
 ---
 
@@ -41,7 +41,7 @@ Cockpit-OMNI retrieves 42-year NASA POWER time series (1984–2025), proves stat
 | **Public source code** | https://github.com/SunLuiz/Curva_do_Pato | Public — HTTP 200 |
 | **Backend (optional)** | not deployed; frontend serves frozen NASA cache | Declared in the UI badge |
 
-The frontend serves every preset region, chart, attribution card, FIRMS count, DONKI alert list, and CMR MCP evidence from `frontend/public/cache/*.json`, so the demo runs with the backend offline, with zero login and no install step.
+The frontend serves every preset region, chart, raw CSV/JSON table (`504` rows), attribution card, FIRMS count (`1,500 of 3,313 detections plotted`), DONKI alert list, CMR MCP evidence, 5-module Detective Academy (`localStorage` only + PNG diploma), and offline `AskPanel` FAQs from `frontend/public/cache/*.json`, so the demo runs with the backend offline, with zero login and no install step. An explicit `"Verify against NASA now"` control probes `/healthz` and compares live backend metrics whenever an upstream API instance is connected.
 
 ### Optional backend → Hugging Face Space (Docker, CPU Basic 16 GB)
 1. Create a Docker Space using the **repository root** (`Curva_do_Pato/`) as root — it ships `Dockerfile` on port `7860`.

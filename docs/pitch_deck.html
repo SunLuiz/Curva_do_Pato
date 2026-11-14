@@ -1,26 +1,30 @@
 <!doctype html>
+<!-- GENERATED from frontend/src/content/story.js — do not edit manually; run: node scripts/build_deck.mjs -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Cockpit-OMNI — 7-Slide Pitch Deck (NASA Space Apps 2026)</title>
   <style>
     :root {
-      --bg: #0a0e17;
-      --card: #131c2e;
-      --border: #1e293b;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --blue: #38bdf8;
-      --cyan: #22d3ee;
-      --amber: #f59e0b;
-      --green: #34d399;
-      --purple: #c084fc;
+      --surface-0: #FAF7F2;
+      --surface-1: #FFFFFF;
+      --surface-2: #F3EEE5;
+      --hairline: #E4DCCF;
+      --hairline-strong: #CFC4B2;
+      --ink: #1C1B19;
+      --ink-soft: #6B6760;
+      --ink-faint: #6C6759;
+      --biome-se: #2A7047;
+      --biome-ne: #8F5D15;
+      --biome-n: #1F6F8B;
+      --null-ink: #736446;
+      --danger: #B23A2A;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #05080f;
-      color: var(--text);
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #E9E2D4;
+      color: var(--ink);
+      font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -31,23 +35,22 @@
       position: fixed;
       bottom: 16px;
       right: 16px;
-      background: rgba(19, 28, 46, 0.92);
-      border: 1px solid var(--border);
-      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid var(--hairline-strong);
+      padding: 8px 16px;
       border-radius: 999px;
       font-size: 12px;
-      color: var(--muted);
+      color: var(--ink-soft);
       z-index: 50;
+      box-shadow: 0 6px 20px rgba(28, 27, 25, 0.08);
     }
     .slide {
       width: 1120px;
       height: 630px;
-      background:
-        radial-gradient(ellipse 80% 50% at 85% -10%, rgba(56, 189, 248, 0.14), transparent),
-        var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 46px 54px;
+      background: var(--surface-0);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 26px;
+      padding: 44px 54px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -55,55 +58,99 @@
       overflow: hidden;
       page-break-after: always;
     }
+    .curve-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .slide-head, .slide-body, .footer {
+      position: relative;
+      z-index: 1;
+    }
     .tag {
       display: inline-block;
       font-family: ui-monospace, monospace;
       font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 4px 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 4px 14px;
       border-radius: 999px;
-      border: 1px solid rgba(56, 189, 248, 0.45);
-      background: rgba(56, 189, 248, 0.12);
-      color: var(--blue);
+      border: 1px solid var(--hairline-strong);
+      background: var(--surface-1);
       margin-bottom: 14px;
     }
-    h1 { font-size: 52px; line-height: 1.08; letter-spacing: -0.03em; }
-    h2 { font-size: 34px; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 12px; }
-    p.lead { font-size: 20px; color: var(--muted); max-width: 66ch; margin-top: 12px; line-height: 1.5; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    h1 {
+      font-family: Georgia, serif;
+      font-size: 48px;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      max-width: 20ch;
+    }
+    h2 {
+      font-family: Georgia, serif;
+      font-size: 36px;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 10px;
+    }
+    p.lead {
+      font-size: 18px;
+      color: var(--ink-soft);
+      max-width: 66ch;
+      margin-top: 10px;
+      line-height: 1.48;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
     .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 18px;
+      padding: 18px 20px;
     }
     .mono { font-family: ui-monospace, SFMono-Regular, monospace; }
-    .big { font-size: 32px; font-weight: 700; margin: 6px 0; }
-    .pill {
-      display: inline-block;
-      font-family: ui-monospace, monospace;
+    .label {
       font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
-      padding: 2px 9px;
-      border-radius: 999px;
+      letter-spacing: 0.05em;
+      color: var(--ink-soft);
+      margin-bottom: 6px;
     }
-    .live { color: var(--green); border: 1px solid rgba(52, 211, 153, 0.45); background: rgba(52, 211, 153, 0.1); }
-    .roadmap { color: var(--purple); border: 1px solid rgba(192, 132, 252, 0.45); background: rgba(192, 132, 252, 0.1); }
+    .value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    .links-bar {
+      margin-top: 14px;
+      padding: 10px 16px;
+      border-radius: 14px;
+      background: var(--surface-1);
+      border: 1px solid var(--hairline);
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+    .links-bar a { color: var(--biome-n); text-decoration: none; font-weight: 600; }
     .footer {
       display: flex;
       justify-content: space-between;
       font-size: 12px;
-      color: #64748b;
-      border-top: 1px solid var(--border);
+      color: var(--ink-faint);
+      border-top: 1px solid var(--hairline);
       padding-top: 12px;
     }
     @media print {
       @page { size: 1120px 630px; margin: 0; }
-      body { padding: 0; gap: 0; background: var(--bg); }
+      body { padding: 0; gap: 0; background: var(--surface-0); }
       .controls { display: none; }
       .slide { border: none; border-radius: 0; }
     }
@@ -112,281 +159,249 @@
 <body>
   <div class="controls">7 Slides · Press Ctrl+P → Save as PDF (16:9)</div>
 
-  <!-- SLIDE 1 -->
-  <section class="slide">
-    <div>
-      <span class="tag">Team: Curva do Pato · Lead: Luiz Antonio Gois Junior · Challenge #2: Be An Earth System Trend Detective!</span>
-      <h1>Cockpit-OMNI<br /><span style="color: var(--blue);">Be An Earth System Trend Detective!</span></h1>
-      <p class="lead">
-        42-year NASA satellite &amp; reanalysis series audited with Seasonal Mann-Kendall significance testing, deseasonalized Theil-Sen slopes, and honest 4-vector physical attribution.
-      </p>
+  <!-- SLIDE 1: cover -->
+  <section class="slide" style="background-color: #F4F7F3;">
+    <svg class="curve-bg" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0.0,440.0 C28.3,431.7 113.3,387.5 170.0,390.0 C226.7,392.5 283.3,460.0 340.0,455.0 C396.7,450.0 453.3,366.7 510.0,360.0 C566.7,353.3 623.3,423.3 680.0,415.0 C736.7,406.7 793.3,321.7 850.0,310.0 C906.7,298.3 961.7,358.3 1020.0,345.0 C1078.3,331.7 1170.0,249.2 1200.0,230.0" fill="none" stroke="var(--biome-se)" stroke-width="4" stroke-opacity="0.22" />
+      <path d="M0.0,440.0 C28.3,431.7 113.3,387.5 170.0,390.0 C226.7,392.5 283.3,460.0 340.0,455.0 C396.7,450.0 453.3,366.7 510.0,360.0 C566.7,353.3 623.3,423.3 680.0,415.0 C736.7,406.7 793.3,321.7 850.0,310.0 C906.7,298.3 961.7,358.3 1020.0,345.0 C1078.3,331.7 1170.0,249.2 1200.0,230.0" fill="none" stroke="var(--biome-se)" stroke-width="1.5" stroke-opacity="0.45" stroke-dasharray="6 6" />
+    </svg>
+    <div class="slide-head">
+      <span class="tag" style="color: var(--biome-se); border-color: var(--biome-se);">Team Curva do Pato · NASA Space Apps Challenge 2026</span>
+      <h1>Learn to tell climate change from climate noise.</h1>
+      <p class="lead">Cockpit-OMNI turns 42 years of open NASA Earth observations into audited answers you can trust — and teaches anyone to read the planet like a scientist.</p>
     </div>
-    <div class="grid-3">
+    <div class="slide-body">
+      <div class="grid-3">
       <div class="card">
-        <div class="mono" style="font-size:12px;color:var(--muted);">TIME SPAN</div>
-        <div class="big mono" style="color:var(--blue);">1984–2025</div>
-        <div style="font-size:13px;color:var(--muted);">504 continuous monthly NASA POWER points</div>
+        <div class="mono label">Challenge</div>
+        <div class="value">#2 — Be An Earth System Trend Detective!</div>
       </div>
       <div class="card">
-        <div class="mono" style="font-size:12px;color:var(--muted);">STATISTICAL RIGOR</div>
-        <div class="big mono" style="color:var(--green);">α = 0.05</div>
-        <div style="font-size:13px;color:var(--muted);">Seasonal MK + 95% CI Theil-Sen slope</div>
+        <div class="mono label">Time Span</div>
+        <div class="value">1984–2025 (504 monthly observations)</div>
       </div>
       <div class="card">
-        <div class="mono" style="font-size:12px;color:var(--muted);">ATTRIBUTION</div>
-        <div class="big mono" style="color:var(--amber);">3 Live + 1</div>
-        <div style="font-size:13px;color:var(--muted);">POWER · FIRMS · DONKI + CMR Roadmap</div>
-      </div>
+        <div class="mono label">Location</div>
+        <div class="value">Campinas, SP · Brazil (Open &amp; Zero-Login)</div>
+      </div></div>
+      
     </div>
+    
     <div class="footer">
       <span>Team Curva do Pato (Luiz Antonio Gois Junior) · NASA Space Apps Challenge 2026 — Campinas, SP</span>
-      <span>Slide 1 / 7</span>
+      <span class="mono">Slide 1 / 7</span>
     </div>
   </section>
 
-  <!-- SLIDE 2 -->
-  <section class="slide">
-    <div>
-      <span class="tag">The Problem</span>
-      <h2>“A trend without a significance test is an opinion.”</h2>
-      <p class="lead">
-        Raw monthly climate plots hide drift inside seasonal cycles — or trick users into mistaking noise for climate change.
-      </p>
+  <!-- SLIDE 2: why -->
+  <section class="slide" style="background-color: #FAF5EC;">
+    <svg class="curve-bg" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0.0,360.0 C28.3,336.7 113.3,201.7 170.0,220.0 C226.7,238.3 283.3,473.3 340.0,470.0 C396.7,466.7 453.3,198.3 510.0,200.0 C566.7,201.7 623.3,478.3 680.0,480.0 C736.7,481.7 793.3,216.7 850.0,210.0 C906.7,203.3 961.7,431.7 1020.0,440.0 C1078.3,448.3 1170.0,290.0 1200.0,260.0" fill="none" stroke="var(--null-ink)" stroke-width="4" stroke-opacity="0.22" />
+      <path d="M0.0,360.0 C28.3,336.7 113.3,201.7 170.0,220.0 C226.7,238.3 283.3,473.3 340.0,470.0 C396.7,466.7 453.3,198.3 510.0,200.0 C566.7,201.7 623.3,478.3 680.0,480.0 C736.7,481.7 793.3,216.7 850.0,210.0 C906.7,203.3 961.7,431.7 1020.0,440.0 C1078.3,448.3 1170.0,290.0 1200.0,260.0" fill="none" stroke="var(--null-ink)" stroke-width="1.5" stroke-opacity="0.45" stroke-dasharray="6 6" />
+    </svg>
+    <div class="slide-head">
+      <span class="tag" style="color: var(--null-ink); border-color: var(--null-ink);">Why We Exist</span>
+      <h2>A trend without a significance test is just an opinion.</h2>
+      <p class="lead">Everyone sees climate charts in the news. Almost nobody can tell whether a jagged line is real long-term warming or normal summer-and-winter swings.</p>
     </div>
-    <div class="grid-2">
+    <div class="slide-body">
+      <div class="grid-3">
       <div class="card">
-        <h3 style="color:var(--amber);margin-bottom:8px;">Common Pitfalls We Solved</h3>
-        <ul style="padding-left:18px;color:var(--muted);line-height:1.75;font-size:15px;">
-          <li>NASA POWER monthly endpoints include <span class="mono">YYYY13</span> annual summary rows and <span class="mono">-999.0</span> fill values that distort naive regressions.</li>
-          <li>Original Mann-Kendall loses power when summer/winter cycles dominate variance (e.g., Campinas solar irradiance <span class="mono">p=0.20</span> raw vs <span class="mono">p=8.6e-04</span> seasonal).</li>
-          <li>Dashboards often mix live APIs with mock layers without declaring data status.</li>
-        </ul>
+        <div class="mono label">Trap 1</div>
+        <div class="value">Seasonal cycles mask real multi-decade drift</div>
       </div>
       <div class="card">
-        <h3 style="color:var(--green);margin-bottom:8px;">Cockpit-OMNI Statistical Pipeline</h3>
-        <ul style="padding-left:18px;color:var(--muted);line-height:1.75;font-size:15px;">
-          <li>Drops <span class="mono">YYYY13</span> rows, aligns calendar PeriodIndex (<span class="mono">freq=M</span>).</li>
-          <li>Computes <strong>Seasonal Mann-Kendall (period=12)</strong> &amp; <strong>Original MK</strong> (<span class="mono">τ</span>, <span class="mono">p-value</span>).</li>
-          <li>Calculates <strong>Deseasonalized Theil-Sen Slope</strong> per decade with <strong>95% Confidence Interval</strong> and 42-year cumulative shift.</li>
-        </ul>
+        <div class="mono label">Trap 2</div>
+        <div class="value">Annual summary artifacts (YYYY13) corrupt naive averages</div>
       </div>
+      <div class="card">
+        <div class="mono label">Trap 3</div>
+        <div class="value">Dashboards hide whether data is live, frozen, or simulated</div>
+      </div></div>
+      
     </div>
+    
     <div class="footer">
-      <span>Methodology: Non-parametric rank correlation + robust median slope</span>
-      <span>Slide 2 / 7</span>
+      <span>Team Curva do Pato (Luiz Antonio Gois Junior) · NASA Space Apps Challenge 2026 — Campinas, SP</span>
+      <span class="mono">Slide 2 / 7</span>
     </div>
   </section>
 
-  <!-- SLIDE 3 -->
-  <section class="slide">
-    <div>
-      <span class="tag">NASA Data Ecosystem</span>
-      <h2>Open NASA Sources &amp; Official CMR MCP Provenance</h2>
-      <p class="lead">Every chart, metric, and attribution card links directly to its live NASA dataset.</p>
+  <!-- SLIDE 3: who -->
+  <section class="slide" style="background-color: #F2F6F8;">
+    <svg class="curve-bg" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0.0,460.0 C28.3,451.7 113.3,427.5 170.0,410.0 C226.7,392.5 283.3,370.0 340.0,355.0 C396.7,340.0 453.3,332.5 510.0,320.0 C566.7,307.5 623.3,292.5 680.0,280.0 C736.7,267.5 793.3,256.7 850.0,245.0 C906.7,233.3 961.7,221.7 1020.0,210.0 C1078.3,198.3 1170.0,180.8 1200.0,175.0" fill="none" stroke="var(--biome-n)" stroke-width="4" stroke-opacity="0.22" />
+      <path d="M0.0,460.0 C28.3,451.7 113.3,427.5 170.0,410.0 C226.7,392.5 283.3,370.0 340.0,355.0 C396.7,340.0 453.3,332.5 510.0,320.0 C566.7,307.5 623.3,292.5 680.0,280.0 C736.7,267.5 793.3,256.7 850.0,245.0 C906.7,233.3 961.7,221.7 1020.0,210.0 C1078.3,198.3 1170.0,180.8 1200.0,175.0" fill="none" stroke="var(--biome-n)" stroke-width="1.5" stroke-opacity="0.45" stroke-dasharray="6 6" />
+    </svg>
+    <div class="slide-head">
+      <span class="tag" style="color: var(--biome-n); border-color: var(--biome-n);">Who Acts on These Numbers</span>
+      <h2>Built for real decisions across four communities.</h2>
+      <p class="lead">Each user comes with a concrete question — and leaves knowing both what the data supports and where it stops.</p>
     </div>
-    <div class="grid-4">
+    <div class="slide-body">
+      <div class="grid-2">
       <div class="card">
-        <span class="pill live">Live</span>
-        <h3 style="margin:10px 0 6px;">NASA POWER</h3>
-        <p style="font-size:13px;color:var(--muted);">CERES &amp; MERRA-2 monthly meteorology (1984–2025): T2M, PRECTOTCORR, RH2M, WS2M, All-Sky &amp; Clear-Sky SW.</p>
+        <div class="mono label">Civil Defense</div>
+        <div class="value">Size urban heat-wave headroom against multi-decade warming</div>
       </div>
       <div class="card">
-        <span class="pill live">Live</span>
-        <h3 style="margin:10px 0 6px;">NASA FIRMS</h3>
-        <p style="font-size:13px;color:var(--muted);">VIIRS NOAA-21 NRT thermal detections &amp; Fire Radiative Power across Brazil (3,313 detections / 24h verified).</p>
+        <div class="mono label">Solar Planners</div>
+        <div class="value">Check if rising sunlight comes from fewer clouds or cleaner air</div>
       </div>
       <div class="card">
-        <span class="pill live">Live</span>
-        <h3 style="margin:10px 0 6px;">NASA DONKI</h3>
-        <p style="font-size:13px;color:var(--muted);">7-day Space Weather notifications (CMEs, solar flares, radiation belt alerts — 8 events live).</p>
+        <div class="mono label">Air &amp; Health</div>
+        <div class="value">Cross-check active VIIRS fires against clear-sky irradiance</div>
       </div>
       <div class="card">
-        <span class="pill live">MCP v1</span>
-        <h3 style="margin:10px 0 6px;">Earthdata CMR</h3>
-        <p style="font-size:13px;color:var(--muted);">Official MCP discovery (<span class="mono">cmr.earthdata.nasa.gov/mcp/v1</span>): 74 Fire, 208 CERES, 52 NISAR &amp; 45 ECOSTRESS collections.</p>
-      </div>
+        <div class="mono label">Students &amp; Teachers</div>
+        <div class="value">Practice statistical reasoning on real NASA records</div>
+      </div></div>
+      
     </div>
+    
     <div class="footer">
-      <span>Sources: power.larc.nasa.gov · firms.modaps.eosdis.nasa.gov · api.nasa.gov · cmr.earthdata.nasa.gov</span>
-      <span>Slide 3 / 7</span>
+      <span>Team Curva do Pato (Luiz Antonio Gois Junior) · NASA Space Apps Challenge 2026 — Campinas, SP</span>
+      <span class="mono">Slide 3 / 7</span>
     </div>
   </section>
 
-  <!-- SLIDE 4 -->
-  <section class="slide">
-    <div>
-      <span class="tag">Verified Scientific Results (1984–2025 · n = 504 months)</span>
-      <h2>Statistically Significant Warming Across All 3 Brazilian Biomes</h2>
+  <!-- SLIDE 4: how -->
+  <section class="slide" style="background-color: #F4F7F3;">
+    <svg class="curve-bg" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0.0,470.0 C28.3,463.3 113.3,434.2 170.0,430.0 C226.7,425.8 283.3,458.3 340.0,445.0 C396.7,431.7 453.3,362.5 510.0,350.0 C566.7,337.5 623.3,383.3 680.0,370.0 C736.7,356.7 793.3,284.2 850.0,270.0 C906.7,255.8 961.7,297.5 1020.0,285.0 C1078.3,272.5 1170.0,210.0 1200.0,195.0" fill="none" stroke="var(--biome-se)" stroke-width="4" stroke-opacity="0.22" />
+      <path d="M0.0,470.0 C28.3,463.3 113.3,434.2 170.0,430.0 C226.7,425.8 283.3,458.3 340.0,445.0 C396.7,431.7 453.3,362.5 510.0,350.0 C566.7,337.5 623.3,383.3 680.0,370.0 C736.7,356.7 793.3,284.2 850.0,270.0 C906.7,255.8 961.7,297.5 1020.0,285.0 C1078.3,272.5 1170.0,210.0 1200.0,195.0" fill="none" stroke="var(--biome-se)" stroke-width="1.5" stroke-opacity="0.45" stroke-dasharray="6 6" />
+    </svg>
+    <div class="slide-head">
+      <span class="tag" style="color: var(--biome-se); border-color: var(--biome-se);">How the Engine Thinks</span>
+      <h2>Three questions. Zero guesswork.</h2>
+      <p class="lead">Every observation series passes through a deterministic statistical pipeline before a single word of interpretation is shown.</p>
     </div>
-    <div class="grid-3">
-      <div class="card" style="border-color: rgba(56,189,248,0.4);">
-        <div class="mono" style="color:var(--blue);font-weight:700;">CAMPINAS-SP (-22.90, -47.06)</div>
-        <div class="big mono">+0.409 °C/dec</div>
-        <div class="mono" style="font-size:12px;color:var(--green);">95% CI: [+0.333, +0.489] · p &lt; 1e-16</div>
-        <hr style="border:0;border-top:1px solid var(--border);margin:10px 0;" />
-        <div style="font-size:13px;color:var(--muted);">
-          42-yr shift: <strong>+1.718 °C</strong><br/>
-          Precipitation: <strong>-0.272 mm/day/dec</strong> (p=1.59e-06)<br/>
-          Relative Humidity: <strong>-1.660 %/dec</strong> (p &lt; 1e-16)
-        </div>
+    <div class="slide-body">
+      <div class="grid-3">
+      <div class="card">
+        <div class="mono label">1. Is it real?</div>
+        <div class="value">Seasonal Mann-Kendall (period = 12) + Original MK at alpha = 0.05</div>
       </div>
-      <div class="card" style="border-color: rgba(245,158,11,0.4);">
-        <div class="mono" style="color:var(--amber);font-weight:700;">PETROLINA-PE (-9.39, -40.50)</div>
-        <div class="big mono">+0.301 °C/dec</div>
-        <div class="mono" style="font-size:12px;color:var(--green);">95% CI: [+0.231, +0.371] · p = 4.66e-15</div>
-        <hr style="border:0;border-top:1px solid var(--border);margin:10px 0;" />
-        <div style="font-size:13px;color:var(--muted);">
-          42-yr shift: <strong>+1.265 °C</strong><br/>
-          Precipitation: <strong>-0.072 mm/day/dec</strong> (p=0.029)<br/>
-          Cloud Attenuation: <strong>-0.965 %/dec</strong> (p=2.83e-09)
-        </div>
+      <div class="card">
+        <div class="mono label">2. How much?</div>
+        <div class="value">Deseasonalized Theil-Sen slope per decade with 95% confidence band</div>
       </div>
-      <div class="card" style="border-color: rgba(34,211,238,0.4);">
-        <div class="mono" style="color:var(--cyan);font-weight:700;">MANAUS-AM (-3.10, -60.02)</div>
-        <div class="big mono">+0.307 °C/dec</div>
-        <div class="mono" style="font-size:12px;color:var(--green);">95% CI: [+0.254, +0.359] · p &lt; 1e-16</div>
-        <hr style="border:0;border-top:1px solid var(--border);margin:10px 0;" />
-        <div style="font-size:13px;color:var(--muted);">
-          42-yr shift: <strong>+1.287 °C</strong><br/>
-          Precipitation: <strong>-0.467 mm/day/dec</strong> (p=4.24e-11)<br/>
-          Cloud Attenuation: <strong>-0.855 %/dec</strong> (p=3.02e-08)
-        </div>
-      </div>
+      <div class="card">
+        <div class="mono label">3. Where from?</div>
+        <div class="value">Hydrometeorology, Fire/Aerosol, Space Weather, and CMR Roadmap</div>
+      </div></div>
+      
     </div>
+    
     <div class="footer">
-      <span>Computed deterministically via pymannkendall + scipy.stats.theilslopes</span>
-      <span>Slide 4 / 7</span>
+      <span>Team Curva do Pato (Luiz Antonio Gois Junior) · NASA Space Apps Challenge 2026 — Campinas, SP</span>
+      <span class="mono">Slide 4 / 7</span>
     </div>
   </section>
 
-  <!-- SLIDE 5 -->
-  <section class="slide">
-    <div>
-      <span class="tag">Multi-Vector Attribution</span>
-      <h2>Separating Cloud Drying from Clear-Sky Aerosol Signals</h2>
-      <p class="lead">
-        Comparing All-Sky vs. Clear-Sky irradiance isolates physical causality instead of guessing.
-      </p>
+  <!-- SLIDE 5: evidence-campinas -->
+  <section class="slide" style="background-color: #F2F7F3;">
+    <svg class="curve-bg" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0.0,480.0 C28.3,475.0 113.3,460.8 170.0,450.0 C226.7,439.2 283.3,427.5 340.0,415.0 C396.7,402.5 453.3,389.2 510.0,375.0 C566.7,360.8 623.3,345.8 680.0,330.0 C736.7,314.2 793.3,298.3 850.0,280.0 C906.7,261.7 961.7,240.8 1020.0,220.0 C1078.3,199.2 1170.0,165.8 1200.0,155.0" fill="none" stroke="var(--biome-se)" stroke-width="4" stroke-opacity="0.22" />
+      <path d="M0.0,480.0 C28.3,475.0 113.3,460.8 170.0,450.0 C226.7,439.2 283.3,427.5 340.0,415.0 C396.7,402.5 453.3,389.2 510.0,375.0 C566.7,360.8 623.3,345.8 680.0,330.0 C736.7,314.2 793.3,298.3 850.0,280.0 C906.7,261.7 961.7,240.8 1020.0,220.0 C1078.3,199.2 1170.0,165.8 1200.0,155.0" fill="none" stroke="var(--biome-se)" stroke-width="1.5" stroke-opacity="0.45" stroke-dasharray="6 6" />
+    </svg>
+    <div class="slide-head">
+      <span class="tag" style="color: var(--biome-se); border-color: var(--biome-se);">Verified Benchmark · 1984–2025 (n = 504)</span>
+      <h2>Significant warming across all three Brazilian biomes.</h2>
+      <p class="lead">Computed deterministically via pymannkendall and scipy.stats.theilslopes over continuous NASA POWER monthly series.</p>
     </div>
-    <div class="grid-2">
+    <div class="slide-body">
+      <div class="grid-3">
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <strong>1. Hydrometeorological &amp; Cloud</strong><span class="pill live">Live</span>
-        </div>
-        <p style="font-size:14px;color:var(--muted);margin-top:8px;">
-          In <strong>Manaus</strong>, All-Sky irradiance rose (+0.241 MJ/m²/day/dec, p=1.7e-10) while Clear-Sky showed <strong>no trend</strong> (p=0.769) — proving cloud attenuation reduction (-0.855%/dec) drives brightening.
-        </p>
-      </div>
-      <div class="card" style="border-color: rgba(244,114,182,0.45);">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <strong>Campinas: the opposite verdict</strong><span class="pill live">Live</span>
-        </div>
-        <p style="font-size:14px;color:var(--muted);margin-top:8px;">
-          In <strong>Campinas</strong>, cloud attenuation shows <strong>no trend</strong> (p=0.948) while Clear-Sky irradiance rises (+0.190 MJ/m²/day/dec, p&lt;1e-16) — the brightening there is <strong>not</strong> a cloud effect. Same engine, opposite causal verdict.
-        </p>
+        <div class="mono label">Campinas-SP</div>
+        <div class="value">+0.409 °C/dec · 95% CI [+0.333, +0.489] · +1.718 °C total (p &lt; 1e-16)</div>
       </div>
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <strong>2. Fire &amp; Atmospheric Aerosol</strong><span class="pill live">Live</span>
-        </div>
-        <p style="font-size:14px;color:var(--muted);margin-top:8px;">
-          Tracks <strong>3,313</strong> VIIRS NOAA-21 24h fire detections (mean FRP 3.06 MW) + local 150 km radius check alongside Clear-Sky irradiance shifts (<span class="mono">C3264430167-LANCEMODIS</span>).
-        </p>
+        <div class="mono label">Petrolina-PE</div>
+        <div class="value">+0.301 °C/dec · 95% CI [+0.231, +0.371] · +1.265 °C total (p = 4.66e-15)</div>
       </div>
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <strong>3. Heliophysical / Space Weather</strong><span class="pill live">Live</span>
-        </div>
-        <p style="font-size:14px;color:var(--muted);margin-top:8px;">
-          Streams 7-day NASA DONKI alerts (<strong>8 events</strong> live) for solar flares, CMEs, and geomagnetic storms impacting high-voltage transformers and satellites.
-        </p>
-      </div>
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <strong>4. Geothermal &amp; Surface Deformation</strong><span class="pill roadmap">Roadmap</span>
-        </div>
-        <p style="font-size:14px;color:var(--muted);margin-top:8px;">
-          Verified in CMR (<span class="mono">NISAR_L2_GUNW_PROVISIONAL_V1</span>, <span class="mono">ECO_L2T_LSTE</span>); declared honestly as post-MVP due to multi-GB SAR granules &amp; Earthdata auth.
-        </p>
-      </div>
+        <div class="mono label">Manaus-AM</div>
+        <div class="value">+0.307 °C/dec · 95% CI [+0.254, +0.359] · +1.287 °C total (p &lt; 1e-16)</div>
+      </div></div>
+      
     </div>
+    
     <div class="footer">
-      <span>Scientific honesty: every vector declares live, cached, or roadmap status</span>
-      <span>Slide 5 / 7</span>
+      <span>Deterministic stats: pymannkendall (period=12) + scipy.stats.theilslopes (95% CI)</span>
+      <span class="mono">Slide 5 / 7</span>
     </div>
   </section>
 
-  <!-- SLIDE 6 -->
-  <section class="slide">
-    <div>
-      <span class="tag">Impact — Persona → Decision → Evidence</span>
-      <h2>Who Acts on These Numbers</h2>
-      <p class="lead">Every claimed impact maps to a specific decision and the p-value that supports it. Where the data cannot support a claim, we say so.</p>
+  <!-- SLIDE 6: evidence-verdicts -->
+  <section class="slide" style="background-color: #FAF4EA;">
+    <svg class="curve-bg" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0.0,360.0 C28.3,351.7 113.3,326.7 170.0,310.0 C226.7,293.3 283.3,256.7 340.0,260.0 C396.7,263.3 453.3,308.3 510.0,330.0 C566.7,351.7 623.3,405.0 680.0,390.0 C736.7,375.0 793.3,273.3 850.0,240.0 C906.7,206.7 961.7,183.3 1020.0,190.0 C1078.3,196.7 1170.0,265.0 1200.0,280.0" fill="none" stroke="var(--biome-ne)" stroke-width="4" stroke-opacity="0.22" />
+      <path d="M0.0,360.0 C28.3,351.7 113.3,326.7 170.0,310.0 C226.7,293.3 283.3,256.7 340.0,260.0 C396.7,263.3 453.3,308.3 510.0,330.0 C566.7,351.7 623.3,405.0 680.0,390.0 C736.7,375.0 793.3,273.3 850.0,240.0 C906.7,206.7 961.7,183.3 1020.0,190.0 C1078.3,196.7 1170.0,265.0 1200.0,280.0" fill="none" stroke="var(--biome-ne)" stroke-width="1.5" stroke-opacity="0.45" stroke-dasharray="6 6" />
+    </svg>
+    <div class="slide-head">
+      <span class="tag" style="color: var(--biome-ne); border-color: var(--biome-ne);">Falsification Inside the Product</span>
+      <h2>One statistical engine. Opposite causal verdicts.</h2>
+      <p class="lead">Surface solar brightening can come from fewer clouds or cleaner air. Comparing All-Sky vs Clear-Sky irradiance separates them automatically.</p>
     </div>
-    <div class="grid-2">
+    <div class="slide-body">
+      <div class="grid-3">
       <div class="card">
-        <h3 style="color:var(--blue);margin-bottom:8px;">Civil Defense &amp; Urban Planning</h3>
-        <p style="font-size:14px;color:var(--muted);line-height:1.6;">
-          <strong>Decision:</strong> size heat-wave response and thermal headroom for Campinas.<br/>
-          <strong>Evidence:</strong> <span class="mono">+0.409 °C/dec</span> ≈ <strong>+1.72 °C cumulative</strong> (95% CI [+0.333, +0.489], p&lt;1e-16), with humidity down <span class="mono">−1.66 %/dec</span> and precipitation down <span class="mono">−0.272 mm/day/dec</span>.
-        </p>
+        <div class="mono label">Manaus &amp; Petrolina</div>
+        <div class="value">Cloud attenuation falls (-0.855 &amp; -0.965 %/dec), while Clear-Sky is null (p = 0.769 / 0.290) -&gt; Cloud-driven.</div>
       </div>
       <div class="card">
-        <h3 style="color:var(--amber);margin-bottom:8px;">Solar Generation Planners</h3>
-        <p style="font-size:14px;color:var(--muted);line-height:1.6;">
-          <strong>Decision:</strong> is rising irradiance a durable resource gain or a cloud artifact?<br/>
-          <strong>Evidence:</strong> in Petrolina, cloud attenuation falls <span class="mono">−0.965 %/dec</span> (p=2.83e-09) while clear-sky shows <strong>no trend</strong> (p=0.290) — so the gain is cloud-driven, not aerosol-driven.
-        </p>
+        <div class="mono label">Campinas-SP</div>
+        <div class="value">Cloud attenuation is null (p = 0.948), while Clear-Sky rises (+0.190 MJ/m2/day/dec, p &lt; 1e-16) -&gt; Aerosol / clear-sky driven.</div>
       </div>
       <div class="card">
-        <h3 style="color:var(--cyan);margin-bottom:8px;">Air Quality &amp; Fire Response</h3>
-        <p style="font-size:14px;color:var(--muted);line-height:1.6;">
-          <strong>Decision:</strong> separate smoke/aerosol forcing from cloud-cover change when advising health authorities.<br/>
-          <strong>Evidence:</strong> Manaus cloud <span class="mono">−0.855 %/dec</span> (p=3.02e-08), clear-sky null (p=0.769), plus <strong>3,313</strong> live VIIRS NOAA-21 detections/24h.
-        </p>
-      </div>
-      <div class="card" style="border-color: rgba(148,163,184,0.4);">
-        <h3 style="color:var(--muted);margin-bottom:8px;">Grid Ramp / Storage — Declared Out of Scope</h3>
-        <p style="font-size:14px;color:var(--muted);line-height:1.6;">
-          <strong>Decision we do NOT claim:</strong> BESS pre-positioning ahead of an intra-hour ramp.<br/>
-          <strong>Why not:</strong> monthly <span class="mono">WS2M</span> shows no significant trend at any station (p=0.489 / 0.173 / 0.451). Ramp risk needs hourly series. Off-world analog telemetry stays a one-line roadmap, not a delivered feature.
-        </p>
-      </div>
+        <div class="mono label">Declared Null (WS2M)</div>
+        <div class="value">Monthly wind speed has no significant trend anywhere (p = 0.489 / 0.173 / 0.451) -&gt; No grid ramp claim.</div>
+      </div></div>
+      
     </div>
+    
     <div class="footer">
-      <span>Local impact only where the statistics support it · No unsupported off-world claim</span>
-      <span>Slide 6 / 7</span>
+      <span>Scientific honesty: every vector declares live, frozen snapshot, or roadmap status</span>
+      <span class="mono">Slide 6 / 7</span>
     </div>
   </section>
 
-  <!-- SLIDE 7 -->
-  <section class="slide">
-    <div>
-      <span class="tag">Architecture, Links &amp; Compliance</span>
-      <h2>Zero-Downtime Demo &amp; Full Transparency</h2>
+  <!-- SLIDE 7: legacy -->
+  <section class="slide" style="background-color: #F5F6F1;">
+    <svg class="curve-bg" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0.0,430.0 C28.3,424.2 113.3,406.7 170.0,395.0 C226.7,383.3 283.3,371.7 340.0,360.0 C396.7,348.3 453.3,336.7 510.0,325.0 C566.7,313.3 623.3,301.7 680.0,290.0 C736.7,278.3 793.3,266.7 850.0,255.0 C906.7,243.3 961.7,231.7 1020.0,220.0 C1078.3,208.3 1170.0,190.8 1200.0,185.0" fill="none" stroke="var(--biome-se)" stroke-width="4" stroke-opacity="0.22" />
+      <path d="M0.0,430.0 C28.3,424.2 113.3,406.7 170.0,395.0 C226.7,383.3 283.3,371.7 340.0,360.0 C396.7,348.3 453.3,336.7 510.0,325.0 C566.7,313.3 623.3,301.7 680.0,290.0 C736.7,278.3 793.3,266.7 850.0,255.0 C906.7,243.3 961.7,231.7 1020.0,220.0 C1078.3,208.3 1170.0,190.8 1200.0,185.0" fill="none" stroke="var(--biome-se)" stroke-width="1.5" stroke-opacity="0.45" stroke-dasharray="6 6" />
+    </svg>
+    <div class="slide-head">
+      <span class="tag" style="color: var(--biome-se); border-color: var(--biome-se);">Architecture, Legacy &amp; Honest Roadmap</span>
+      <h2>Zero-downtime prototype built to stay useful after Sunday.</h2>
+      <p class="lead">Public MIT repository, verified NASA data snapshots, transparent AI disclosure, and a clear engineering roadmap for what comes next.</p>
     </div>
-    <div class="grid-2">
+    <div class="slide-body">
+      <div class="grid-3">
       <div class="card">
-        <h3 style="margin-bottom:10px;">Resilient Architecture</h3>
-        <ul style="padding-left:18px;color:var(--muted);line-height:1.75;font-size:14px;">
-          <li><strong>Backend:</strong> FastAPI + Python 3.12 (<span class="mono">trend.py</span>, <span class="mono">main.py</span>, Docker port 7860 for Hugging Face Spaces).</li>
-          <li><strong>Frontend:</strong> React + Vite dark cockpit, live on Vercel at <a href="https://frontend-rho-seven-69.vercel.app" target="_blank" rel="noreferrer" style="color:var(--blue);text-decoration:none;">frontend-rho-seven-69.vercel.app</a> with frozen JSON fallback (<span class="mono">public/cache/</span>) so the demo runs without login or downtime.</li>
-          <li><strong>Source Code:</strong> <a href="https://github.com/SunLuiz/Curva_do_Pato" target="_blank" rel="noreferrer" style="color:var(--blue);text-decoration:none;">github.com/SunLuiz/Curva_do_Pato</a> — public, MIT licensed, no login required.</li>
-        </ul>
+        <div class="mono label">v0.2 · Hourly Wind &amp; Solar</div>
+        <div class="value">Unlock sub-hourly ramp risk (GOES / hourly POWER)</div>
       </div>
       <div class="card">
-        <h3 style="margin-bottom:10px;">Space Apps 2026 Compliance</h3>
-        <ul style="padding-left:18px;color:var(--muted);line-height:1.75;font-size:14px;">
-          <li><strong>100% English:</strong> Code, UI, README, references, and pitch deck.</li>
-          <li><strong>No NASA Logo:</strong> Uses explicit dataset citations &amp; Space Apps 2026 Campinas badge only.</li>
-          <li><strong>AI Disclosure:</strong> Declared in <span class="mono">AI_DISCLOSURE.md</span>; all stats are deterministic Python computations over real NASA data.</li>
-          <li><strong>Prototype Disclaimer:</strong> Comparative prototype estimate; not an operational forecast.</li>
-        </ul>
+        <div class="mono label">v0.3 · NISAR &amp; ECOSTRESS</div>
+        <div class="value">Move geothermal / InSAR deformation from CMR roadmap to live</div>
       </div>
+      <div class="card">
+        <div class="mono label">v0.4 · Statistical Guardrail</div>
+        <div class="value">Reuse trend engine + Academy mastery pedagogy in open pipelines</div>
+      </div></div>
+      <div class="links-bar mono">
+          <span>Live Demo: <a href="https://frontend-rho-seven-69.vercel.app">frontend-rho-seven-69.vercel.app</a></span>
+          <span>Source: <a href="https://github.com/SunLuiz/Curva_do_Pato">github.com/SunLuiz/Curva_do_Pato</a></span>
+          <span>Sources: NASA POWER · FIRMS · DONKI · Earthdata CMR MCP</span>
+        </div>
     </div>
+    
     <div class="footer">
-      <span>Built in 36h at Espaço Plasma, Unicamp — Campinas, SP, Brazil</span>
-      <span>Slide 7 / 7</span>
+      <span>Built at Espaço Plasma, Unicamp — Campinas, SP, Brazil · MIT License · No NASA logo used</span>
+      <span class="mono">Slide 7 / 7</span>
     </div>
   </section>
 </body>

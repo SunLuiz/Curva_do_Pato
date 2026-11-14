@@ -1,6 +1,6 @@
 """
-Cockpit-OMNI — NASA FIRMS client (queimadas MODIS/VIIRS, near-real-time).
-Requer FIRMS_MAP_KEY no .env (gratuita; 5000 transações/10min).
+Cockpit-OMNI — NASA FIRMS client (MODIS/VIIRS active fires, near-real-time).
+Requires FIRMS_MAP_KEY in .env (free; 5000 transactions per 10 min).
 """
 from __future__ import annotations
 
@@ -12,10 +12,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# bbox padrão: Brasil continental [west, south, east, north]
+# default bbox: continental Brazil [west, south, east, north]
 BR_BBOX = "-74,-34,-34,6"
 
-# datasets válidos (S-NPP será descontinuado em 02/11/2026)
+# valid datasets (S-NPP retired on 2026-11-02)
 DATASETS = {
     "viirs_noaa21": "VIIRS_NOAA21_NRT",
     "viirs_noaa20": "VIIRS_NOAA20_NRT",
@@ -42,7 +42,7 @@ class FirmsClient:
         days: int = 1,
         dataset: str = "viirs_noaa21",
     ) -> pd.DataFrame:
-        """Focos de calor ativos na área [west,south,east,north] nos últimos N dias."""
+        """Active hot spots inside [west,south,east,north] over the last N days."""
         ds = DATASETS.get(dataset, dataset)
         url = f"{self.BASE}/{self.api_key}/{ds}/{bbox}/{days}"
         r = self.client.get(url)
@@ -55,11 +55,11 @@ class FirmsClient:
         self, lat: float, lon: float, radius_km: float = 50,
         days: int = 1, dataset: str = "viirs_noaa21",
     ) -> pd.DataFrame:
-        """Focos em um raio ao redor de um ponto (ex.: parque eólico do NE)."""
+        """Hot spots within a radius of a point (e.g. a Northeast wind farm)."""
         df = self.active_fires(BR_BBOX, days, dataset)
         if df.empty:
             return df
-        # haversine aproximada
+        # approximate haversine
         import numpy as np
         lat_r = np.radians(df["latitude"])
         lon_r = np.radians(df["longitude"])
@@ -78,7 +78,7 @@ def io_from_text(text: str) -> "pd.io.common.StringIO":
 if __name__ == "__main__":
     c = FirmsClient()
     df = c.active_fires(days=1)
-    print("focos BR 24h:", len(df))
+    print("BR hot spots 24h:", len(df))
     near = c.fires_near(-5.2, -38.5, radius_km=100)
-    print("focos perto de -5.2,-38.5 (NE):", len(near))
+    print("hot spots near -5.2,-38.5 (NE):", len(near))
     c.close()

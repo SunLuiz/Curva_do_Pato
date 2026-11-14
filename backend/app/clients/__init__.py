@@ -1,1 +1,1 @@
-"""Clients de ingestão de dados — Cockpit-OMNI."""
+"""Data ingestion clients — Cockpit-OMNI."""

@@ -27,4 +27,12 @@ gods-eye-view/
 
 # Internal Portuguese planning notes & organizer PDFs (keep public repo 100% English)
 NOTAS_ANALISE.md
+Documentos/
 cockpit-omni/Documentos/
+*.bak
+.env.bak-*
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+*.swp

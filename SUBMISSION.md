@@ -35,7 +35,7 @@ Cockpit-OMNI retrieves 42-year NASA POWER time series (1984–2025), proves stat
 
 ### Frontend → Vercel (Works Live + Offline Frozen Cache)
 ```bash
-cd cockpit-omni/frontend
+cd frontend
 npm install && npm run build
 npx vercel --prod
 ```
@@ -43,7 +43,7 @@ npx vercel --prod
 - Even without `VITE_API_BASE`, `frontend/public/cache/*.json` guarantees every preset region, chart, attribution card, FIRMS count, DONKI alert list, and CMR MCP evidence works offline with zero login.
 
 ### Backend → Hugging Face Space (Docker, CPU Basic 16 GB)
-1. Create a Docker Space on Hugging Face using `cockpit-omni/` as the root (uses `cockpit-omni/Dockerfile` on port `7860`).
+1. Create a Docker Space on Hugging Face using the **repository root** (`Curva_do_Pato/`) as the root — it ships `Dockerfile` on port `7860` at the top level.
 2. Add Space Secrets: `NASA_API_KEY`, `FIRMS_MAP_KEY`.
 3. Verify `/healthz` and `/api/trend?region=campinas&variable=T2M` in an incognito browser tab.
 

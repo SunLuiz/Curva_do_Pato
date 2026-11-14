@@ -1,6 +1,6 @@
 """
 Cockpit-OMNI — NASA POWER client (aberto, sem chave).
-Irradiância solar (CERES) e vento (MERRA-2), temporal horário/diário em ponto.
+Solar irradiance (CERES) and wind (MERRA-2), hourly/daily point time series.
 """
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ class PowerClient:
         parameters: str = "WS2M,ALLSKY_SFC_SW_DWN,T2M,PRECTOTCORR",
         community: str = "RE",
     ) -> pd.DataFrame:
-        """Série horária em um ponto. Retorna DataFrame com coluna `time`."""
+        """Hourly series at a point. Returns a DataFrame with a `time` column."""
         url = f"{self.BASE}/temporal/hourly/point"
         params = {
             "parameters": parameters,

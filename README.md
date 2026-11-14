@@ -45,36 +45,39 @@ Using Seasonal Mann-Kendall (`period=12`) and deseasonalized Theil-Sen anomalies
 ## Project Structure
 
 ```text
-Hackaton_NASA/
-├── cockpit-omni/
-│   ├── backend/
-│   │   ├── app/
-│   │   │   ├── clients/       # NASA POWER, FIRMS, DONKI, MEDA, JPL Horizons, ONS
-│   │   │   ├── trend.py       # Mann-Kendall + deseasonalized Theil-Sen engine
-│   │   │   └── main.py        # FastAPI endpoints (/healthz, /api/trend, /api/fires, /api/spaceweather, /api/attribution)
-│   │   └── tests/             # API & statistical engine tests
-│   ├── data/                  # Sample & frozen fallback JSON/CSV snapshots
-│   ├── frontend/              # Vite web dashboard
-│   └── requirements.txt
-├── REFERENCES.md              # Full NASA & external dataset citations
-└── AI_DISCLOSURE.md           # Transparent AI usage declaration
+Curva_do_Pato/                     # repository root (this is what you clone)
+├── backend/
+│   ├── app/
+│   │   ├── clients/               # NASA POWER, FIRMS, DONKI, MEDA, JPL Horizons, ONS
+│   │   ├── trend.py               # Mann-Kendall + deseasonalized Theil-Sen engine
+│   │   └── main.py                # FastAPI endpoints (/healthz, /api/trend, /api/fires, /api/spaceweather, /api/attribution)
+│   └── tests/                     # API & statistical engine tests
+├── data/                          # Sample & frozen fallback JSON/CSV snapshots
+├── frontend/                      # Vite web dashboard
+├── docs/pitch_deck.html           # 7-slide demo deck
+├── Dockerfile                     # Hugging Face Space (Docker, port 7860)
+├── requirements.txt
+├── REFERENCES.md                  # Full NASA & external dataset citations
+└── AI_DISCLOSURE.md               # Transparent AI usage declaration
 ```
 
 ---
 
 ## Quickstart (Local Backend)
 
+Clone the repository and you land directly in the project root — no `cd` into a subfolder:
+
 ```bash
-cd cockpit-omni
+git clone https://github.com/SunLuiz/Curva_do_Pato.git
+cd Curva_do_Pato
 cp .env.example .env           # Add NASA_API_KEY and FIRMS_MAP_KEY (free keys)
-.venv\Scripts\python.exe -m uvicorn app.main:app --app-dir backend --reload --port 8000
+.venv/Scripts/python.exe -m uvicorn app.main:app --app-dir backend --reload --port 8000
 ```
 
 Run tests:
 
 ```bash
-cd cockpit-omni
-.venv\Scripts\python.exe -m pytest backend/tests -q
+.venv/Scripts/python.exe -m pytest backend/tests -q
 ```
 
 ---

@@ -1,6 +1,6 @@
 """
-Cockpit-OMNI — JPL Horizons client (efemérides, sem chave).
-Posição Sol/Terra vista de qualquer corpo (Lua=10-base, Marte=499).
+Cockpit-OMNI — JPL Horizons client (ephemerides, no key required).
+Sun/Earth geometry as seen from any body (Moon=10-base, Mars=499).
 """
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ class HorizonsClient:
     ) -> Dict:
         """
         Ephemeris OBSERVER para o Sol (1) visto do astro alvo.
-        QUANTITIES=1 (az/el), 20 (range) -> posição solar.
+        QUANTITIES=1 (az/el), 20 (range) -> solar geometry.
         """
         url = self.BASE
         params = {
@@ -50,7 +50,7 @@ class HorizonsClient:
 
 
 def parse_ephem(text: str) -> Dict:
-    """Extrai as linhas tabulares de um ephemeris OBSERVER/APPARENT."""
+    """Extract the tabular rows of an OBSERVER/APPARENT ephemeris."""
     rows = []
     in_table = False
     for line in text.splitlines():
@@ -61,7 +61,7 @@ def parse_ephem(text: str) -> Dict:
             in_table = True
             continue
         if in_table and s and not s.startswith("$") and not s.startswith("$$"):
-            # linha de dados: começa com "2026-Nov-14 00:00"
+            # data row: starts with "2026-Nov-14 00:00"
             if re.match(r"^\d{4}-[A-Za-z]{3}-\d{2}", s):
                 parts = s.split()
                 if len(parts) >= 5:

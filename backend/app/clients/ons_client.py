@@ -1,6 +1,6 @@
 """
 Cockpit-OMNI — ONS Dados Abertos client (CKAN, sem chave).
-Geração eólica/solar real por subsistema do SIN (ground-truth terrestre).
+Real wind/solar generation per SIN subsystem (terrestrial ground truth).
 """
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ class OnsClient:
         self.client.close()
 
     def package_search(self, q: str, rows: int = 5) -> list:
-        """Procura datasets no catálogo CKAN do ONS."""
+        """Search datasets in the ONS CKAN catalog."""
         url = f"{self.BASE}/api/3/action/package_search"
         r = self.client.get(url, params={"q": q, "rows": rows})
         r.raise_for_status()

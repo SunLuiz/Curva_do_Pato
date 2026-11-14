@@ -1,0 +1,791 @@
+Os projetos vencedores com IA do NASA Space Apps Challenge entre 2023 e 2025 mostram um padrão consistente: os juízes da NASA não premiam *wrappers* genéricos de LLM nem modelos em *notebooks* isolados, mas sim **pipelines científicos explicáveis** que traduzem dados brutos de instrumentos espaciais em decisões visuais imediatas.
+
+### 1. Padrões Técnicos dos Vencedores (2023–2025)
+
+* **Modelos especializados em séries temporais e sinais ruidosos:** Em vez de usar apenas LLMs para tudo, os campeões aplicam arquiteturas específicas para o sinal físico do instrumento — como redes LSTM no **Storm Prophet** ([vencedor de 2023 em *Best Use of Data](https://science.nasa.gov/directorates/smd/2023-nasa-international-space-apps-challenge-announces-10-global-winners/)*) para prever tempestades geomagnéticas a partir do satélite DSCOVR, redes neurais profundas combinadas a processamento de sinais não estacionários no brasileiro **42 QuakeHeroes** ([vencedor de 2024 em *Best Use of Technology](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-international-space-apps-challenge-announces-2024-global-winners/)*) para detectar sismos planetários, e análise automatizada de espectros do James Webb no **Resonant Exoplanets** ([vencedor de 2025 em *Best Use of Data](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-announces-2025-international-space-apps-challenge-global-winners/)*).
+* **Fusão multimodal (Satélite + Camada Local + IA):** Projetos que vencem em *Local Impact*, *Galactic Impact* ou *Best Use of Technology* cruzam múltiplas fontes da NASA com variáveis de solo ou operação local. O **QUEÑARIS** ([vencedor de 2025 em *Local Impact](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-announces-2025-international-space-apps-challenge-global-winners/)*) combinou imagens de satélite da NASA, mapeamento por drones, IA e dados fenológicos para restaurar florestas andinas, enquanto o **SkySense / Twisters** ([vencedor de 2025 em *Best Use of Technology](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-announces-2025-international-space-apps-challenge-global-winners/)*) unificou múltiplos datasets meteorológicos da NASA em um pipeline limpo de inferência probabilística.
+* **Otimização matemática e índices proprietários:** Em vez de exibir dados brutos, os vencedores criam uma métrica sintética auditável — como o *Astro Sweepers Risk Index* para detritos orbitais no **Astro Sweepers** e o modelo de otimização inteira mista para data centers orbitais no **Gaia+LEO** ([ambos vencedores globais de 2025](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-announces-2025-international-space-apps-challenge-global-winners/)).
+* **Honestidade científica e rastreabilidade (RAG com evidência):** Nas diretrizes de avaliação ([Judging and Awards Guide](https://www.spaceappschallenge.org/resources/judging-awards-guide/)), validade científica tem peso central. As arquiteturas de destaque em 2026 — como a proposta para o desafio [Flame in Freefall](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/) — separam claramente o cálculo preditivo (ex.: XGBoost/Random Forest + SHAP sobre variáveis físicas) do copiloto conversacional (RAG ancorado nos experimentos *Saffire*, *BASS-II* e *FLEX*), rotulando o resultado como *score comparativo de protótipo* e citando o ID exato do experimento da NASA.
+
+### 2. Padrões de UX e Produto que Conquistam os Juízes
+
+* **Tradução da complexidade em uma pergunta cotidiana:** O **SkySense (Twisters)** venceu em 2025 transformando variáveis de observação da Terra (chuva, vento, umidade e visibilidade) em uma resposta direta para o usuário comum (*"Vai chover no meu evento?"*), sugerindo janelas horárias seguras com código de cores ([anúncio oficial de 2025](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-announces-2025-international-space-apps-challenge-global-winners/)).
+* **Simulação interativa *"What-If"* e estresse em tempo real:** O brasileiro **PureFlow** ([vencedor de 2025 em *Best Mission Concept](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-announces-2025-international-space-apps-challenge-global-winners/)*) destacou-se porque não fez apenas uma maquete 3D de habitat espacial, mas permitiu submeter o projeto a ameaças solares reais para testar a resiliência de suporte à vida e energia.
+* **Guias de IA e experiências multissensoriais:** O **Connected Earth Museum**, de Campinas ([vencedor de 2024 em *Art & Technology](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-international-space-apps-challenge-announces-2024-global-winners/)*), usou um anfitrião de IA para conduzir o visitante por galerias 2D/3D de séries temporais climáticas, enquanto o brasileiro **Arcobaleno** ([vencedor de 2023 em *Global Connection](https://science.nasa.gov/directorates/smd/2023-nasa-international-space-apps-challenge-announces-10-global-winners/)*) converteu imagens espaciais em som para acessibilidade visual.
+* **Descoberta progressiva em 3 a 4 telas:** Os projetos premiados evitam menus extensos e concentram a demonstração em um fluxo enxuto: **Visão Geral de Missão (KPIs)** → **Simulador / Laboratório Interativo** → **Explorador de Evidências da NASA** → **Copiloto Explicável**.
+
+### 3. Roteiro de Aplicação para o Hackathon de 2026 (48 Horas)
+
+Para aplicar esses padrões nos [desafios de 2026](https://www.spaceappschallenge.org/2026/challenges/) — especialmente em **Flame in Freefall**, **Be An Earth System Trend Detective!**, **Create Health Monitoring Software for Astronauts** ou **The Earth Information Jukebox** — siga esta sequência de execução:
+
+1. **Normalizar o dataset da NASA em um schema unificado:** Horas 0 a 6.
+Escolha de 2 a 3 conjuntos de dados oficiais do desafio (como experimentos *Saffire* e *BASS-II* no banco PSI, ou séries *MERRA-2* e *MODIS*) e estruture um banco limpo em CSV/Parquet ou SQLite/PostgreSQL. Garanta que cada registro mantenha o link e o identificador oficial da missão da NASA para citação direta na interface.
+
+
+2. **Construir o motor analítico ou preditivo com explicabilidade:** Horas 6 a 18.
+Implemente um modelo leve e auditável (como XGBoost/Scikit-Learn com pesos SHAP para risco de combustão/saúde, ou testes estatísticos *Mann-Kendall* e *t-test* para tendências climáticas) combinado a busca vetorial para encontrar registros históricos similares da NASA (*Find Similar Experiments/Events*).
+
+
+3. **Desenvolver o simulador interativo What-If como tela principal:** Horas 18 a 32.
+Crie um painel *dark-mode* de alta legibilidade onde o avaliador possa alterar parâmetros físicos em controles deslizantes (ex.: concentração de O₂, fluxo de ar, gravidade ou região geográfica) e ver instantaneamente a mudança no *Score de Risco/Tendência*, os fatores de maior peso e os gráficos comparativos antes/depois.
+
+
+4. **Acoplar um Agente / Copiloto RAG restrito às evidências:** Horas 32 a 40.
+Conecte um agente que responda perguntas sobre o cenário simulado consultando exclusivamente o banco estruturado e os artigos técnicos da NASA, exibindo em cada resposta a fonte, a variável medida e o grau de confiança, sem extrapolar recomendações operacionais não certificadas.
+
+
+5. **Fechar o storytelling e o vídeo de demonstração de 3 minutos:** Horas 40 a 48.
+Estruture o pitch com 25 segundos de problema real, 25 segundos de insight sobre os dados da NASA, 80 segundos navegando ao vivo pelo simulador *What-If* e pela explicação da IA, e 30 segundos finais conectando o protótipo ao impacto humano na Terra, na Lua ou em Marte.
+
+
+Para blindar a pontuação nos critérios de avaliação global, inclua no rodapé da interface um aviso explícito de rigor científico (informando que o índice gerado é uma estimativa comparativa de protótipo baseada em dados históricos abertos da NASA) e mantenha todos os links dos datasets originais clicáveis dentro do dashboard.
+
+
+A convergência entre o **Cockpit-SIN** (sua arquitetura preditiva de rampas de carga líquida e despacho de baterias BESS com `hermes-orchestrator`), os modelos abertos da NASA ([Super Intelligence for Science](https://science.nasa.gov/artificial-intelligence-science)), o histórico de projetos premiados do Space Apps (2023–2025) e o ecossistema de câmeras públicas em tempo real **[God's Eye View (`bilawalsidhu/gods-eye-view`)](https://github.com/bilawalsidhu/gods-eye-view)** permite estruturar uma plataforma unificada de **Inteligência Física, Energética e Ambiental Multiplanetária** — que podemos batizar de **COCKPIT-OMNI (ou Cockpit-V: Planetary Visual & Energy Twin)**.
+
+A tese central que conecta todas essas pontas é simples e fisicamente rigorosa: **satélites e modelos climáticos globais enxergam de cima com atraso temporal e baixa resolução de microescala, enquanto redes elétricas e habitats espaciais colapsam em segundos por eventos de borda** (rampas abruptas de nuvens/poeira, rajadas de vento e correntes geomagnéticas induzidas por tempestades solares). Ao usar visão computacional a **1 frame por segundo (1 Hz)** em câmeras terrestres ou de superfície planetária para medir o vento no bater das folhas (**anemometria visual**) e a opacidade do céu frame a frame, você cria o **elo de confirmação física instantânea (*ground-truth*)** que faltava aos modelos orbitais da NASA.
+
+---
+
+### Etapa 1: Arquitetura Unificada do Sistema (Cockpit-OMNI)
+
+O diagrama abaixo apresenta o fluxo de ponta a ponta em 6 módulos, unificando a ingestão orbital da NASA, a malha de visão computacional 1 Hz estilo *God's Eye*, o motor de fusão físico-estatística e o orquestrador neuro-agêntico (`hermes-orchestrator`) para atuação na Terra, na Lua e em Marte:
+
+```svg
+<svg viewBox="0 0 680 316" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    :root {
+      --lumi-ink: light-dark(#000000, #e0e0e0);
+      --lumi-muted: light-dark(#5f6368, #9aa0a6);
+      --lumi-dim: light-dark(#f2f0f0, #242528);
+      --lumi-container: light-dark(#e8e6e6, #2d2f33);
+      --lumi-outline: light-dark(#727676, #9a9b9c);
+      --lumi-accent-bg: light-dark(#dcf1ff, #192967);
+      --lumi-primary: light-dark(#3186ff, #9dd2ff);
+      --lumi-sans: 'Google Sans Flex', var(--font-family, 'Google Sans', sans-serif);
+      --lumi-mono: 'Google Sans Code', ui-monospace, monospace;
+    }
+    text { font-weight: 400; stroke: none; }
+    .t-l1 { font-family: var(--lumi-sans); font-size: 15px; fill: var(--lumi-ink); }
+    .t-l2 { font-family: var(--lumi-mono); font-size: 13px; font-style: italic; fill: var(--lumi-ink); }
+    .t-l4 { font-family: var(--lumi-sans); font-size: 13px; fill: var(--lumi-muted); }
+    .node-step { fill: var(--lumi-dim); stroke: none; }
+    .node-focal { fill: var(--lumi-accent-bg); stroke: var(--lumi-primary); stroke-width: 1.25; }
+    .node-store { fill: var(--lumi-container); stroke: var(--lumi-outline); stroke-width: 1; }
+    .edge-seg { fill: none; stroke: var(--lumi-ink); stroke-width: 1.3; stroke-linecap: round; stroke-dasharray: 0 4; }
+    .edge-arrow { fill: none; stroke: var(--lumi-ink); stroke-width: 1.3; stroke-linecap: round; stroke-dasharray: 0 4; marker-end: url(#lumi-caret); }
+  </style>
+  <defs>
+    <marker id="lumi-caret" viewBox="0 0 10 10" refX="7.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto">
+      <path d="M 3 1.2 L 7.5 5 L 3 8.8" fill="none" stroke="var(--lumi-ink)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" />
+    </marker>
+  </defs>
+
+  <rect class="node-store" x="20" y="24" width="180" height="80" rx="40" />
+  <text class="t-l1" x="110" y="55" text-anchor="middle" dominant-baseline="central">Telemetria NASA</text>
+  <text class="t-l2" x="110" y="77" text-anchor="middle" dominant-baseline="central">Surya + Prithvi + MEDA</text>
+
+  <line class="edge-arrow" x1="208" y1="64" x2="242" y2="64" />
+
+  <rect class="node-focal" x="250" y="24" width="180" height="80" rx="40" />
+  <text class="t-l1" x="340" y="55" text-anchor="middle" dominant-baseline="central">Malha Visual 1 Hz</text>
+  <text class="t-l2" x="340" y="77" text-anchor="middle" dominant-baseline="central">God's Eye + OFTV</text>
+
+  <line class="edge-arrow" x1="438" y1="64" x2="472" y2="64" />
+
+  <rect class="node-step" x="480" y="24" width="180" height="80" rx="40" />
+  <text class="t-l1" x="570" y="55" text-anchor="middle" dominant-baseline="central">Validador Físico</text>
+  <text class="t-l4" x="570" y="77" text-anchor="middle" dominant-baseline="central">Mann-Kendall + SHAP</text>
+
+  <line class="edge-seg" x1="570" y1="112" x2="570" y2="142" />
+  <rect x="518" y="150" width="104" height="20" rx="10" fill="var(--lumi-dim)" />
+  <text class="t-l2" x="570" y="160" text-anchor="middle" dominant-baseline="central">P10-P95 SSE</text>
+  <line class="edge-arrow" x1="570" y1="178" x2="570" y2="204" />
+
+  <rect class="node-focal" x="480" y="212" width="180" height="80" rx="40" />
+  <text class="t-l1" x="570" y="243" text-anchor="middle" dominant-baseline="central">Hermes Orchestrator</text>
+  <text class="t-l2" x="570" y="265" text-anchor="middle" dominant-baseline="central">Matriz 4x4 + DRL</text>
+
+  <line class="edge-arrow" x1="472" y1="252" x2="438" y2="252" />
+
+  <rect class="node-store" x="250" y="212" width="180" height="80" rx="40" />
+  <text class="t-l1" x="340" y="243" text-anchor="middle" dominant-baseline="central">Gêmeo Multi-Mundo</text>
+  <text class="t-l4" x="340" y="265" text-anchor="middle" dominant-baseline="central">Terra • Lua • Marte</text>
+
+  <line class="edge-arrow" x1="242" y1="252" x2="208" y2="252" />
+
+  <rect class="node-step" x="20" y="212" width="180" height="80" rx="40" />
+  <text class="t-l1" x="110" y="243" text-anchor="middle" dominant-baseline="central">Despacho BESS</text>
+  <text class="t-l2" x="110" y="265" text-anchor="middle" dominant-baseline="central">Proteção de Missão</text>
+</svg>
+```
+
+---
+
+### Etapa 2: Síntese dos Projetos Vencedores (2023–2025) e Desafios 2026 Incorporados
+
+Em vez de tratar os vencedores anteriores e os desafios de 2026 como ideias isoladas, o **Cockpit-OMNI** absorve a lógica central de cada um deles como um módulo funcional do mesmo motor:
+
+* **De *Storm Prophet* (Vencedor 2023) + *Surya* (NASA 2025/2026) → Módulo Heliofísico e Geomagnético:** O projeto ucraniano **Storm Prophet** ([vencedor global de 2023 em *Best Use of Data](https://science.nasa.gov/directorates/smd/2023-nasa-international-space-apps-challenge-announces-10-global-winners/)*) usou redes LSTM sobre dados do satélite DSCOVR para prever tempestades geomagnéticas, enquanto a NASA lançou o **[Surya Heliophysics Foundation Model](https://science.nasa.gov/artificial-intelligence-science)** (treinado em 9 anos do Solar Dynamics Observatory). No seu sistema, essa camada antecipa dois efeitos críticos: **correntes geomagnéticas induzidas (GIC)** que saturam transformadores no SIN (Terra) e **surtos de radiação solar** que exigem chaveamento imediato de habitats para modo de blindagem e isolamento de baterias na Lua e em Marte — exatamente a premissa premiada no brasileiro **PureFlow** ([vencedor global de 2025 em *Best Mission Concept](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-announces-2025-international-space-apps-challenge-global-winners/)*).
+* **De *SkySense / Twisters* (Vencedor 2025) + *Be An Earth System Trend Detective!* (Desafio 2026) → Módulo de Detecção de Tendências e Rampas:** O **SkySense** ([vencedor de 2025 em *Best Use of Technology](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-announces-2025-international-space-apps-challenge-global-winners/)*) transformou múltiplos datasets de satélite em probabilidades hiperlocais, e o desafio de 2026 **[Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/earth-system-trend-detective/)** exige selecionar variáveis de missões como MODIS, AIRS, GPM e reanálises MERRA-2 (base do **[Prithvi Weather & Climate](https://science.nasa.gov/artificial-intelligence-science)**) para aplicar testes de significância (*Mann-Kendall* e *t-test*). No Cockpit-SIN, isso deixa de ser apenas um gráfico histórico: uma tendência estatisticamente significativa de queda de umidade ou anomalia térmica regional recalibra os quantis conformais (P10–P95) de rampa de carga líquida antes que o modelo DESSEM do ONS perceba o erro.
+* **De *42 QuakeHeroes* (Vencedor 2024) + *QUEÑARIS* (Vencedor 2025) → Fusão de Sinais Não Estacionários e Sensoriamento de Superfície:** O brasileiro **42 QuakeHeroes** ([vencedor de 2024 em *Best Use of Technology](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-international-space-apps-challenge-announces-2024-global-winners/)*) isolou eventos reais em séries temporais altamente ruidosas, enquanto o peruano **QUEÑARIS** ([vencedor de 2025 em *Local Impact](https://www.nasa.gov/learning-resources/stem-engagement-at-nasa/nasa-announces-2025-international-space-apps-challenge-global-winners/)*) uniu satélites da NASA a sensores ópticos de baixa altitude. Essa mesma decomposição de sinal é o que permite separar o ruído de câmera da assinatura real de vento ou poeira na camada visual.
+* **De *Flame in Freefall* + *Create Health Monitoring Software* (Desafios 2026) → Copiloto de Risco Interno de Habitat:** Quando uma tempestade solar ou de poeira força o desligamento de sistemas externos na Lua ou em Marte e altera a pressão/ventilação interna da base (com atmosfera de 30% de O₂ a 10,2 psi descrita em **[Flame in Freefall](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/)**), o consumo energético do suporte à vida (ECLSS) e o risco de inflamabilidade mudam drasticamente, conectando o despacho de baterias (BESS) diretamente à telemetria fisiológica da tripulação (**[Create Health Monitoring Software](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/)**).
+
+---
+
+### Etapa 3: A Camada "Olho de Deus" (`gods-eye-view`) + Visão Computacional a 1 Hz (`Frame t-1 → Frame t`)
+
+O projeto open-source **[God's Eye View (`bilawalsidhu/gods-eye-view`)](https://github.com/bilawalsidhu/gods-eye-view)** (e seu fork **[`IdoCohen560/gods-eye-worldview`](https://github.com/IdoCohen560/gods-eye-worldview)**) projeta em um globo 3D (CesiumJS / WebGPU com propagação orbital SGP4 em WebAssembly) sinais públicos globais em tempo real: satélites, aeronaves, incêndios e **milhares de câmeras públicas (CCTV/webcams meteorológicas e rodoviárias)**.
+
+No seu sistema, essa malha de câmeras deixa de ser apenas visualização passiva e passa a alimentar um **pipeline de Visão Computacional de Borda a 1 Hz (1 print por segundo)** que compara o estado do *Frame $t-1$* com o *Frame $t$* em três camadas físicas:
+
+1. **Anemometria Visual por Fluxo Óptico no Bater das Folhas (*Optical Flow Tracking Velocimetry — OFTV*):**
+* **Fundamento científico:** Estudos recentes de **[Anemometria Visual informada pela física](https://www.researchgate.net/publication/369924718_Visual_anemometry_physics-informed_inference_of_wind_for_renewable_energy_urban_sustainability_and_environmental_science)** e de **[rastreamento óptico do movimento de árvores sob rajadas de vento (Loughborough University, 2026)](https://repository.lboro.ac.uk/articles/journal_contribution/Seeing_gusty_winds_Optical_tracking_of_tree_motion_captures_peak_3-second_gust_velocities/31211143/1/files/61960342.pdf)** demonstram que a velocidade do movimento de copas e folhas extraída por fluxo óptico (*Optical Flow*) correlaciona-se linearmente ($R^2 \approx 0,9$) com rajadas de vento de 3 segundos entre 25 e 144 km/h, sendo isotrópica (independente do ângulo da câmera entre 0° e 180°). Da mesma forma, a **[análise de vetores normais de fluxo óptico em folhas](https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2019.00227/full)** extrai frequência de oscilação e rigidez foliar.
+* **Como opera a 1 Hz no seu sistema:** A cada segundo, o módulo captura o *frame* da câmera pública próxima a um parque eólico/solar ou subestação, isola a máscara de vegetação (ROI de árvores/folhagens), calcula o campo denso de fluxo óptico (Farnebäck ou RAFT) entre $t-1$ e $t$, e extrai a magnitude média do deslocamento angular ($\Delta u, \Delta v$) e a variância espectral de alta frequência (vibração induzida por vórtices). Isso transforma qualquer câmera pública em um **anemômetro virtual de custo zero**, confirmando em 1 segundo se uma frente de rajada prevista pelo satélite realmente tocou o solo.
+
+
+2. **Nefologia Visual, Opacidade Atmosférica e *Cloud/Dust Nowcasting* (Céu e Horizonte):**
+* **Como opera a 1 Hz:** Na metade superior do *frame* (ROI do céu), o diferencial entre $t-1$ e $t$ calcula o vetor de advecção da borda das nuvens (prevendo em quantos segundos a sombra cobrirá uma usina solar fotovoltaica — a principal causa de rampas bruscas de geração no SIN) e mede a **extinção óptica ($\tau$)** pela queda de contraste no horizonte e mudança na razão espectral R/B (vermelho/azul), validando na hora a densidade de aerossóis, fumaça de queimadas ([desafio MODIS/VIIRS 2026](https://www.spaceappschallenge.org/2026/challenges/modis-and-viirs-hot-spots/?tab=teams)) ou poeira em suspensão.
+
+
+3. **Detecção de Cintilação, Aurora e Perturbação Eletromagnética / Solar:**
+* **Como opera a 1 Hz:** Câmeras voltadas ao céu noturno ou crepuscular em altas e médias latitudes, combinadas à telemetria de ruído de sensor CMOS e perda de pacotes/latência de links de rádio/satélite mapeados no globo *God's Eye*, detectam variações abruptas de luminância atmosférica (*airglow*/auroras) e degradação de sinal sincronizadas com a chegada de ejeções de massa coronal alertadas pelo modelo **[Surya](https://science.nasa.gov/artificial-intelligence-science)**.
+
+
+
+---
+
+### Etapa 4: Consequência Lógica dos Dados do Cockpit-SIN na Terra, na Lua e em Marte
+
+O que o **Cockpit-SIN** calcula hoje para o Operador Nacional do Sistema Elétrico (previsão probabilística de rampa de carga líquida $\Delta P / \Delta t$ e despacho ótimo de armazenamento BESS via DRL) é, na verdade, a **equação universal de sobrevivência de qualquer microrrede planetária isolada**. Veja o impacto direto quando transferimos esse mesmo motor para os três mundos usando análogos terrestres ([desafio Identify Earth Locations that Analog the Moon and Mars](https://www.spaceappschallenge.org/2026/challenges/permanent-moon-base-locations-and-mars/)):
+
+| Parâmetro do Sistema | Impacto na Terra (SIN / Subestações) | Impacto na Lua (Polo Sul / Base Artemis) | Impacto em Marte (Cratera Jezero / Habitat) |
+| --- | --- | --- | --- |
+| **Fonte Primária da Rampa Energética** | Passagem rápida de nuvens sobre usinas solares e frentes de rajada em parques eólicos. | Sombras topográficas extremas de crateras e libration no Polo Sul ([Lunar Landing Site Navigator](https://www.spaceappschallenge.org/2026/challenges/lunar-landing-site-navigator/)). | Tempestades de poeira regionais e redemoinhos (*dust devils*) que bloqueiam a irradiação UV/solar ([estudo MEDA/RDS da NASA](https://ntrs.nasa.gov/api/citations/20250010686/downloads/SmithDustSTI.pdf)). |
+| **Validação Visual a 1 Hz ($\Delta t = 1\text{ s}$)** | Câmeras públicas ([`gods-eye-view`](https://github.com/bilawalsidhu/gods-eye-view)) medindo fluxo óptico no bater das folhas (vento) e avanço de sombra de nuvens. | Câmeras de horizonte no lander/rover rastreando o ângulo de elevação solar sem refração atmosférica e poeira eletrostática. | **SkyCam** do pacote **[MEDA do Perseverance](https://www.nasa.gov/solar-system/mars-is-getting-a-new-robotic-meteorologist/)** e navcams calculando opacidade atmosférica ($\tau$) e velocidade de *dust devils* (5 a 130 m de diâmetro). |
+| **Análogo Terrestre de Calibração** | Semiárido do Nordeste e corredores eólicos monitorados por MERRA-2 e câmeras rodoviárias. | Regiões polares (Antártida / Cratera Haughton) e campos vulcânicos basálticos mapeados pelo **[NASA-IBM Lunar Model](https://science.nasa.gov/science-research/artificial-intelligence-lunar-foundation-model/)**. | Deserto do Atacama, Vale da Morte e planícies áridas com processos eólicos de saltação em escala de 1 segundo ([estudo de ventos de Marte da NASA](https://ntrs.nasa.gov/api/citations/20230001086/downloads/Guzewich.winds.STI.pdf?attachment=true)). |
+| **Ação Autônoma do `hermes-orchestrator**` | Pré-carga/descarga de BESS e alerta preditivo de rampa P10–P95 antes do despacho DESSEM. | Chaveamento de cargas térmicas e janela de comunicação direta com a Terra antes do *Earthset/Sunset*. | Isolamento preventivo de bancos de baterias, pausa na produção de $O_2$ (MOXIE) e recalibração de rota de EVA ([Martian Map](https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/)). |
+
+#### Aprofundamento: O Caso Crítico de Marte (Do Deserto Terrestre à Cratera Jezero)
+
+1. **A física da saltação em 1 segundo:** Conforme documentado nos relatórios técnicos da missão Mars 2020 ([Winds at the Mars 2020 Landing Site — NASA NTRS](https://ntrs.nasa.gov/api/citations/20230001086/downloads/Guzewich.winds.STI.pdf?attachment=true)), o levantamento de poeira em Marte ocorre por tensão de cisalhamento do vento (*wind stress*) e vórtices convectivos (*dust devils*), onde a **saltação de partículas responde a variações de velocidade do vento na escala de 1 segundo**. Na Terra, câmeras em desertos análogos (como o Atacama) treinam o algoritmo de visão computacional a 1 Hz na transição entre o movimento de vegetação rasteira/poeira de superfície e a formação da pluma.
+2. **Quando o sensor mecânico falha, a visão computacional salva a missão:** No próprio Perseverance, os sensores de vento do MEDA sofreram danos ao longo da missão devido a detritos voadores levantados pelo vento ([Relatório MEDA Parte 2 — NASA NTRS](https://ntrs.nasa.gov/api/citations/20230001086/downloads/Guzewich.winds.STI.pdf?attachment=true)). Um módulo de **anemometria visual a 1 Hz** operando sobre as câmeras de navegação e a **SkyCam** (que já possui anel semitransparente para medir opacidade solar duas vezes ao sol, operando em blocos de 1 Hz segundo o [estudo de Dust Devils na Cratera Jezero](https://ntrs.nasa.gov/api/citations/20250010686/downloads/SmithDustSTI.pdf)) atua como sensor redundante imune à abrasão mecânica.
+3. **Consequência energética direta para a missão humana:** Enquanto um gerador nuclear MMRTG custa cerca de US$ 119 milhões e exige 3,2 anos de produção de plutônio-238 ([estudo MANTA Explorer — NASA NTRS](https://ntrs.nasa.gov/api/citations/20250008367/downloads/NASA-TM-20250008367.pdf)), bases humanas e frotas de rovers dependerão fortemente de matrizes solares híbridas com baterias (BESS). Uma tempestade de poeira de 0,5 a 1 km ou uma sequência de *dust devils* derruba abruptamente a radiação UV/visível (como registrado nas correntes dos painéis solares do lander *InSight* e pelo sensor RDS do *Perseverance*). O motor conformal do **Cockpit-SIN**, alimentado pela detecção visual da cortina de poeira no horizonte a 1 Hz, prevê a rampa severa de queda fotovoltaica com minutos a horas de antecedência e comanda o **Hermes Orchestrator** para preservar o estado de carga (SoC) vital para aquecimento e suporte à vida durante a noite marciana.
+
+---
+
+### Etapa 5: Categorização Completa dos 6 Subsistemas do "Mega Sistema"
+
+Para transformar essa síntese em uma especificação técnica modular (pronta para o Space Apps 2026 e para evolução do seu artigo na Unicamp), o sistema se divide em **6 categorias arquiteturais**:
+
+1. **Categoria I — Ingestão Orbital e Sinótica (*Macro-Sensing Layer*):**
+* Conecta via APIs abertas os dados de reanálise e observação da Terra (**MERRA-2**, **MODIS/VIIRS**, **GPM**, **NISAR**), clima espacial (**DSCOVR** e modelo **[Surya](https://science.nasa.gov/artificial-intelligence-science)**), topografia lunar (**LOLA** e **[NASA-IBM Lunar Foundation Model](https://science.nasa.gov/science-research/artificial-intelligence-lunar-foundation-model/)**) e meteorologia marciana (**MEDA / PDS**).
+
+
+2. **Categoria II — Malha de Visão Computacional Planetária a 1 Hz (*Edge Visual Verification Layer*):**
+* Integra o globo 3D de sinais abertos (**[`bilawalsidhu/gods-eye-view`](https://github.com/bilawalsidhu/gods-eye-view)**) com um coletor de *frames* a 1 fps ($\Delta t = 1\text{ s}$) que executa três extratores leves em OpenCV/PyTorch:
+* `OFTV-LeafWind`: fluxo óptico denso na vegetação para estimar velocidade de rajada ($s_3$) e direção do vento local sem anemômetro físico.
+* `SkyOpacity-Tau`: diferencial de luminância, contraste de horizonte e vetor de velocidade de nuvens/plumas de poeira ou fumaça.
+* `HelioScint-Check`: detecção de anomalias ópticas atmosféricas e correlação com falhas de telemetria/RF durante alertas geomagnéticos.
+
+
+
+
+3. **Categoria III — Motor de Detecção de Tendências e Divergência Multi-Escala (*Trend & Anomaly Engine*):**
+* Atende diretamente ao desafio **[Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/earth-system-trend-detective/)** aplicando testes não paramétricos de *Mann-Kendall*, inclinação de Sen (*Sen's slope*) e *t-test* nas séries históricas da NASA, mas adiciona o **Índice de Confirmação Visual (ICV)**: compara a tendência macro do satélite com a derivada instantânea de 1 Hz das câmeras em solo para eliminar falsos positivos.
+
+
+4. **Categoria IV — Núcleo Preditivo Conformal de Rampas (*Cockpit-SIN Core*):**
+* Recebe as variáveis validadas na matriz neuro-agêntica 4x4 (LSTMs + Transformers) e calcula os quantis probabilísticos (P10, P50, P90, P95) de rampa de geração solar/eólica e carga térmica nos três ambientes (subestações do SIN, base no Polo Sul Lunar ou habitat na Cratera Jezero).
+
+
+5. **Categoria V — Orquestrador Multiagente e Segurança Crítica (*Hermes Orchestrator & Safety Copilot*):**
+* Opera em FastAPI + Server-Sent Events (SSE) coordenando três agentes especializados:
+* **Agente de Despacho Energético (DRL):** otimiza carga/descarga de BESS e corte preventivo de cargas não essenciais.
+* **Agente de Segurança Física e Ambiental (RAG + XGBoost/SHAP):** cruza o estado de energia e ventilação interna do habitat com o banco PSI da NASA (**[Flame in Freefall](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/)**) e indicadores vitais da tripulação (**[Health Monitoring Software](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/)**).
+* **Agente de Analogia Planetária:** mapeia em tempo real qual câmera/região da Terra (ex.: Atacama para Marte, Caatinga/Nordeste para rampa solar extrema) está operando como gêmeo físico do cenário extraterrestre simulado (**[Identify Earth Locations that Analog Moon and Mars](https://www.spaceappschallenge.org/2026/challenges/permanent-moon-base-locations-and-mars/)**).
+
+
+
+
+6. **Categoria VI — Interface *Deep Tech* de Comando e Simulação *"What-If"*:**
+* Globo 3D interativo (baseado em MapLibre GL / Deck.gl / CesiumJS) com alternância instantânea entre **Modo Terra (SIN)**, **Modo Lua (Artemis)** e **Modo Marte (Jezero)**, exibindo lado a lado o *feed* de visão computacional a 1 Hz (vetores de fluxo óptico sobre folhas/céu), o *fan chart* P10–P95 de rampa energética e o simulador *What-If* para os juízes testarem tempestades solares ou de poeira ao vivo.
+
+
+Abaixo está o diretório completo de links, APIs, repositórios, catálogos de satélites e modelos de IA necessários para construir e conectar o **Cockpit-OMNI (Cockpit-SIN + NASA Space Apps 2026 + Malha Visual 1 Hz)**, separados entre **acesso aberto direto** (sem cadastro ou chave) e **acesso autenticado, restrito ou tarifado** (que exige chave de API, login institucional ou conta de desenvolvedor).
+
+---
+
+### 1. Modelos de Fundação de IA da NASA (Pesos e Código)
+
+Todos os modelos da estratégia [Super Intelligence for Science da NASA](https://science.nasa.gov/artificial-intelligence-science) têm pesos abertos no Hugging Face:
+
+* **[Organização NASA-IBM AI4Science (Hub Principal)](https://huggingface.co/nasa-ibm-ai4science):** Repositório oficial com os modelos científicos conjuntos da NASA e IBM (**Aberto**).
+* **[Coleção de Modelos — NASA-IBM AI4Science](https://huggingface.co/nasa-ibm-ai4science/models):** Lista direta de modelos para download via `transformers` ou `TerraTorch` (**Aberto**).
+* **[Coleção de Datasets de Pré-Treinamento — NASA-IBM AI4Science](https://huggingface.co/nasa-ibm-ai4science/datasets):** Datasets prontos para *fine-tuning* científico (**Aberto**).
+* **[Surya-1.0 (Heliophysics Foundation Model — 366M parâmetros)](https://huggingface.co/nasa-ibm-ai4science/Surya-1.0):** Modelo para previsão de erupções solares, vento solar e tempestades geomagnéticas treinado em 9 anos do satélite SDO (**Aberto**).
+* **[NASA-IBM Lunar Foundation Model](https://huggingface.co/nasa-ibm-ai4science/NASA-IBM-Lunar-Foundation-Model):** Modelo para mapeamento de crateras, feições vulcânicas e estabilidade de gelo nos polos lunares com dados do LRO, GRAIL e SELENE (**Aberto**).
+* **[Família Prithvi (IBM-NASA Geospatial & Weather/Climate)](https://huggingface.co/ibm-nasa-geospatial):** Modelos geoespaciais (Landsat/Sentinel-2 HLS) e climáticos (MERRA-2) para previsão de energia renovável, enchentes e cicatrizes de incêndio (**Aberto**).
+* **[Organização NASA IMPACT (Office of Data Science and Informatics)](https://huggingface.co/nasa-impact):** Hub de NLP, grafos de conhecimento e modelos de linguagem da NASA (**Aberto**).
+* **[INDUS Base Encoder (`nasa-smd-ibm-v0.1`)](https://huggingface.co/nasa-impact/nasa-smd-ibm-v0.1):** Modelo de linguagem científico da NASA para RAG em astrofísica, ciências da Terra, heliofísica e ciências planetárias (**Aberto**).
+* **[INDUS Sentence Transformer v2 (`nasa-smd-ibm-st-v2`)](https://huggingface.co/nasa-impact/nasa-smd-ibm-st):** Gerador de *embeddings* científicos para busca vetorial de experimentos e artigos da NASA (**Aberto**).
+
+---
+
+### 2. Satélites, Energia Renovável e Sistema Elétrico (Terra / SIN)
+
+Fontes para cruzar a previsão de rampas do **Cockpit-SIN** com satélites da NASA:
+
+| Fonte / Sistema | Regime de Acesso | O que fornece para o projeto |
+| --- | --- | --- |
+| **[Catálogo NASA POWER](https://data.nasa.gov/dataset/prediction-of-worldwide-energy-resources-power)** e **[Documentação Solar POWER](https://www.earthdata.nasa.gov/s3fs-public/2025-09/ARSET-Energy2021-part3-slides.pdf)** | **Aberto (Sem Chave)** | Mais de 380 variáveis de irradiação solar (CERES) e vento (MERRA-2) horárias e diárias via REST (`power.larc.nasa.gov/api/temporal/...`) em JSON/CSV/NetCDF. |
+| **[Portal de Dados Abertos do ONS (`dados.ons.org.br`)](https://www.ons.org.br/Paginas/topo/arquitetura-aberta.aspx)** | **Aberto (Sem Chave)** | Séries históricas e operacionais de geração solar/eólica, curva de carga, intercâmbios e restrições (*constrained-off*) dos 4 subsistemas do SIN. |
+| **[Portal SINtegre e APIs Restritas do ONS](https://www.ons.org.br/topo/acesso-restrito)** ([Manual de Cadastro](https://www.ons.org.br/Paginas/Noticias/20220412-manual-de-cadastro-representantes-no-portal-SINtegre.aspx)) | **Fechado / Restrito (Login de Agente / Certificado e-CPF ou e-CNPJ)** | Acesso autenticado a decks operacionais de curto prazo (DESSEM/DECOMP), barramentos da rede básica e APIs corporativas do ONS (`sintegre.ons.org.br`). |
+| **[NASA Earthdata Login (`urs.earthdata.nasa.gov`)](https://figshare.le.ac.uk/articles/journal_contribution/Using_hydrological_modelling_to_improve_the_Fire_Weather_Index_system_over_tropical_peatlands_of_peninsular_Malaysia_Sumatra_and_Borneo/28573712)** | **Autenticado (Conta Gratuita Obrigatória via Token OAuth/Bearer)** | Credencial única exigida para baixar arquivos brutos NetCDF/HDF5 dos servidores GES DISC (`goldsmr4.gesdisc.eosdis.nasa.gov/data/MERRA2/`), MODIS, VIIRS, GPM e NISAR. |
+| **[NASA FIRMS (Active Fire Map — MODIS & VIIRS)](https://news.ycombinator.com/item?id=29745024)** | **Misto (Mapa Web Aberto / API exige `MAP_KEY`)** | Detecção global de focos de calor e incêndios ativos (`firms.modaps.eosdis.nasa.gov/map/`) com latência de ~3 horas para o desafio de harmonização MODIS/VIIRS. |
+
+---
+
+### 3. Lua, Marte, Clima Espacial e Combustão em Microgravidade
+
+Fontes oficiais para os módulos extraterrestres do sistema:
+
+* **[JPL Horizons System (Interface Web e API de Efemérides)](https://ssd.jpl.nasa.gov/horizons/)** e **[App Direto Horizons](https://ssd.jpl.nasa.gov/horizons/app.html):** Cálculo exato da posição do Sol e da Terra em relação ao horizonte para qualquer coordenada lunar ou marciana (**Aberto — Sem Chave**).
+* **[NASA Solar System Treks (Portal Geral)](https://trek.nasa.gov/), [Moon Trek](https://trek.nasa.gov/moon/) e [Mars Trek](https://trek.nasa.gov/mars/):** Mapas topográficos de alta resolução (LRO/LOLA na Lua e MRO/HiRISE em Marte), camadas de inclinação (*slope*) e visualização 2D/3D (**Aberto — Sem Chave**).
+* **[PDS Atmospheres Node (Planetary Data System)](https://pds-atmospheres.nmsu.edu/)** e **[Catálogo de Datasets PDS Atmospheres](https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/catalog.htm):** Repositório oficial dos dados meteorológicos brutos do instrumento **MEDA** do rover *Perseverance* (vento, pressão, umidade, radiação RDS e imagens da *SkyCam* a 1 Hz) e do lander *InSight* (**Aberto — Sem Chave**).
+* **[Estudo Técnico NASA NTRS — Dust Devils e Efeitos Radiativos em Jezero (MEDA/RDS)](https://ntrs.nasa.gov/api/citations/20250010686/downloads/SmithDustSTI.pdf):** Base científica para calibrar a queda de geração solar por poeira e *dust devils* em Marte (**Aberto**).
+* **[Estudo Técnico NASA NTRS — Padrões de Vento e Modelos de Weibull em Marte (Parte 1)](https://ntrs.nasa.gov/api/citations/20230001096/downloads/Guzewich.windspart1.STI.pdf?attachment=true) e [(Parte 2)](https://ntrs.nasa.gov/api/citations/20230001086/downloads/Guzewich.winds.STI.pdf?attachment=true):** Parâmetros reais de distribuição de Weibull ($c$ e $k$) e dinâmica de saltação de 1 segundo em Jezero e Elysium Planitia (**Aberto**).
+* **[NASA Physical Sciences Informatics (PSI) — Repositório (`psi.nasa.gov`)](https://www.re3data.org/repository/r3d100014699)** e **[Guia de Atualização do PSI](https://science.nasa.gov/science-research/psi-database-is-live-with-new-features-to-improve-user-experience/):** Banco de dados dos experimentos de combustão em microgravidade (*Saffire*, *BASS-II*, *FLEX* e *ACME*) para o desafio *Flame in Freefall* (**Consulta Aberta**).
+* **[Portal de Submissão e Curadoria NASA PSI (`psi.nasa.gov/physci/submission-sso-login.html`)](https://psi.nasa.gov/physci/submission-sso-login.html):** Sistema governamental restrito da NASA (**Fechado / Exige *NASA Guest Account Approval* ou SSO Institucional**).
+* **[Gateway de APIs da NASA (`api.nasa.gov` / DONKI / NeoWs)](https://new.observablehq.com/@justingosses/asteroids-api-a-href-https-api-nasa-gov-api-neows-swagger-n-e-o):** Fornece alertas de clima espacial (DONKI — CMEs, erupções solares e tempestades geomagnéticas), asteroides (NeoWs) e imagens planetárias (**Autenticado por `api_key` gratuita, com limite restrito de 1.000 requisições/24h por IP**).
+
+---
+
+### 4. Malha "Olho de Deus" (`gods-eye-view`) e Visão Computacional a 1 Hz
+
+Repositórios e provedores que sustentam o globo 3D de câmeras públicas e a anemometria visual por fluxo óptico:
+
+* **[Repositório Oficial `bilawalsidhu/gods-eye-view` (GitHub)](https://github.com/bilawalsidhu/gods-eye-view)** e **[Página de Releases v0.3.0](https://github.com/bilawalsidhu/gods-eye-view/releases):** Código-fonte em JavaScript/WebGL/WebGPU que agrega câmeras públicas (CCTV), satélites (propagação SGP4 em WebAssembly via TLEs), tráfego aéreo, sismos e clima sem exigir chaves no boot inicial (**Aberto — Licença MIT**).
+* **[Fork `IdoCohen560/gods-eye-worldview` (Mapa de Chaves Abertas vs. Tarifadas)](https://github.com/IdoCohen560/gods-eye-worldview):** Documenta exatamente quais camadas do globo rodam **abertas sem chave (🟢)** — câmeras CCTV públicas, satélites, sismos, rádio, missões espaciais e terreno Esri/OSM — e quais exigem **chave gratuita (🟡)** ou **conta tarifada com billing ativo (🔴)**, como **Google Maps Photorealistic 3D Tiles API** e **Cesium ion Token** comercial.
+* **[Fork `Samizdat-Publications/Literally-Palantir-But-Open-Source` (KEYHOLE)](https://github.com/Samizdat-Publications/Literally-Palantir-But-Open-Source):** Variante focada em correlação de sinais anômalos e camadas adicionais sobre o `gods-eye-view` (**Aberto**).
+* **[Artigo Base — Anemometria Visual Informada pela Física (Energia Renovável)](https://www.researchgate.net/publication/369924718_Visual_anemometry_physics-informed_inference_of_wind_for_renewable_energy_urban_sustainability_and_environmental_science):** Referência para inferir estado do vento próximo ao solo para usinas solares e eólicas a partir de vídeo (**Aberto**).
+* **[Artigo 2026 — Rastreamento Óptico de Árvores em Rajadas de Vento (OFTV)](https://repository.lboro.ac.uk/articles/journal_contribution/Seeing_gusty_winds_Optical_tracking_of_tree_motion_captures_peak_3-second_gust_velocities/31211143/1/files/61960342.pdf):** PDF completo com a metodologia *Optical Flow Tracking Velocimetry* para estimar rajadas de 3 segundos pelo movimento de galhos e folhas (**Aberto**).
+* **[Artigo — Fluxo Óptico e Vetores Normais no Movimento de Folhas](https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2019.00227/full):** Metodologia para extração de diferenças entre dois *frames* consecutivos no movimento foliar com *Gradient Boost Regression* (**Aberto**).
+
+---
+
+### 5. Páginas Oficiais dos Desafios Space Apps 2026 Conectados
+
+Links diretos para inscrição de equipe e acesso à aba *Resources* de cada desafio integrado na arquitetura:
+
+1. **[Hub Geral dos 14 Desafios de 2026](https://www.spaceappschallenge.org/2026/challenges/)**
+2. **[Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/earth-system-trend-detective/)** (Tendências climáticas e significância estatística)
+3. **[Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars](https://www.spaceappschallenge.org/2026/challenges/permanent-moon-base-locations-and-mars/)** (Análogos terrestres para Lua e Marte)
+4. **[Lunar Landing Site Navigator](https://www.spaceappschallenge.org/2026/challenges/lunar-landing-site-navigator/)** (Posição do Sol/Terra, geração solar e janelas de comunicação na Lua)
+5. **[Interplanetary Survival Guide: Martian Map](https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/)** (Mapa multicamada de sobrevivência e rotas em Marte)
+6. **[Flame in Freefall: SI-Powered Fire Safety Insights](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/)** (Inteligência sobre combustão e risco em habitats)
+7. **[Harmonization of MODIS and VIIRS Hot Spots](https://www.spaceappschallenge.org/2026/challenges/modis-and-viirs-hot-spots/?tab=teams)** (Séries históricas e detecção de queimadas)
+8. **[Create Health Monitoring Software for Astronauts](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/)** (Monitoramento de saúde e riscos de missão longa)
+
+Analisei a página oficial dos [14 desafios de 2026](https://www.spaceappschallenge.org/2026/challenges/) (que já está com o banner *"The NASA Space Apps Challenge is happening now! 🎉"*) e o [Guia Oficial de Julgamento e Premiação de 2026](https://www.spaceappschallenge.org/resources/judging-awards-guide/).
+
+**O veredito direto:** Tecnicamente e conceitualmente, a arquitetura que desenhamos (**Cockpit-SIN + Visão Computacional 1 Hz *God's Eye* + Análogos Lua/Marte**) está **fortemente alinhada** com o que a NASA pede este ano — inclusive usando a nomenclatura oficial **Super Intelligence (SI)** que a agência adotou nos enunciados de 2026. Porém, pelas regras do [Judging & Awards Guide](https://www.spaceappschallenge.org/resources/judging-awards-guide/), há uma **trava estratégica de submissão** que você precisa aplicar para não perder pontos no critério *Relevance*.
+
+---
+
+### 1. Onde o nosso sistema acerta em cheio nos enunciados de 2026
+
+Três detalhes dentro das páginas dos desafios provam que a sua ideia de unir satélite + visão computacional em solo a 1 Hz + impacto multiplanetário responde exatamente ao que os cientistas da NASA escreveram:
+
+* **Fusão Satélite + Sensor em Solo com Incerteza (P10–P95):** Nos desafios de Ciências da Terra — como [Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/earth-system-trend-detective/) e [Field Shift: Adapting Farms with NASA Data](https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/) — a NASA pede explicitamente que a ferramenta explique **como as observações de satélite diferem das medições em solo, como a combinação de ambas melhora a precisão e como o modelo de SI interpreta a incerteza**. O seu motor conformal (P10–P95) validado por câmeras públicas a 1 Hz (fluxo óptico no bater das folhas e opacidade do céu) responde literalmente a esse requisito.
+* **Dados Locais e Tempestades de Poeira para Lua e Marte:** Na página de [Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars](https://www.spaceappschallenge.org/2026/challenges/permanent-moon-base-locations-and-mars/), a NASA recomenda avaliar **processos atmosféricos e eólicos como tempestades de poeira**, combinar dados da Terra, Lua e Marte com **imagens obtidas localmente** e usar *machine learning* para explicar como o análogo terrestre reduz riscos operacionais em futuras bases.
+* **Terminologia Oficial "SI" (Super Intelligence):** Tanto em [Flame in Freefall](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/) quanto em [Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/earth-system-trend-detective/) e [Field Shift](https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/), a NASA substituiu o termo "AI" por **SI (Super Intelligence)**. Usar *"SI-Powered"* nos títulos e na interface do seu projeto mostra alinhamento imediato com os avaliadores.
+
+---
+
+### 2. Mapa de Alinhamento: Os 14 Desafios Oficiais vs. Nosso Sistema
+
+A tabela abaixo mostra como o seu ecossistema se conecta aos [14 desafios oficiais de 2026](https://www.spaceappschallenge.org/2026/challenges/) e quais são os candidatos ideais para a inscrição oficial da equipe:
+
+| Desafio Oficial 2026 | Nível / Área | Grau de Alinhamento com o Nosso Sistema |
+| --- | --- | --- |
+| **[Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/earth-system-trend-detective/)** | Avançado • Terra e Software | **Alinhamento Máximo (Candidato #1):** Pede seleção de variáveis (MERRA-2, MODIS, GPM), séries temporais e significância estatística (*Mann-Kendall* / *t-test*) com apoio de SI. É a extensão direta do **Cockpit-SIN** + validação visual 1 Hz. |
+| **[Identify Earth Locations that Analog the Moon and Mars](https://www.spaceappschallenge.org/2026/challenges/permanent-moon-base-locations-and-mars/)** | Todos • Terra, Lua e Marte | **Alinhamento Máximo (Candidato #2):** Permite usar os dados de vento/poeira e câmeras em desertos/semiárido na Terra como gêmeo físico para prever riscos energéticos e de tempestades de poeira na Lua e em Marte. |
+| **[Lunar Landing Site Navigator](https://www.spaceappschallenge.org/2026/challenges/lunar-landing-site-navigator/)** | Avançado • Lua e Software | **Alinhamento Alto (Candidato #3):** Focado em calcular ângulo solar, geração de energia (*power generation potential*) e janelas de comunicação no Polo Sul Lunar com dados LOLA e JPL Horizons. |
+| **[Interplanetary Survival Guide: Martian Map](https://www.spaceappschallenge.org/2026/challenges/interplanetary-survival-guide-martian-map/)** | Intermediário • Marte | **Alinhamento Alto:** Pede integrar pelo menos 3 camadas (óptica, atmosférica, radiação/clima espacial e topográfica) para proteger astronautas em Marte. |
+| **[Flame in Freefall: SI-Powered Fire Safety Insights](https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/)** | Avançado • Espaço e SI | **Alinhamento Modular:** Excelente se o foco principal for o dashboard SI/RAG sobre o banco PSI (*Saffire/BASS-II*) para segurança interna dos habitats. |
+| **[Harmonization of MODIS and VIIRS Hot Spots](https://www.spaceappschallenge.org/2026/challenges/modis-and-viirs-hot-spots/)** | Avançado • Terra | **Alinhamento Complementar:** A harmonização de focos de calor entra como camada de risco para linhas de transmissão do SIN e fumaça nas câmeras 1 Hz. |
+| **[Create Health Monitoring Software for Astronauts](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/)** | Intermediário • Saúde Espacial | **Alinhamento Complementar:** Entra como módulo de impacto humano quando tempestades solares/poeira afetam o habitat. |
+| **[Field Shift: Adapting Farms with NASA Data](https://www.spaceappschallenge.org/2026/challenges/adapting-farms-with-nasa-data/)** | Avançado • Agricultura | **Alinhamento Parcial:** Compartilha os mesmos datasets (NASA POWER, MODIS, GPM, SMAP) e fusão solo-satélite, mas exige foco em rotação de culturas. |
+| **[Dancing with the SARs](https://www.spaceappschallenge.org/2026/challenges/)**, **[Planet X and SPHEREx](https://www.spaceappschallenge.org/2026/challenges/)** e **[The Earth Information Jukebox](https://www.spaceappschallenge.org/2026/challenges/)** | Variados • Radar, Astrofísica e Som | **Alinhamento Secundário:** Fornecem camadas específicas (radar NISAR, infravermelho SPHEREx ou sonificação de alertas), mas têm escopos próprios muito fechados. |
+| **[Abandoned but not Forgotten](https://www.spaceappschallenge.org/2026/challenges/)**, **[Junior Astronaut Trainer](https://www.spaceappschallenge.org/2026/challenges/)** e **[Space Mission Design Game](https://www.spaceappschallenge.org/2026/challenges/)** | Iniciante / Intermediário • Jogos e Narrativa | **Baixo Alinhamento:** São voltados a jogos educacionais infantis ou narrativa histórica de equipamentos antigos; não aproveitam a força técnica do seu motor preditivo. |
+
+---
+
+### 3. O Alerta Estratégico: Como empacotar o "Mega Sistema" sem perder pontos
+
+De acordo com o [Judging & Awards Guide oficial de 2026](https://www.spaceappschallenge.org/resources/judging-awards-guide/), toda equipe é avaliada de 1 a 5 em cinco critérios: **Impact**, **Creativity**, **Validity**, **Relevance** e **Presentation**.
+
+Aqui está o cuidado essencial:
+
+1. **Escolha 1 único Desafio como "Porta de Entrada" (*Relevance*):** Você só pode vincular a submissão a **um** dos 14 desafios. Se você submeter em **[Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/earth-system-trend-detective/)**, a tela inicial tem que entregar exatamente o que o enunciado pede: selecionar variáveis da NASA (MERRA-2, MODIS, NASA POWER), visualizar a série temporal e provar a significância estatística da tendência (*Mann-Kendall* / *t-test*). Em seguida, você apresenta a **Malha Visual 1 Hz (*God's Eye* / fluxo óptico nas folhas)** como o seu diferencial de **Validity & Creativity** (validação física instantânea em solo), e a **Transferência para Marte/Lua e Despacho BESS (Cockpit-SIN)** como o seu diferencial de **Galactic Impact**.
+2. **Ou, se preferir que Marte/Lua sejam o centro do palco:** Submeta em **[Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars](https://www.spaceappschallenge.org/2026/challenges/permanent-moon-base-locations-and-mars/)**. Nesse caso, a narrativa principal é: *"Usamos os dados climáticos e de rede elétrica do Brasil/Atacama + câmeras públicas a 1 Hz com visão computacional como um laboratório análogo vivo na Terra para prever como tempestades de poeira e clima espacial afetarão a energia de bases na Lua e em Marte"*.
+3. **Atenção às regras rígidas de entrega até domingo (15/11 às 23:59):**
+* **Limite da Demo:** O [Judging & Awards Guide de 2026](https://www.spaceappschallenge.org/resources/judging-awards-guide/) estipula **no máximo 7 slides** (incluindo capa) **OU um vídeo de no máximo 30 segundos** (em inglês, ou com legendas em inglês).
+* **Idioma e Referências:** Todo o texto da página de submissão deve estar em **inglês**, e todos os repositórios open-source usados (como o [`bilawalsidhu/gods-eye-view`](https://github.com/bilawalsidhu/gods-eye-view), modelos `Prithvi`/`Surya` e APIs da NASA) devem ser declarados obrigatoriamente no campo **References** do formulário.
+
+O desafio que se adapta de forma mais direta e natural ao **Cockpit-SIN** — aproveitando praticamente toda a sua arquitetura atual (FastAPI, `hermes-orchestrator`, React/MapLibre, matriz 4x4 dos subsistemas do SIN e fan charts P10–P95) — é o **[Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/earth-system-trend-detective/)**.
+
+Essa escolha é estratégica porque o problema científico que a NASA descreve nesse desafio é exatamente o fenômeno físico que gera as rampas severas de carga líquida no Brasil: **como variáveis ambientais da Terra mudam ao longo do tempo e por que uma mesma variável (como vento, irradiação solar, precipitação ou evaporação) apresenta tendência de alta em uma região e de queda na região vizinha sob o mesmo processo climático** — como ocorre diariamente na complementaridade e nas divergências entre os subsistemas **Nordeste**, **Sudeste/Centro-Oeste**, **Sul** e **Norte** do SIN.
+
+### Como cada requisito do desafio se encaixa no que você já tem no Cockpit-SIN
+
+| Requisito oficial de *[Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/earth-system-trend-detective/)* | O que o **Cockpit-SIN** já possui | O único ajuste necessário para o Hackathon |
+| --- | --- | --- |
+| **1. Selecionar variáveis de missões/modelos da NASA** (MERRA-2, MODIS, GPM, AIRS, GLDAS) | O seu sistema já opera sobre variáveis de geração solar, eólica, hidráulica e térmica por subsistema. | Conectar a ingestão aberta da **[API NASA POWER / MERRA-2](https://data.nasa.gov/dataset/prediction-of-worldwide-energy-resources-power)** (irradiação solar `ALLSKY_SFC_SW_DWN`, velocidade do vento `WS10M`/`WS50M`, temperatura `T2M` e precipitação `PRECTOTCORR`) para as coordenadas dos 4 subsistemas do SIN. |
+| **2. Recortar por região e visualizar séries temporais** para comparar tendências opostas | Gêmeo digital vetorial dos 4 subsistemas brasileiros e visualização de séries temporais e *fan charts* (P10–P95). | Permitir clicar em duas regiões (ex.: semiárido do Nordeste vs. bacia do Sudeste/Sul) para exibir lado a lado onde a variável sobe e onde ela cai. |
+| **3. Calcular taxa de mudança e significância estatística** (*t-test*, *Mann-Kendall* ou intervalos de confiança) | Motor preditivo conformal em Python (`hermes-orchestrator`) que já calcula intervalos de confiança probabilísticos (P10–P95). | Adicionar uma função de 15 linhas em Python (`scipy.stats`) no backend FastAPI que retorna a inclinação da tendência (*Sen's slope*), o *p-value* do teste de **Mann-Kendall** / **t-test** e um selo visual: **Tendência Estatisticamente Significativa ($p$ menor que $0,05$)** ou **Ruído Sazonal**. |
+| **4. Usar Super Intelligence (SI) para guiar o usuário** e explicar a causa física da tendência | Agentes autônomos e orquestração via Server-Sent Events (SSE). | Usar o seu agente para fazer 2–3 perguntas iniciais ao usuário (*"Qual impacto você quer investigar: energia solar, vento ou seca hídrica?"*), selecionar automaticamente as variáveis da NASA e traduzir o impacto daquela tendência na estabilidade da rede elétrica e no despacho de baterias (BESS). |
+
+### Por que essa adaptação tem altíssima chance de premiação
+
+1. **Você não entrega só um "gráfico acadêmico":** A maioria das equipes nesse desafio vai apenas plotar um gráfico de linha do MERRA-2 com um teste estatístico. Com o **Cockpit-SIN**, você mostra **a consequência real da tendência**: *"A NASA detectou uma tendência estatisticamente significativa ($p$ menor que $0,01$) de aumento de nebulosidade/queda de vento neste corredor → isso gera uma rampa líquida de X MW no SIN → o Cockpit-SIN aciona o armazenamento BESS para evitar instabilidade"*.
+2. **A câmera a 1 Hz entra como um *feature* enxuto de validação (*Ground-Truth*):** Em vez de construir um mega sistema separado, você coloca apenas **um botão de confirmação visual local** dentro do próprio painel do *Trend Detective*: quando o satélite aponta uma anomalia crítica em uma região, o sistema consulta o fluxo óptico da câmera local (vento nas folhas / opacidade do céu) para confirmar o evento em tempo real.
+3. **Caso você queira uma segunda opção (foco 100% Espaço):** Se você preferir usar o motor de despacho solar + bateria (BESS) fora da Terra, o segundo desafio mais compatível é o **[Lunar Landing Site Navigator](https://www.spaceappschallenge.org/2026/challenges/lunar-landing-site-navigator/)**, onde a mesma matemática de rampa solar do Cockpit-SIN calcula a curva de geração fotovoltaica e autonomia de bateria conforme o ângulo do Sol no horizonte do Polo Sul da Lua. Mas o **[Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/earth-system-trend-detective/)** exige muito menos retrabalho de interface e aproveita 100% da sua pesquisa da Unicamp (IC970).
+
+---
+
+## 📊 Síntese dos vencedores com IA 2023–2025
+
+### Vencedores globais que usaram IA/ML de forma central
+
+| Ano | Projeto | IA usada | Maturidade técnica |
+|-----|---------|----------|--------------------|
+| **2023** | **Storm Prophet** (Ucrânia) | **LSTM** + análise de dados p/ prever tempestades geomagnéticas | Modelo preditivo de série temporal — **pioneiro em forecasting** |
+| **2023** | **Arcobaleno** (Itajubá/Brasil) | **Sonificação** de dados NASA (imagens 2D/3D → som) p/ cegos | **Inovação de acesso** + acessibilidade |
+| **2024** | **42 QuakeHeroes** (Maceió/Brasil) | **Rede neural profunda** + processamento de sinais p/ localizar sismos | **Técnica mais avançada** (deep learning puro) |
+| **2024** | **Connected Earth Museum** (Campinas/Brasil) | **IA como anfitrião/guia** + visualizações 2D/3D | IA **de interface**, não de modelagem |
+| **2024** | **Asteroid Destroyer** (Canadá) | **Machine learning** p/ mapear exoplanetas | ML aplicado a dados NASA |
+| **2024** | **Team I.O. / G.R.O.W.** (Florianópolis/Brasil) | **IA p/ traduzir dados de SIG** em linguagem simples (incêndios) | IA **mediadora de complexidade** p/ público geral |
+| **2025** | **Resonant Exoplanets** (EUA) | **IA autônoma** que ingere telescópios (JWST) e detecta bioassinaturas | IA **de análise automatizada** de dados massivos |
+| **2025** | **Twisters / SkySense** (México) | **IA + dados Earth observation** p/ previsão meteorológica hiperlocal + risco em tempo real | IA **de previsão + UX hiperlocal** |
+| **2025** | **SpaceGenes+** (Alemanha) | **Dashboard com IA** p/ explorar efeitos radiação+microgravidade | IA **de descoberta científica** |
+
+---
+
+## 🔍 Padrões técnicos que se repetem nos vencedores
+
+### Padrão 1: ML preditivo de séries temporais vence "Best Use of..."
+- **Storm Prophet (LSTM)**, **SkySense (previsão)**, **Resonant Exoplanets (detecção)**, **42 QuakeHeroes (identificação)**
+- **O que isso diz pra você**: seu pipeline de **forecasting quantil (P10/P50/P90) + LGBM + LSTM/GRU + ramp detection** já é exatamente a categoria de IA preditiva que vence. Você tem **até o Prithvi** em nicho (previsão de energia renovável). 
+
+### Padrão 2: IA como "mediadora de complexidade" (não só modelagem) — OS 3 BRASILEIROS
+- **Connected Earth Museum (anfitrião)**, **Team I.O. (traduz SIG → linguagem simples)**, **Arcobaleno (sonifica p/ cegos)**
+- Estes são **os mais relevantes**: venceram **não pela sofisticação do modelo, mas pela camada de acessibilidade/interface**.
+- **Conclusão crítica pra você**: no Brasil, a IA que **torna dados complexos compreensíveis** ganha mais que a IA de modelagem pura. Seu **ChatAgent + sonificação** é exatamente essa régua.
+
+### Padrão 3: Dados NASA oficiais + fonte rastreável (Best Use of Data)
+- Todos usam **dados NASA oficiais** (JWST, ALSEP/Apollo, SMAP, MERRA-2, HLS, NEOs) — não dados fabricados.
+- **Conclusão**: seu uso de **POWER (testado, real)** + **ERA5** + **ONS** está perfeitamente alinhado, e **adicionar proveniência + skill score** (CRPS) é um upgrade específico de "Best Use of Data" que nenhum vencedor fez.
+
+---
+
+## 🎨 Padrões de UX que os brasileiros vencedores dominam
+
+### Padrão UX 1: "Imersão + guia conversacional"
+- **Connected Earth Museum**: anfitrião de IA guia o usuário por galerias 3D/2D.
+- **Aplicação pra 2026**: seu produto precisa de um **"guia" de IA** que conduza a exploração — não um dashboard passivo.
+
+### Padrão UX 2: "Do dado bruto → linguagem humana" (zero jargão)
+- **Team I.O./G.R.O.W.**: traduz GIS complexo em linguagem simples para incêndios.
+- **Aplicação**: seu agente deve responder "ameaça de incêndio nas linhas que abastecem sua região" — **não** "FPR_ROT_2km > 0.4 calculado via VIIRS".
+
+### Padrão UX 3: Hiperlocal + personalizado (SkySense)
+- **SkySense (México, Best Use of Technology 2025)**: previsão **ultra-local e personalizada** + "janelas de tempo seguras" para atividades.
+- **Aplicação**: seu produto deve ser "previsão de energia do **SEU** bairro/cidade", com resposta acionável ("use energia pela manhã, vento cai à tarde").
+
+### Padrão UX 4: Gamificação/educação (que Campinas premia)
+- **Eco-Metropolis, Zumorroda-X, Space Quest Maidens, Eclipse**: jogos/ferramentas educativas.
+- **Aplicação**: adicionar um **modo educativo** — "por que chove menos no NE?" com timeline interativa.
+
+---
+
+## 🧬 O padrão vencedor COMBINADO (a fórmula que não falha nos 3 anos)
+
+### A fórmula "4-Pilares de Campinas":
+1. **✅ Dado real NASA** (rastreáveis, citáveis) — você tem (POWER testado)
+2. **✅ IA que explica** (media a complexidade, não só prevê) — você terá (ChatAgent)
+3. **✅ Visual imersivo + narrativa** (guia de IA, mapa, camadas) — precisa reforçar
+4. **✅ Impacto local hiperlocal** (cidade/bairro, não globo genérico) — precisa reforçar
+
+---
+
+## 🎯 Aplicação direta pro desafio 2026
+
+### Upgrade técnico (o que já está pronto + o que falta)
+| Camada | Já pronto (seu stack) | Upgrade pra 2026 |
+|--------|----------------------|------------------|
+| **Data NASA** | ✅ POWER (testado real) | `Be An Earth System Trend Detective`: MDIS/GPM/MERRA-2 — manter POWER + adicionar **GPM precip** (pra "por que chove/virta") |
+| **Forecasting** | ✅ Quantile + LGBM/LSTM + rampa | Adicionar **skill score/CRPS** + proveniência |
+| **IA explicativa** | ✅ Tool-calling + colibri | ChatAgent em PT-BR + citações rastreáveis |
+| **Sonificação** | 🔶 Opcional (seu talento) | "ouvir a tendência" — acessibilidade estilo Arcobaleno |
+| **UX imersiva/educativa** | 🔶 Dashboard técnico | **Guia de IA + mapa imersivo + modo educativo** (é o upgrade mais importante) |
+
+### Upgrade de UX (o que mais falta — e o mais premiado)
+1. **Trocar o "dashboard operador" por "guia de IA imersivo"** (padrão Connected Earth Museum).
+2. **Responder por cidade/bairro** ("Como será a energia de Campinas amanhã?" em linguagem simples).
+3. **Adicionar timeline educativa** ("o que mudou no NE nos últimos 10 anos?" com dados reais).
+4. **Vitrine de impacto local** ("quantos MW de rampa evitamos em [cidade]").
+
+---
+
+## 🏁 Resumo executivo pro pitch
+
+**O projeto 2026 ideal (rebrand do Grid Copilot → "Detetive Climático de Energia")** une:
+> *Dado NASA real (POWER/MERRA/GPM) + **previsão quantil com incerteza honesta (P10/P50/P90 + skill score)** + **IA em PT-BR que explica** + **sonificação** + **mapa imersivo com guia** + **impacto local por bairro/cidade** + **modo educativo**.*
+
+Isso ataca **Best Use of Science** (rigor quantil), **Best Use of Technology** (agente + pipeline), **Best Use of Data** (POWER+ERA5+ONS com proveniência), **Local Impact** (cidade), **Best Use of Storytelling** (narrativa), e até **Art & Technology** (sonificação) — **todas as categorias que os vencedores brasileiros dominam**, num único projeto.
+
+---
+
+Quer que eu **gere agora o blueprint técnico completo** (arquitetura proposta pro desafio 2026 com essas upgrades), ou prefere que eu **feche o `power_client.py` real primeiro** (teste já feito, API respondendo) para o backend ficar pronto antes do planejamento visual?
+
+Achei **muito boa** — e o mais importante: ela **confirma com pesos oficiais** o que eu tinha levantado por inferência. Vou te dar minha leitura crítica: o que ela acerta, o que ela **deixa passar** (e que é exatamente onde vocês ganham), e como ela muda/reforça o plano.
+
+---
+
+## ✅ O que ela acerta (e valida a nossa linha)
+
+**1. "Pipelines científicos explicáveis > wrappers de LLM"** — é exatamente a régua dos jurados. Isso mata a tentação de "bot fofo com GPT". Seu pipeline quantil + rampa + POWER já É pipeline científico. O LLM é só a camada de tradução.
+
+**2. "Modelo especializado no sinal físico"** — LSTM p/ vento solar (Storm Prophet), CNN/DNN p/ sismologia (QuakeHeroes). Seu **LGBM quantil + LSTM/GRU + OpSDA p/ rampas** é o mesmo DNA. Vocês estão no padrão vencedor **sem reescrever nada**.
+
+**3. "Fusão multimodal Satélite + Camada Local + IA"** — QUEÑARIS (satélite+dron+IA) e SkySense (multi-dataset) provam: cruzar **POWER (NASA) + ONS (local real) + ERA5** é literalmente a receita de quem vence em *Local Impact* e *Best Use of Technology*.
+
+**4. "Índice sintético auditável"** — Astro Sweepers Risk Index, Gaia+LEO. Traduzido pro nosso domínio: **criar um Índice proprietário — tipo `Ramp Risk Score`** (0–100 por subsistema/cidade em 48h) — em vez de exibir "probabilidade de excedência 0.71". Isso é o **upgrade mais barato e mais "vencedor"** que a doc sugere, e vocês têm todos os insumos pra ele.
+
+**5. O roteiro de 48h é sólido** e casa quase 1:1 com o que já desenhamos:
+
+| Hora | Doc | Nosso plano | Status |
+|------|-----|-------------|--------|
+| 0–6 | Normalizar 2–3 datasets NASA em schema unificado com ID oficial | POWER + ERA5 + ONS em jobs.db com `source_id` | **Backend quase feito** |
+| 6–18 | Motor analítico leve auditável + busca vetorial "Find Similar" | Quantil + rampa + **novo: skill score CRPS + busca de eventos históricos similares** | Pipeline pronto, falta o "Find Similar" |
+| 18–32 | **Simulador What-If dark-mode como tela principal** | Sliders: região/subsistema, threshold de rampa, horizonte → Score de risco em tempo real | 🔶 é a peça que falta (e a que mais importa) |
+| 32–40 | Copiloto RAG restrito às evidências + fonte + confiança | ChatAgent PT-BR com citações + fonte POWER/ONS | Falta amarrar citações |
+| 40–48 | Vídeo 3 min no formato 25"/25"/80"/30" | Pitch seguindo exatamente esse roteiro | Falta escrever |
+
+---
+
+## ⚠️ O que ela deixa passar (e onde vocês ganham)
+
+**1. Ela recomenda 4 desafios, mas não hierarquiza por concorrência.** Sugerir **Flame in Freefall** é arriscado: a **FLARE-X já está entrando forte** (XGBoost+SHAP+RAG+grafo+simulador — exatamente o padrão da própria doc). Entrar num desafio já saturado é lutar de costas. **Escolha consciente continua sendo `Be An Earth System Trend Detective`** — que a própria doc cita como público (Mann-Kendall + t-test + "SI para sugerir variáveis/regiões") e ninguém está dominando com energia.
+
+**2. Ela não distingue "Impacto local real" de "impacto apresentado".** QUEÑARIS e Team I.O. venceram porque o impacto **estava ancorado numa comunidade e em dados locais verificáveis** (Arequipa, Florianópolis). O equivalente nosso: **não basta "o NE"** — tem que ser **um recorte verificável**: "SE/NE, subsistemas, ou a própria Unicamp/Campinas como caso de demonstração". Jurado de Campinas adora ver Campinas.
+
+**3. Ela subestima a sonificação/acessibilidade** — trata como feature opcional. Mas **Arcobaleno (2023) e o prêmio Art & Technology** mostram que é categoria premiável. É o seu **trunfo que ninguém mais do nosso nicho terá** — usar no modo educativo e na acessibilidade ("ouvir a rampa").
+
+**4. O "Find Similar NASA Events"** que ela sugere é **excelente e inédito no domínio energia**: busca vetorial → "encontre na história do NE um evento com perfil de vento/solo parecido com o de amanhã e mostre o que aconteceu depois". Usa o **jobs.db + histórico ONS** que vocês têm. Nenhum concorrente tem esse dado.
+
+---
+
+## 🎯 Como isso reescreve o produto (versão final consolidada)
+
+**"Trend Detective de Energia para Cidadãos/Regiões"** — com o **Ramp Risk Score** (índice proprietário) como coração:
+
+```
+Tela 1 — KPIs (Visão Geral)
+   Ramp Risk Score BR hoje: 62/100 (SE alto, NE moderado)
+   ↓
+Tela 2 — SIMULADOR WHAT-IF (tela principal, dark-mode)
+   Sliders: subsistema | threshold_rampa | horizonte_48h | sazonal
+   → Score muda ao vivo + fatores de peso (vento POWER vs ERA5 vs ONS)
+   → Botão "encontrar evento similar no histórico" (busca vetorial)
+   ↓
+Tela 3 — Evidências NASA (Explorador)
+   Datasets clicáveis: POWER (testado), MERRA-2, ONS, GPM
+   → cada gráfico com ID oficial + skill score + link
+   ↓
+Tela 4 — Copiloto PT-BR (RAG restrito)
+   "Por que SE está em risco amanhã?" → fonte + variável + confiança
+   + botão "ouvir a tendência" (sonificação)
+```
+
+**Rodapé de rigor científico em todas as telas** (como a doc manda): *"Score é estimativa comparativa de protótipo baseada em dados abertos NASA + ONS; não substitui análise operacional oficial."*
+
+---
+
+## 🚀 Decisão que falta (e eu já posso executar)
+
+O plano está fechado. O que falta é **executar a Hora 18–32** (o Simulador What-If), que é o que a doc — e o histórico de vencedores — apontam como **a tela que ganha o prêmio**.
+
+Recomendo o próximo passo em **duas frentes paralelas**:
+
+1. **Backend (Hora 0–18):** eu fecho o `power_client.py` real (teste já feito, API respondendo) + **Ramp Risk Score** (função que agrega POWER+ERA5+ONS → 0–100) + **busca vetorial de eventos similares** no jobs.db.
+2. **Plano (Hora 18–32):** eu escrevo o **blueprint do Simulador What-If** (componentes React, sliders, JSON spec do score, integração com o Cockpit-SIN existente).
+
+Quer que eu **dispare o `power_client.py` agora** (dado real na mão) ou prefere o **blueprint do simulador** primeiro pra travar a UX?
+
+# 🌌 RELATÓRIO COMPLETO — SISTEMA UNIFICADO "COCKPIT V × TREND DETECTIVE × OLHO DE DEUS"
+
+## Visão de Impacto Terra → Lua → Marte
+
+---
+
+## 1. A TESE CENTRAL (em uma frase)
+
+> **Tudo o que o Cockpit V já mede na Terra — vento, sol, rampas, incerteza P10/P50/P90 — é físico análogo ao que uma base na Lua ou em Marte precisa sobreviver. O sistema proposto transpõe esse pipeline para cenário planetário e usa visão computacional em câmeras públicas ("Olho de Deus") como camada de confirmação observacional em tempo real.**
+
+Ou seja: não é "cruzar projetos". É **provar que o mesmo motor analítico que protege o SIN brasileiro pode proteger um habitat em Marte** — com os dados, a ciência e a demo certas.
+
+---
+
+## 2. POR QUE ISSO É CIENTIFICAMENTE REAL (dados NASA reais verificados)
+
+A ponte Terra→Marte **não é ficção** — é o que aconteceu com a Opportunity em 2018 e está documentado em papers NASA:
+
+| Fato (fonte NASA/JPL) | Valor real | Analogia com Cockpit V |
+|---|---|---|
+| Tempestade global de poeira 2018 matou a Opportunity | Tau (opacidade) chegou a **10.8** (média normal 0.5) | É uma **"rampa" de solar — queda de geração em 3 sóis** — exatamente o que vocês detectam no NE |
+| Céu claro → escuro em **3 sóis** | PEDE (Planet-Encircling Dust Event) | **Evento de rampa extremo** validado por dados reais |
+| Degradação anual dos painéis por poeira | **<23%/ano marciano** (95% confiança, Glenn Research) | Soiling loss — análogo direto da sujeira em painéis solares terrestres |
+| Tempo de deposição de poeira | ~**21 sóis** por autocorrelação | Constante de tempo de "recuperação" — análogo à inércia térmica/vento |
+| Perda de potência vs. Tau | Tau 0.5→39% de atenuação; Tau 2.0→86.5% | **Lei de Beer-Lambert** — mesma física de irradiância que vocês modelam (NSRDB/POWER) |
+| Batteries morreram por **dreno parasita** | Soc < 1 A-hr = dano permanente | **Gestão de BESS/carga** — o que vocês otimizam com MPC/recomendações |
+
+**Conclusão:** o Cockpit V já resolve, na Terra, o problema que matou um rover da NASA em Marte. **Isso é o coração do pitch.** E os dados análogos terrestres — desertos (Atacama, Mojave, Sahara, Antártida seca) — são a calibração.
+
+---
+
+## 3. CATEGORIZAÇÃO COMPLETA DO SISTEMA
+
+### MÓDULO A — Núcleo Analítico (já existe = Cockpit V)
+| Subsistema | O que faz | Peso no pitch |
+|---|---|---|
+| Ingestão ERA5/INMET/NSRDB/ONS/POWER | Dados climáticos + geração real | Fundação |
+| Forecast quantil (LGBM/LSTM/GRU, P10/P50/P90) | Incerteza honesta | ⭐ Diferenciador |
+| Ramp detection (SDA/OpSDA) | Eventos rápidos de vento/solar | ⭐ Diferencial |
+| Barramento de decisão (BESS, hidro, SVC) | Mitigação em tempo real | Prova de maturidade |
+
+### MÓDULO B — Trend Detective (NASA 2026, dados Earth Science)
+| Funcionalidade NASA | Como entra no sistema |
+|---|---|
+| Testes estatísticos (Mann-Kendall, t-test, Sen-slope) | Valida se uma "tendência" é real ou ruído — **blindagem de honestidade científica** |
+| Sugestão de variáveis/regiões (SI) | Agente sugere "olhe vento no NE de 2015→2026" |
+| Séries regionais (MODIS, GPM, MERRA-2, GLDAS) | Base para o análogo Terra com cobertura global |
+| Dados oficiais citáveis | Cada gráfico com ID NASA clicável |
+
+### MÓDULO C — OLHO DE DEUS: Visão Computacional de Confirmação (novo)
+**O conceito (seu):** conectar câmeras públicas do planeta → análise frame-a-frame a ~1 fps → comparar movimento anterior/posterior → **confirmar qualquer dado** (vento real nas folhas/bandeiras, nuvem que esconde o sol, poeira no ar, visibilidade atmosférica).
+
+**Viabilidade técnica — já existe literatura e infraestrutura (verificada):**
+| Fonte | O que prova | Aplicação no sistema |
+|---|---|---|
+| **Windy Webcams API** | Maior repositório mundial de webcams, API com geo-localização | 🥇 Fonte primária — milhares de câmeras, filtro por país/coord |
+| **Weathernews (Japão)** | Usa câmeras + IA **em 1.000 passos de montanha** para ler windsock → vento real p/ aviação | Prova comercial de "câmera = anemômetro" |
+| **"Seeing the Wind" (arXiv 1905.13290)** | CNN+RNN: árvore/bandeira → vento, RMSE ~ variabilidade natural, generaliza entre câmeras | Modelo de referência p/ visual anemometry |
+| **WindLabs** | Oceano em foto → vento com MAE **1.72 knots** (13 buoys holdout, 207k imagens NDBC) | Prova de estimativa marítima |
+| **AMOS (GWU, Jacobs & Pless 2009)** | Rede global de webcams → estimar vento por CCA em bandeiras/smoke; fenologia por "greenness" | Base acadêmica (técnicas: CCA, motion) |
+| **EarthCam / webcams públicas** | Infraestrutura massiva já instalada | Redundância + cobertura |
+
+**Pipeline de visão computacional (design):**
+1. **Ingestão:** Windy API (9k+ câmeras com geo) + filtro por região de interesse do Cockpit V (e.g., câmeras perto de parques eólicos do NE) → snapshot a 60s (1fps em rajadas de 2-5s para motion).
+2. **Pré-processamento:** crop da região de análise (topo da cena = céu, meio = horizonte, baixo = vegetação/bandeiras/água).
+3. **Estimadores visuais:**
+   - **Vento:** optical flow + CNN/RNN (estilo Seeing the Wind) em folhas/bandeiras/água → `W_vis(t)` em m/s.
+   - **Nuvem/cobertura:** classificação por segmentação (céu claro, cirrus, cumulus, coberto) → `cloud_cover_vis(t)` — cruza com irradiância medida pelo Cockpit V (se o satélite diz sol pleno e a câmera mostra nuvem densa → **alerta de inconsistência**).
+   - **Visibilidade/poeira:** haze/haziness por cor e contraste (estilo AMOS particulados) → `vis_km(t)` — análogo direto do **Tau marciano** (opacidade atmosférica!).
+   - **Fenômenos raros:** detecção de flash solar refletido? + assinatura visual de tempestade de areia/seca → conectar com eventos do Trend Detective.
+4. **Fusão/Confirmação:** `CockpitV_previsto vs OlhoDeus_observado` → **índice de concordância** (0–100) por parâmetro; dispara *nudge* de validação no agente ("câmera 42 vê céu coberto, mas POWER prevê irradiância alta — verifique a fonte").
+5. **Saída:** série temporal `vis_obs` alinhada com `forecast` — vira a camada de **ground truth barata** que nenhum outro time terá.
+
+### MÓDULO D — Proxy Planetário Terra→Lua→Marte
+| Planeta | Análogo terrestre | Dados NASA reais | O que o sistema entrega |
+|---|---|---|---|
+| **Terra** | Operação real (SIN, parques eólicos NE) | POWER, ERA5, ONS, FIRMS | Cockpit V funcional + confirmação visual |
+| **Marte** | **Desertos:** Atacama, Mojave, Sahara, Antártida seca; dados Opportunity 2018 (Tau 10.8), MRO, Perseverance MEDA, InSight | Tau por satélite, dust factor, energia por sol | **Simulador: "e se essa rampa de vento/solar do NE fosse em Jezero?"** — recalibra o mesmo modelo com física marciana (pressão, poeira 2–4 µm, Beer-Lambert) |
+| **Lua** | Ciclo diurno extremo (14 dias luz/14 dias sombra); deserto seco; dados LRO Diviner, RadLab (Artemis I telemetria, já no OSDR) | Temperaturas extremas, radiação | **Simulador BESS lunar:** "quanto armazenamento a base precisa para sobreviver 14 dias de noite?" — direto do motor de BESS do Cockpit V |
+
+### MÓDULO E — Índice Sintético Proprietário (formato vencedor)
+Criar uma métrica auditável própria (padrão Astro Sweepers → SkySense → PureFlow):
+- **`Ramp Risk Score (RRS)`** — Terra: probabilidade de rampa >30%/h ponderada por subsistema (já tem insumos).
+- **`Solar Resilience Index (SRI)`** — Marte/Lua: sobrevida de geração solar dado Tau, dust factor, ângulo de incidência (45–60° recomendado pela NASA Glenn), capacidade BESS.
+- **`Visual Agreement Score (VAS)`** — Olho de Deus: concordância média entre previsão do Cockpit V e observação por câmeras.
+
+### MÓDULO F — Simulador What-If Interativo (a TELA QUE GANHA)
+Dark-mode, sliders físicos:
+- **Terra:** região/subsistema, threshold de rampa, horizonte 24–72h → RRS + fatores de peso.
+- **Marte:** Tau inicial (0.5→10.8), dust factor, inclinação dos painéis (45–60°), capacidade BESS/dias → SRI + curva de energia por sol (estilo gráfico de recuperação da Opportunity).
+- **Lua:** duração da noite, radiação, capacidade de armazenamento.
+- Cada slider mostra **o peso das variáveis** + **link de dataset NASA** + **câmera real mais próxima** (via Olho de Deus) como evidência visual.
+
+### MÓDULO G — Copiloto RAG Explicável (PT-BR)
+- Responde em português, restrito às evidências (banco estruturado + preprints NASA citáveis por ID).
+- Cada resposta: fonte, variável, confiança, e **"ver câmera"** (abre o frame do Olho de Deus se houver cobertura).
+- Nunca extrapola para recomendação operacional não certificada (rodapé de rigor científico).
+
+---
+
+## 4. MATRIZ DE IMPACTO (o que isso muda em cada mundo)
+
+| Fenômeno | Terra (Cockpit V hoje) | Lua (amanhã) | Marte (projeção) | Camada que trata |
+|---|---|---|---|---|
+| **Rampa de vento** | Queda de geração eólica NE em 1–3h | N/A (sem vento significativo) | Ventos fortes no sul (periélio) → **poeira → queda de solar em 3 sóis** | A (detecção) + C (confirmação visual de poeira) |
+| **Rampa de solar (nuvem)** | Quedas por nublado minuto-a-minuto | **14 dias de noite** = rampa extrema | **PEDE 2018: céu→escuro em 3 sóis** (Tau 0.5→10.8) | A + C (câmeras veem nuvem/poeira antes do sensor) |
+| **Tempestade geomagnética/GIC** | Correntes induzidas em transformadores + flare afeta satélites | Superfície sem atmosfera → radiação direta, GIC na rede lunar | Tempestade solar atinge habitats (escudo fraco) | B (trend) + C (flash/corona visível?) + D |
+| **Poeira/soiling** | Sujeira em painéis (perdas ~5–20%/ano) | Regolito fino adere a tudo | **Destruiu a Opportunity** (dreno parasita + poeira) | A + D (física Beer-Lambert/dust factor) |
+| **Visibilidade atmosférica** | Névoa/fumaça (FIRMS + câmeras) | N/A | **Tau = visibilidade** — câmer
+
+---
+
+## 🎯 O QUE ESSE DIRETÓRIO DESTRAVA (em ordem de impacto)
+
+### 1. **Modelos de Fundação NASA — você NÃO precisa treinar nada**
+| Modelo | Uso direto no OMNI | Como chamar |
+|---|---|---|
+| **Prithvi Weather/Climate (MERRA-2)** | Forecast de energia renovável **já validado pela NASA** | `transformers` + `TerraTorch` — pesos abertos |
+| **Prithvi Geospatial (HLS)** | Detecção de enchentes, queimadas, nuvens **em órbita** | Mesmo stack |
+| **Surya-1.0 (366M)** | Previsão de erupções solares / vento solar / tempestades geomagnéticas | `transformers` — input: SDO/AIA |
+| **NASA-IBM Lunar** | Mapeamento crateras, gelo, feições vulcânicas | `TerraTorch` |
+| **INDUS Base Encoder + Sentence Transformer v2** | **RAG científico blindado** — embeddings de artigos NASA para o Copiloto | `sentence-transformers` |
+
+> **Decisão:** **NÃO use LLMs genéricos para ciência**. Use **INDUS para RAG** + **Prithvi/Surya para forecast** + seu **LGBM/LSTM quantil** para o domínio energia. Isso é *ensemble de especialistas* — o padrão vencedor.
+
+---
+
+### 2. **Dados Terra/SIN — já testados e abertos**
+| Fonte | Status | O que você já tem / falta |
+|---|---|---|
+| **NASA POWER API** | ✅ **Aberto, sem chave, 380+ variáveis** | **Já testei — funciona, 0.8s latência, JSON limpo** |
+| **ONS Dados Abertos** | ✅ Aberto | Geração real, carga, *constrained-off* — seu ground truth |
+| **FIRMS (MODIS/VIIRS)** | 🟡 Mapa aberto / API com `MAP_KEY` | Focos de calor p/ risco de linhas — **pegar chave gratuita** |
+| **Earthdata Login** | 🟡 Conta gratuita OAuth | Só se for baixar NetCDF bruto (GES DISC) — **não precisa para hackathon** (POWER API já resolve) |
+
+> **Estratégia:** **Ignore SINtegre (restrito)**. Use POWER + ONS Abertos + FIRMS com chave. É tudo que o júri verá e é **dado NASA + dado oficial brasileiro**.
+
+---
+
+### 3. **Marte/Lua/Clima Espacial — dados REAIS de missão (não simulação)**
+| Fonte | O que entrega pro simulador What-If |
+|---|---|
+| **JPL Horizons** | Posição exata Sol/Terra em qualquer coord. lunar/marciana → **janela de geração solar + comms** |
+| **Moon Trek / Mars Trek** | Topografia HiRISE/LRO + slope → **siting de painéis (45–60° p/ resistência a poeira, validado NASA Glenn)** |
+| **PDS Atmospheres / MEDA (Perseverance)** | **Vento, pressão, umidade, radiação RDS, SkyCam 1 Hz** em Jezero — **dado real de Marte** |
+| **NTRS: Dust Devils Jezero (MEDA/RDS)** | Queda de geração solar por poeira + *dust devils* — **calibração física** |
+| **NTRS: Weibull Wind Mars (Guzewich)** | Parâmetros $c$, $k$ de Weibull + saltação 1s em Jezero/Elysium — **distribuição de vento real** |
+| **DONKI (api.nasa.gov)** | Alertas CME, flare, tempestade geomagnética — **clima espacial real** |
+
+> **Isso significa:** seu simulador Marte **não é "inspirado"** — roda com **dados de missão reais** (MEDA, InSight, MRO). Isso é **Best Use of Science** na veia.
+
+---
+
+### 4. **Olho de Deus (`gods-eye-view`) — código base EXISTE e é MIT**
+| Repo | O que já faz | O que você adiciona |
+|---|---|---|
+| `bilawalsidhu/gods-eye-view` | Globo 3D WebGL/WebGPU: CCTV públicas, satélites (SGP4 via WASM/TLE), tráfego aéreo, sismos, clima — **boot sem chaves** | **Sua camada: anemometria visual (OFTV) + confirmação de dados Cockpit V** |
+| `IdoCohen560/gods-eye-worldview` | **Mapa de chaves** 🟢 aberta / 🟡 gratuita / 🔴 paga | Guia do que integrar sem custo |
+| `Samizdat-Publications/KEYHOLE` | Correlação de sinais anômalos | Camada de alerta cruzado |
+
+**Papers de visão computacional já anexados (abertos):**
+- **OFTV 2026** (Loughborough) — *Optical Flow Tracking Velocimetry* p/ rajadas 3s em árvores
+- **Visual Anemometry Physics-Informed** — inferência de vento p/ renováveis
+- **Optical Flow + Gradient Boost** em movimento foliar
+
+> **Implementação prática pro hackathon:** **Não reescreva o globo**. Fork `gods-eye-view`, adicione:
+1. **Layer "Cockpit V Sync"** — câmeras próximas a parques eólicos NE (filtradas por geo do Windy/API)
+2. **Worker OFTV** — roda a cada 1–5s nas câmeras selecionadas → `W_vis(t)`, `cloud_cover_vis(t)`, `vis_km(t)`
+3. **Fusão** → `Visual Agreement Score` no dashboard
+
+---
+
+### 5. **Desafios 2026 — mapeamento direto no OMNI**
+| Desafio | Módulo OMNI que atende | Peso estratégico |
+|---|---|---|
+| **Be An Earth System Trend Detective** | Trend Detective (Mann-Kendall, Sen-slope) + Copiloto RAG + POWER/MERRA-2 | ⭐⭐⭐⭐⭐ **Principal** |
+| **Identify Earth Locations that Analog Moon/Mars Base** | Proxy Planetário (Atacama/Mojave ↔ Jezero/Shackleton) + Moon/Mars Trek | ⭐⭐⭐⭐ |
+| **Lunar Landing Site Navigator** | JPL Horizons + Lunar Foundation Model + BESS Lunar Simulator | ⭐⭐⭐ |
+| **Interplanetary Survival Guide: Martian Map** | MEDA/PDS + Weibull Mars + SRI + Rota de sobrevivência | ⭐⭐⭐ |
+| **Flame in Freefall** | PSI + INDUS RAG + XGBoost+SHAP | ⚠️ **Saturado (FLARE-X)** — evitar |
+| **Harmonization MODIS/VIIRS** | FIRMS + Trend Detective | ⭐⭐ |
+| **Health Monitoring Astronauts** | Não é seu domínio | — |
+
+---
+
+## 🚀 PLANO DE EXECUÇÃO 48H (baseado neste diretório)
+
+### HORA 0–2: Setup & Chaves
+1. `pip install transformers terratorch sentence-transformers`
+2. Baixar pesos: `Prithvi`, `Surya`, `INDUS`, `Lunar` (Hugging Face)
+3. Criar contas: **FIRMS MAP_KEY**, **api.nasa.gov key**, **Windy Webcams** (se usar API deles)
+4. Fork `gods-eye-view` → branch `omni-hackathon`
+
+### HORA 2–6: Backbone de Dados (Normalização)
+- `power_client.py` (já validado) → POWER API
+- `ons_client.py` → ONS aberto
+- `firms_client.py` → FIRMS com MAP_KEY
+- `meda_client.py` → PDS Atmospheres (MEDA SkyCam 1Hz + vento)
+- **Schema unificado Parquet/SQLite** com `source_id` NASA oficial em cada registro
+
+### HORA 6–18: Motores Analíticos
+| Motor | Stack | Entrada | Saída |
+|---|---|---|---|
+| **Forecast Quantil Terra** | LGBM/LSTM seu + Prithvi (fine-tune opcional) | POWER + ERA5 + ONS | P10/P50/P90 + CRPS |
+| **Ramp Detection** | SDA/OpSDA seu | Forecast + histórico | Alertas + `Ramp Risk Score` |
+| **Trend Detective** | SciPy (Mann-Kendall, Sen-slope, t-test) | Séries 10+ anos | Significância + variáveis sugeridas |
+| **Mars Solar Sim** | Beer-Lambert + Dust Factor + Weibull (Guzewich) + MEDA | Tau, dust factor, slope, BESS | `SRI` + curva energia/sol |
+| **Lunar BESS Sim** | Seu motor MPC/BESS + Horizons | Latitude, noite 14 dias, radiação | Capacidade mínima + janelas |
+| **Visual Anemometry (OFTV)** | OpenCV + CNN/RNN leve (paper 2026) | Frames câmeras selecionadas | `W_vis`, `cloud_vis`, `vis_km` |
+
+### HORA 18–32: **Simulador What-If (TELA PRINCIPAL)**
+- Dark-mode React (Cockpit-SIN components + shadcn)
+- Sliders físicos: região, threshold, horizonte, Tau, dust factor, BESS
+- **Outputs ao vivo:** RRS, SRI, VAS, fatores de peso (SHAP/feature importance)
+- **Botão "Evento Similar"** → busca vetorial no histórico (INDUS embeddings + FAISS)
+- **Câmera ao vivo** (gods-eye-view layer) sincronizada com região
+
+### HORA 32–40: Copiloto RAG (INDUS + seus dados)
+- `INDUS Base Encoder` para embeddings de artigos NASA (PSI, NTRS, papers)
+- `INDUS Sentence Transformer` para queries
+- Contexto restrito: banco estruturado + artigos indexados
+- Resposta: PT-BR + **fonte + variável + confiança + link câmera**
+
+### HORA 40–48: Storytelling + Vídeo 3 min
+- Roteiro 25"/25"/80"/30" (já definido)
+- Gravação tela What-If + Copiloto + Marte/Lua
+- Rodapé rigor científico em **todas** as telas
+
+---
+
+## ⚠️ RISCOS REAIS (e mitigação)
+
+| Risco | Prob. | Mitigação |
+|---|---|---|
+| **OFTV não roda em 48h** | Média | **Fallback**: usar apenas `cloud_cover_vis` (segmentação céu/claro — trivial com OpenCV/YOLOR) + `vis_km` (haze por contraste). Wind estimation = "nice to have". |
+| **MEDA SkyCam 1Hz muito pesado** | Baixa | Usar **resumo horário** do PDS (já processado) + 1 frame representativo por hora p/ demo. |
+| **Prithvi fine-tune não converge** | Baixa | **Não fine-tune**. Use Prithvi como *feature extractor* (embeddings) + seu LGBM por cima. |
+| **FIRMS MAP_KEY demora** | Baixa | Registre **agora** (leva minutos). |
+| **gods-eye-view build falha** | Média | Use **versão release v0.3.0** (compilada) + adicione layer via `import` ES module — não recompile o core. |
+
+---
+
+## 🏆 DIFERENCIAIS QUE NINGUÉM MAIS TEM (resumo final)
+
+1. **Pipeline quantil + rampa + ONS real** (operacional, não acadêmico)
+2. **Dados de missão Marte REAIS** (MEDA, InSight, Weibull Guzewich, NTRS dust) no simulador
+3. **INDUS para RAG científico** (não LLM genérico)
+4. **Prithvi/Surya como especialistas** (ensemble NASA)
+5. **Olho de Deus + OFTV** = camada de *ground truth visual* barata
+6. **Índices proprietários auditáveis** (RRS, SRI, VAS)
+7. **What-If físico** (sliders de variáveis reais, não brinquedo)
+8. **Copiloto PT-BR com evidência + câmera**
+
+---
+
+## 🎯 VEREDITO FINAL
+
+**Este diretório transforma o projeto de "ambicioso" para "executável com vantagem competitiva real".**  
+Tudo que é **ciência dura** (modelos, dados de missão, papers) já está resolvido e aberto.  
+O que resta é **engenharia de integração** — e seu time já tem o backbone (Cockpit-SIN, FastAPI, React, pipeline quantil).
+
+**Recomendação:** comece **agora** pelo fork do `gods-eye-view` + `power_client.py` + download dos pesos Prithvi/Surya/INDUS. O resto é montagem.
+
+Quer que eu gere o **`requirements.txt` + `docker-compose.yml` + estrutura de pastas inicial** pro repositório OMNI agora?

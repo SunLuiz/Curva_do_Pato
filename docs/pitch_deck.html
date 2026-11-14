@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cockpit-OMNI — 7-Slide Pitch Deck (NASA Space Apps 2026)</title>
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --card: #131c2e;
+      --border: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --blue: #38bdf8;
+      --cyan: #22d3ee;
+      --amber: #f59e0b;
+      --green: #34d399;
+      --purple: #c084fc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #05080f;
+      color: var(--text);
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      padding: 24px;
+    }
+    .controls {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      background: rgba(19, 28, 46, 0.92);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      z-index: 50;
+    }
+    .slide {
+      width: 1120px;
+      height: 630px;
+      background:
+        radial-gradient(ellipse 80% 50% at 85% -10%, rgba(56, 189, 248, 0.14), transparent),
+        var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 46px 54px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+    }
+    .tag {
+      display: inline-block;
+      font-family: ui-monospace, monospace;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--blue);
+      margin-bottom: 14px;
+    }
+    h1 { font-size: 52px; line-height: 1.08; letter-spacing: -0.03em; }
+    h2 { font-size: 34px; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 12px; }
+    p.lead { font-size: 20px; color: var(--muted); max-width: 66ch; margin-top: 12px; line-height: 1.5; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .mono { font-family: ui-monospace, SFMono-Regular, monospace; }
+    .big { font-size: 32px; font-weight: 700; margin: 6px 0; }
+    .pill {
+      display: inline-block;
+      font-family: ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 9px;
+      border-radius: 999px;
+    }
+    .live { color: var(--green); border: 1px solid rgba(52, 211, 153, 0.45); background: rgba(52, 211, 153, 0.1); }
+    .roadmap { color: var(--purple); border: 1px solid rgba(192, 132, 252, 0.45); background: rgba(192, 132, 252, 0.1); }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #64748b;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+    @media print {
+      @page { size: 1120px 630px; margin: 0; }
+      body { padding: 0; gap: 0; background: var(--bg); }
+      .controls { display: none; }
+      .slide { border: none; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">7 Slides · Press Ctrl+P → Save as PDF (16:9)</div>
+
+  <!-- SLIDE 1 -->
+  <section class="slide">
+    <div>
+      <span class="tag">NASA Space Apps Challenge 2026 · Campinas, SP · Challenge #2</span>
+      <h1>Cockpit-OMNI<br /><span style="color: var(--blue);">Earth System Trend Detective</span></h1>
+      <p class="lead">
+        42-year NASA satellite &amp; reanalysis series audited with Seasonal Mann-Kendall significance testing, deseasonalized Theil-Sen slopes, and honest 4-vector physical attribution.
+      </p>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="mono" style="font-size:12px;color:var(--muted);">TIME SPAN</div>
+        <div class="big mono" style="color:var(--blue);">1984–2025</div>
+        <div style="font-size:13px;color:var(--muted);">504 continuous monthly NASA POWER points</div>
+      </div>
+      <div class="card">
+        <div class="mono" style="font-size:12px;color:var(--muted);">STATISTICAL RIGOR</div>
+        <div class="big mono" style="color:var(--green);">α = 0.05</div>
+        <div style="font-size:13px;color:var(--muted);">Seasonal MK + 95% CI Theil-Sen slope</div>
+      </div>
+      <div class="card">
+        <div class="mono" style="font-size:12px;color:var(--muted);">ATTRIBUTION</div>
+        <div class="big mono" style="color:var(--amber);">3 Live + 1</div>
+        <div style="font-size:13px;color:var(--muted);">POWER · FIRMS · DONKI + CMR Roadmap</div>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Built at NASA Space Apps Challenge 2026 — Campinas</span>
+      <span>Slide 1 / 7</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 -->
+  <section class="slide">
+    <div>
+      <span class="tag">The Problem</span>
+      <h2>“A trend without a significance test is an opinion.”</h2>
+      <p class="lead">
+        Raw monthly climate plots hide drift inside seasonal cycles — or trick users into mistaking noise for climate change.
+      </p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="color:var(--amber);margin-bottom:8px;">Common Pitfalls We Solved</h3>
+        <ul style="padding-left:18px;color:var(--muted);line-height:1.75;font-size:15px;">
+          <li>NASA POWER monthly endpoints include <span class="mono">YYYY13</span> annual summary rows and <span class="mono">-999.0</span> fill values that distort naive regressions.</li>
+          <li>Original Mann-Kendall loses power when summer/winter cycles dominate variance (e.g., Campinas solar irradiance <span class="mono">p=0.20</span> raw vs <span class="mono">p=8.6e-04</span> seasonal).</li>
+          <li>Dashboards often mix live APIs with mock layers without declaring data status.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--green);margin-bottom:8px;">Cockpit-OMNI Statistical Pipeline</h3>
+        <ul style="padding-left:18px;color:var(--muted);line-height:1.75;font-size:15px;">
+          <li>Drops <span class="mono">YYYY13</span> rows, aligns calendar PeriodIndex (<span class="mono">freq=M</span>).</li>
+          <li>Computes <strong>Seasonal Mann-Kendall (period=12)</strong> &amp; <strong>Original MK</strong> (<span class="mono">τ</span>, <span class="mono">p-value</span>).</li>
+          <li>Calculates <strong>Deseasonalized Theil-Sen Slope</strong> per decade with <strong>95% Confidence Interval</strong> and 42-year cumulative shift.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Methodology: Non-parametric rank correlation + robust median slope</span>
+      <span>Slide 2 / 7</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 -->
+  <section class="slide">
+    <div>
+      <span class="tag">NASA Data Ecosystem</span>
+      <h2>Open NASA Sources &amp; Official CMR MCP Provenance</h2>
+      <p class="lead">Every chart, metric, and attribution card links directly to its live NASA dataset.</p>
+    </div>
+    <div class="grid-4">
+      <div class="card">
+        <span class="pill live">Live</span>
+        <h3 style="margin:10px 0 6px;">NASA POWER</h3>
+        <p style="font-size:13px;color:var(--muted);">CERES &amp; MERRA-2 monthly meteorology (1984–2025): T2M, PRECTOTCORR, RH2M, WS2M, All-Sky &amp; Clear-Sky SW.</p>
+      </div>
+      <div class="card">
+        <span class="pill live">Live</span>
+        <h3 style="margin:10px 0 6px;">NASA FIRMS</h3>
+        <p style="font-size:13px;color:var(--muted);">VIIRS NOAA-21 NRT thermal detections &amp; Fire Radiative Power across Brazil (3,313 detections / 24h verified).</p>
+      </div>
+      <div class="card">
+        <span class="pill live">Live</span>
+        <h3 style="margin:10px 0 6px;">NASA DONKI</h3>
+        <p style="font-size:13px;color:var(--muted);">7-day Space Weather notifications (CMEs, solar flares, radiation belt alerts — 8 events live).</p>
+      </div>
+      <div class="card">
+        <span class="pill live">MCP v1</span>
+        <h3 style="margin:10px 0 6px;">Earthdata CMR</h3>
+        <p style="font-size:13px;color:var(--muted);">Official MCP discovery (<span class="mono">cmr.earthdata.nasa.gov/mcp/v1</span>): 74 Fire, 208 CERES, 52 NISAR &amp; 45 ECOSTRESS collections.</p>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Sources: power.larc.nasa.gov · firms.modaps.eosdis.nasa.gov · api.nasa.gov · cmr.earthdata.nasa.gov</span>
+      <span>Slide 3 / 7</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 -->
+  <section class="slide">
+    <div>
+      <span class="tag">Verified Scientific Results (1984–2025 · n = 504 months)</span>
+      <h2>Statistically Significant Warming Across All 3 Brazilian Biomes</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card" style="border-color: rgba(56,189,248,0.4);">
+        <div class="mono" style="color:var(--blue);font-weight:700;">CAMPINAS-SP (-22.90, -47.06)</div>
+        <div class="big mono">+0.409 °C/dec</div>
+        <div class="mono" style="font-size:12px;color:var(--green);">95% CI: [+0.333, +0.489] · p &lt; 1e-16</div>
+        <hr style="border:0;border-top:1px solid var(--border);margin:10px 0;" />
+        <div style="font-size:13px;color:var(--muted);">
+          42-yr shift: <strong>+1.718 °C</strong><br/>
+          Precipitation: <strong>-0.272 mm/day/dec</strong> (p=1.59e-06)<br/>
+          Relative Humidity: <strong>-1.660 %/dec</strong> (p &lt; 1e-16)
+        </div>
+      </div>
+      <div class="card" style="border-color: rgba(245,158,11,0.4);">
+        <div class="mono" style="color:var(--amber);font-weight:700;">PETROLINA-PE (-9.39, -40.50)</div>
+        <div class="big mono">+0.301 °C/dec</div>
+        <div class="mono" style="font-size:12px;color:var(--green);">95% CI: [+0.231, +0.371] · p = 4.66e-15</div>
+        <hr style="border:0;border-top:1px solid var(--border);margin:10px 0;" />
+        <div style="font-size:13px;color:var(--muted);">
+          42-yr shift: <strong>+1.265 °C</strong><br/>
+          Precipitation: <strong>-0.072 mm/day/dec</strong> (p=0.029)<br/>
+          Cloud Attenuation: <strong>-0.965 %/dec</strong> (p=2.83e-09)
+        </div>
+      </div>
+      <div class="card" style="border-color: rgba(34,211,238,0.4);">
+        <div class="mono" style="color:var(--cyan);font-weight:700;">MANAUS-AM (-3.10, -60.02)</div>
+        <div class="big mono">+0.307 °C/dec</div>
+        <div class="mono" style="font-size:12px;color:var(--green);">95% CI: [+0.254, +0.359] · p &lt; 1e-16</div>
+        <hr style="border:0;border-top:1px solid var(--border);margin:10px 0;" />
+        <div style="font-size:13px;color:var(--muted);">
+          42-yr shift: <strong>+1.287 °C</strong><br/>
+          Precipitation: <strong>-0.467 mm/day/dec</strong> (p=4.24e-11)<br/>
+          Cloud Attenuation: <strong>-0.855 %/dec</strong> (p=3.02e-08)
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Computed deterministically via pymannkendall + scipy.stats.theilslopes</span>
+      <span>Slide 4 / 7</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 -->
+  <section class="slide">
+    <div>
+      <span class="tag">Multi-Vector Attribution</span>
+      <h2>Separating Cloud Drying from Clear-Sky Aerosol Signals</h2>
+      <p class="lead">
+        Comparing All-Sky vs. Clear-Sky irradiance isolates physical causality instead of guessing.
+      </p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong>1. Hydrometeorological &amp; Cloud</strong><span class="pill live">Live</span>
+        </div>
+        <p style="font-size:14px;color:var(--muted);margin-top:8px;">
+          In <strong>Manaus</strong>, All-Sky irradiance rose (+0.241 MJ/m²/day/dec, p=1.7e-10) while Clear-Sky showed <strong>no trend</strong> (p=0.769) — proving cloud attenuation reduction (-0.855%/dec) drives brightening.
+        </p>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong>2. Fire &amp; Atmospheric Aerosol</strong><span class="pill live">Live</span>
+        </div>
+        <p style="font-size:14px;color:var(--muted);margin-top:8px;">
+          Tracks <strong>3,313</strong> VIIRS NOAA-21 24h fire detections (mean FRP 3.06 MW) + local 150 km radius check alongside Clear-Sky irradiance shifts (<span class="mono">C3264430167-LANCEMODIS</span>).
+        </p>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong>3. Heliophysical / Space Weather</strong><span class="pill live">Live</span>
+        </div>
+        <p style="font-size:14px;color:var(--muted);margin-top:8px;">
+          Streams 7-day NASA DONKI alerts (<strong>8 events</strong> live) for solar flares, CMEs, and geomagnetic storms impacting high-voltage transformers and satellites.
+        </p>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong>4. Geothermal &amp; Surface Deformation</strong><span class="pill roadmap">Roadmap</span>
+        </div>
+        <p style="font-size:14px;color:var(--muted);margin-top:8px;">
+          Verified in CMR (<span class="mono">NISAR_L2_GUNW_PROVISIONAL_V1</span>, <span class="mono">ECO_L2T_LSTE</span>); declared honestly as post-MVP due to multi-GB SAR granules &amp; Earthdata auth.
+        </p>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Scientific honesty: every vector declares live, cached, or roadmap status</span>
+      <span>Slide 5 / 7</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 -->
+  <section class="slide">
+    <div>
+      <span class="tag">Impact on Earth &amp; Beyond</span>
+      <h2>From Brazilian Infrastructure to Off-World Habitat Analogs</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <h3 style="color:var(--amber);margin-bottom:8px;">Power Grid &amp; Solar Operators</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;">
+          Petrolina's decreasing cloud cover (+0.256 MJ/m²/day/dec solar trend) &amp; Campinas's -1.66%/dec humidity shift help utilities plan BESS storage and thermal cooling headroom.
+        </p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--blue);margin-bottom:8px;">Civil Defense &amp; Agriculture</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;">
+          Simultaneous warming (+0.41 °C/dec) and drying (-0.27 mm/day/dec) in Campinas coupled with live VIIRS NOAA-21 fire proximity flags acute drought-fire risk.
+        </p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--cyan);margin-bottom:8px;">Mars &amp; Moon Analog Telemetry</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;">
+          Our backend already includes Mars 2020 Perseverance MEDA &amp; JPL Horizons clients — showing how Earth trend detection translates to planetary habitat resilience.
+        </p>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Local Impact (Campinas / Northeast / Amazon) + Galactic Impact narrative</span>
+      <span>Slide 6 / 7</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 -->
+  <section class="slide">
+    <div>
+      <span class="tag">Architecture, Links &amp; Compliance</span>
+      <h2>Zero-Downtime Demo &amp; Full Transparency</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="margin-bottom:10px;">Resilient Architecture</h3>
+        <ul style="padding-left:18px;color:var(--muted);line-height:1.75;font-size:14px;">
+          <li><strong>Backend:</strong> FastAPI + Python 3.12 (<span class="mono">trend.py</span>, <span class="mono">main.py</span>, Docker port 7860 for Hugging Face Spaces).</li>
+          <li><strong>Frontend:</strong> React + Vite dark cockpit deployed on Vercel with frozen JSON fallback (<span class="mono">public/cache/</span>) so the demo runs without login or downtime.</li>
+          <li><strong>3D Showcase Credit:</strong> <span class="mono">bilawalsidhu/gods-eye-view</span> (MIT, TeleGeography CC BY-NC-SA carve-out).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:10px;">Space Apps 2026 Compliance</h3>
+        <ul style="padding-left:18px;color:var(--muted);line-height:1.75;font-size:14px;">
+          <li><strong>100% English:</strong> Code, UI, README, references, and pitch deck.</li>
+          <li><strong>No NASA Logo:</strong> Uses explicit dataset citations &amp; Space Apps 2026 Campinas badge only.</li>
+          <li><strong>AI Disclosure:</strong> Declared in <span class="mono">AI_DISCLOSURE.md</span>; all stats are deterministic Python computations over real NASA data.</li>
+          <li><strong>Prototype Disclaimer:</strong> Comparative prototype estimate; not an operational forecast.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Built in 36h at Espaço Plasma, Unicamp — Campinas, SP, Brazil</span>
+      <span>Slide 7 / 7</span>
+    </div>
+  </section>
+</body>
+</html>

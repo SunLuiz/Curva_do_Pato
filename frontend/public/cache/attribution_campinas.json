@@ -1,0 +1,110 @@
+{
+  "status": "live",
+  "region": {
+    "id": "campinas",
+    "name": "Campinas-SP",
+    "lat": -22.9,
+    "lon": -47.06,
+    "biome": "Atlantic Forest / Cerrado Transition",
+    "context": "Southeast Brazil Industrial & Agribusiness Hub"
+  },
+  "period": "1984-2025",
+  "headline_temperature": {
+    "status": "ok",
+    "method": "Seasonal Mann-Kendall (period=12) + Deseasonalized Theil-Sen (95% CI)",
+    "n": 504,
+    "tau": 0.293,
+    "p_value": 0.0,
+    "trend": "increasing",
+    "significant_5pct": true,
+    "slope_per_decade": 0.4091,
+    "ci_95_per_decade": [
+      0.3329,
+      0.4891
+    ],
+    "total_change": 1.718,
+    "original_tau": 0.136,
+    "original_p_value": 5.271e-06,
+    "original_trend": "increasing",
+    "original_slope_per_decade": 0.4038,
+    "sen_line": {
+      "intercept": 20.2237,
+      "slope_per_step": 0.003365
+    },
+    "start": "1984-01",
+    "end": "2025-12"
+  },
+  "vectors": [
+    {
+      "id": "hydrometeorological",
+      "label": "Hydrometeorological & Cloud Cover",
+      "status": "live",
+      "metric": "Precipitation, RH2M & Cloud Attenuation Deficit",
+      "value": "-0.2724 mm/day/dec",
+      "details": {
+        "precip_slope_per_decade": -0.2724,
+        "precip_p_value": 1.59e-06,
+        "rh2m_slope_per_decade": -1.6601,
+        "rh2m_p_value": 0.0,
+        "cloud_attenuation_slope_per_decade": 0.0378,
+        "cloud_attenuation_p_value": 0.9476,
+        "allsky_slope_per_decade": 0.1621
+      },
+      "interpretation": "Significant cloud attenuation & rainfall shift detected.",
+      "source": "NASA POWER (MERRA-2 / CERES)",
+      "url": "https://power.larc.nasa.gov/"
+    },
+    {
+      "id": "fire_aerosol",
+      "label": "Fire & Atmospheric Aerosol",
+      "status": "live",
+      "metric": "VIIRS NOAA-21 Fires (24h BR / 150km radius) + Clear-Sky SW",
+      "value": "3313 BR fires (0 within 150 km)",
+      "details": {
+        "brazil_24h_detections": 3313,
+        "nearby_24h_detections": 0,
+        "radius_km": 150.0,
+        "mean_frp_mw": 3.06,
+        "clrsky_slope_per_decade": 0.1897,
+        "clrsky_p_value": 0.0,
+        "clrsky_significant": true
+      },
+      "interpretation": "Clear-sky irradiance shifted significantly, pointing to aerosol or column water-vapor change independent of clouds.",
+      "source": "NASA FIRMS (VIIRS_NOAA21_NRT) & NASA POWER",
+      "url": "https://firms.modaps.eosdis.nasa.gov/",
+      "cmr_concept_id": "C3264430167-LANCEMODIS"
+    },
+    {
+      "id": "heliophysical",
+      "label": "Heliophysical / Space Weather",
+      "status": "live",
+      "metric": "7-day Solar & Geomagnetic Alerts (DONKI)",
+      "value": "8 alerts (2026-11-07 to 2026-11-14)",
+      "details": {
+        "alert_count_7d": 8,
+        "latest_type": "RBE",
+        "latest_time": "2026-11-08T21:18Z",
+        "latest_url": "https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/49463/1"
+      },
+      "interpretation": "Active solar-geomagnetic telemetry (8 events in 7d) monitored for high-latitude & grid GIC resilience.",
+      "source": "NASA DONKI (Space Weather)",
+      "url": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/"
+    },
+    {
+      "id": "geothermal_deformation",
+      "label": "Geothermal & Surface Deformation",
+      "status": "roadmap",
+      "metric": "InSAR Surface Displacement & Thermal Anomaly",
+      "value": "NISAR L2 GUNW / ECOSTRESS (CMR Verified)",
+      "details": {
+        "cmr_collection": "NISAR_L2_GUNW_PROVISIONAL_V1",
+        "reason_deferred": "Requires Earthdata authentication & multi-GB SAR granules; scheduled post-MVP."
+      },
+      "interpretation": "Declared honestly as post-MVP roadmap via NASA Earthdata CMR MCP catalog.",
+      "source": "NASA Earthdata CMR (NISAR / ECOSTRESS)",
+      "url": "https://cmr.earthdata.nasa.gov/search/concepts/NISAR_L2_GUNW_PROVISIONAL_V1"
+    }
+  ],
+  "cache_mode": "frozen_snapshot",
+  "frozen_at_utc": "2026-11-14T15:04:15.192319+00:00"
+}

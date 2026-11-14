@@ -1,0 +1,1 @@
+"""Cockpit-OMNI backend application."""

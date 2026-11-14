@@ -1,0 +1,80 @@
+{
+  "regions": [
+    {
+      "id": "campinas",
+      "name": "Campinas-SP",
+      "lat": -22.9,
+      "lon": -47.06,
+      "biome": "Atlantic Forest / Cerrado Transition",
+      "context": "Southeast Brazil Industrial & Agribusiness Hub"
+    },
+    {
+      "id": "petrolina",
+      "name": "Petrolina-PE",
+      "lat": -9.39,
+      "lon": -40.5,
+      "biome": "Caatinga Semi-Arid",
+      "context": "Northeast Renewable Solar & Wind Corridor"
+    },
+    {
+      "id": "manaus",
+      "name": "Manaus-AM",
+      "lat": -3.1,
+      "lon": -60.02,
+      "biome": "Amazon Rainforest",
+      "context": "Central Amazon Basin Climate Reference"
+    }
+  ],
+  "variables": [
+    {
+      "id": "T2M",
+      "label": "2m Air Temperature",
+      "unit": "°C",
+      "power_unit": "C",
+      "vector": "hydrometeorological"
+    },
+    {
+      "id": "PRECTOTCORR",
+      "label": "Bias-Corrected Precipitation",
+      "unit": "mm/day",
+      "power_unit": "mm/day",
+      "vector": "hydrometeorological"
+    },
+    {
+      "id": "ALLSKY_SFC_SW_DWN",
+      "label": "All-Sky Surface Shortwave Irradiance",
+      "unit": "MJ/m²/day",
+      "power_unit": "MJ/m^2/day",
+      "vector": "hydrometeorological"
+    },
+    {
+      "id": "CLRSKY_SFC_SW_DWN",
+      "label": "Clear-Sky Surface Shortwave Irradiance",
+      "unit": "MJ/m²/day",
+      "power_unit": "MJ/m^2/day",
+      "vector": "fire_aerosol"
+    },
+    {
+      "id": "RH2M",
+      "label": "2m Relative Humidity",
+      "unit": "%",
+      "power_unit": "%",
+      "vector": "hydrometeorological"
+    },
+    {
+      "id": "WS2M",
+      "label": "2m Wind Speed",
+      "unit": "m/s",
+      "power_unit": "m/s",
+      "vector": "hydrometeorological"
+    },
+    {
+      "id": "CLOUD_ATTEN_PCT",
+      "label": "Cloud Attenuation Deficit (1 - AllSky / ClearSky)",
+      "unit": "%",
+      "power_unit": "%",
+      "vector": "hydrometeorological",
+      "derived": true
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "count": 8,
+  "window_days": 7,
+  "start_date": "2026-11-07",
+  "end_date": "2026-11-14",
+  "status": "live",
+  "source": "NASA DONKI",
+  "source_url": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/",
+  "events": [
+    {
+      "type": "RBE",
+      "id": "20261108-AL-001",
+      "time": "2026-11-08T21:18Z",
+      "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/49463/1",
+      "summary": "## Community Coordinated Modeling Center Database Of Notifications, Knowledge, Information ( CCMC DONKI )"
+    },
+    {
+      "type": "RBE",
+      "id": "20261108-AL-002",
+      "time": "2026-11-08T21:28Z",
+      "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/49464/1",
+      "summary": "## Community Coordinated Modeling Center Database Of Notifications, Knowledge, Information ( CCMC DONKI )"
+    },
+    {
+      "type": "CME",
+      "id": "20261110-AL-001",
+      "time": "2026-11-10T13:06Z",
+      "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/49474/1",
+      "summary": "## Community Coordinated Modeling Center Database Of Notifications, Knowledge, Information ( CCMC DONKI )"
+    },
+    {
+      "type": "CME",
+      "id": "20261110-AL-002",
+      "time": "2026-11-10T16:29Z",
+      "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/49483/1",
+      "summary": "## Community Coordinated Modeling Center Database Of Notifications, Knowledge, Information ( CCMC DONKI )"
+    },
+    {
+      "type": "RBE",
+      "id": "20261110-AL-003",
+      "time": "2026-11-10T21:31Z",
+      "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/49486/1",
+      "summary": "## Community Coordinated Modeling Center Database Of Notifications, Knowledge, Information ( CCMC DONKI )"
+    },
+    {
+      "type": "Report",
+      "id": "20261111-7D-001",
+      "time": "2026-11-11T21:02Z",
+      "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/49503/1",
+      "summary": "## Community Coordinated Modeling Center Database Of Notifications, Knowledge, Information (CCMC DONKI)"
+    },
+    {
+      "type": "RBE",
+      "id": "20261112-AL-001",
+      "time": "2026-11-12T21:30Z",
+      "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/49522/1",
+      "summary": "## Community Coordinated Modeling Center Database Of Notifications, Knowledge, Information ( CCMC DONKI )"
+    },
+    {
+      "type": "CME",
+      "id": "20261113-AL-001",
+      "time": "2026-11-13T16:25Z",
+      "url": "https://ccmc.gsfc.nasa.gov/DONKI/view/Alert/49532/1",
+      "summary": "## Community Coordinated Modeling Center Database Of Notifications, Knowledge, Information ( CCMC DONKI )"
+    }
+  ],
+  "frozen_at_utc": "2026-11-14T15:04:15.192319+00:00"
+}

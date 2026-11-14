@@ -1,0 +1,91 @@
+{
+  "endpoint": "https://cmr.earthdata.nasa.gov/mcp/v1",
+  "protocol": "2025-06-18",
+  "verified_at_utc": "2026-11-14T15:04:42.987166+00:00",
+  "queries": {
+    "fire_aerosol": {
+      "keyword": "ACTIVE FIRE",
+      "total_hits": 74,
+      "top_collections": [
+        {
+          "concept_id": "C3264430167-LANCEMODIS",
+          "title": null,
+          "short_name": "VJ114IMGTDL_NRT"
+        },
+        {
+          "concept_id": "C1942970257-LANCEMODIS",
+          "title": null,
+          "short_name": "VNP14IMGTDL_NRT"
+        },
+        {
+          "concept_id": "C2734202914-LPCLOUD",
+          "title": null,
+          "short_name": "VNP14IMG"
+        }
+      ]
+    },
+    "geothermal_nisar": {
+      "keyword": "NISAR",
+      "total_hits": 52,
+      "top_collections": [
+        {
+          "concept_id": "C2854338529-ASF",
+          "title": null,
+          "short_name": "NISAR_L2_GCOV_PROVISIONAL_V1"
+        },
+        {
+          "concept_id": "C2854332392-ASF",
+          "title": null,
+          "short_name": "NISAR_L2_GSLC_PROVISIONAL_V1"
+        },
+        {
+          "concept_id": "C2854335566-ASF",
+          "title": null,
+          "short_name": "NISAR_L2_GUNW_PROVISIONAL_V1"
+        }
+      ]
+    },
+    "geothermal_ecostress": {
+      "keyword": "ECOSTRESS",
+      "total_hits": 45,
+      "top_collections": [
+        {
+          "concept_id": "C2076090826-LPCLOUD",
+          "title": null,
+          "short_name": "ECO_L2T_LSTE"
+        },
+        {
+          "concept_id": "C2076087338-LPCLOUD",
+          "title": null,
+          "short_name": "ECO_L1B_GEO"
+        },
+        {
+          "concept_id": "C2076104650-LPCLOUD",
+          "title": null,
+          "short_name": "ECO_L4T_ESI"
+        }
+      ]
+    },
+    "hydrometeorological_ceres": {
+      "keyword": "CERES",
+      "total_hits": 208,
+      "top_collections": [
+        {
+          "concept_id": "C3880496704-LARC_CLOUD",
+          "title": null,
+          "short_name": "CERES_EBAF"
+        },
+        {
+          "concept_id": "C3880497643-LARC_CLOUD",
+          "title": null,
+          "short_name": "CERES_EBAF-TOA"
+        },
+        {
+          "concept_id": "C3880508247-LARC_CLOUD",
+          "title": null,
+          "short_name": "CER_CldTypHist_GEO-MODIS"
+        }
+      ]
+    }
+  }
+}

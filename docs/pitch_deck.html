@@ -277,6 +277,14 @@
           In <strong>Manaus</strong>, All-Sky irradiance rose (+0.241 MJ/m²/day/dec, p=1.7e-10) while Clear-Sky showed <strong>no trend</strong> (p=0.769) — proving cloud attenuation reduction (-0.855%/dec) drives brightening.
         </p>
       </div>
+      <div class="card" style="border-color: rgba(244,114,182,0.45);">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong>Campinas: the opposite verdict</strong><span class="pill live">Live</span>
+        </div>
+        <p style="font-size:14px;color:var(--muted);margin-top:8px;">
+          In <strong>Campinas</strong>, cloud attenuation shows <strong>no trend</strong> (p=0.948) while Clear-Sky irradiance rises (+0.190 MJ/m²/day/dec, p&lt;1e-16) — the brightening there is <strong>not</strong> a cloud effect. Same engine, opposite causal verdict.
+        </p>
+      </div>
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <strong>2. Fire &amp; Atmospheric Aerosol</strong><span class="pill live">Live</span>
@@ -311,31 +319,42 @@
   <!-- SLIDE 6 -->
   <section class="slide">
     <div>
-      <span class="tag">Impact on Earth &amp; Beyond</span>
-      <h2>From Brazilian Infrastructure to Off-World Habitat Analogs</h2>
+      <span class="tag">Impact — Persona → Decision → Evidence</span>
+      <h2>Who Acts on These Numbers</h2>
+      <p class="lead">Every claimed impact maps to a specific decision and the p-value that supports it. Where the data cannot support a claim, we say so.</p>
     </div>
-    <div class="grid-3">
+    <div class="grid-2">
       <div class="card">
-        <h3 style="color:var(--amber);margin-bottom:8px;">Power Grid &amp; Solar Operators</h3>
+        <h3 style="color:var(--blue);margin-bottom:8px;">Civil Defense &amp; Urban Planning</h3>
         <p style="font-size:14px;color:var(--muted);line-height:1.6;">
-          Petrolina's decreasing cloud cover (+0.256 MJ/m²/day/dec solar trend) &amp; Campinas's -1.66%/dec humidity shift help utilities plan BESS storage and thermal cooling headroom.
+          <strong>Decision:</strong> size heat-wave response and thermal headroom for Campinas.<br/>
+          <strong>Evidence:</strong> <span class="mono">+0.409 °C/dec</span> ≈ <strong>+1.72 °C cumulative</strong> (95% CI [+0.333, +0.489], p&lt;1e-16), with humidity down <span class="mono">−1.66 %/dec</span> and precipitation down <span class="mono">−0.272 mm/day/dec</span>.
         </p>
       </div>
       <div class="card">
-        <h3 style="color:var(--blue);margin-bottom:8px;">Civil Defense &amp; Agriculture</h3>
+        <h3 style="color:var(--amber);margin-bottom:8px;">Solar Generation Planners</h3>
         <p style="font-size:14px;color:var(--muted);line-height:1.6;">
-          Simultaneous warming (+0.41 °C/dec) and drying (-0.27 mm/day/dec) in Campinas coupled with live VIIRS NOAA-21 fire proximity flags acute drought-fire risk.
+          <strong>Decision:</strong> is rising irradiance a durable resource gain or a cloud artifact?<br/>
+          <strong>Evidence:</strong> in Petrolina, cloud attenuation falls <span class="mono">−0.965 %/dec</span> (p=2.83e-09) while clear-sky shows <strong>no trend</strong> (p=0.290) — so the gain is cloud-driven, not aerosol-driven.
         </p>
       </div>
       <div class="card">
-        <h3 style="color:var(--cyan);margin-bottom:8px;">Mars &amp; Moon Analog Telemetry</h3>
+        <h3 style="color:var(--cyan);margin-bottom:8px;">Air Quality &amp; Fire Response</h3>
         <p style="font-size:14px;color:var(--muted);line-height:1.6;">
-          Our backend already includes Mars 2020 Perseverance MEDA &amp; JPL Horizons clients — showing how Earth trend detection translates to planetary habitat resilience.
+          <strong>Decision:</strong> separate smoke/aerosol forcing from cloud-cover change when advising health authorities.<br/>
+          <strong>Evidence:</strong> Manaus cloud <span class="mono">−0.855 %/dec</span> (p=3.02e-08), clear-sky null (p=0.769), plus <strong>3,313</strong> live VIIRS NOAA-21 detections/24h.
+        </p>
+      </div>
+      <div class="card" style="border-color: rgba(148,163,184,0.4);">
+        <h3 style="color:var(--muted);margin-bottom:8px;">Grid Ramp / Storage — Declared Out of Scope</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;">
+          <strong>Decision we do NOT claim:</strong> BESS pre-positioning ahead of an intra-hour ramp.<br/>
+          <strong>Why not:</strong> monthly <span class="mono">WS2M</span> shows no significant trend at any station (p=0.489 / 0.173 / 0.451). Ramp risk needs hourly series. Off-world analog telemetry stays a one-line roadmap, not a delivered feature.
         </p>
       </div>
     </div>
     <div class="footer">
-      <span>Local Impact (Campinas / Northeast / Amazon) + Galactic Impact narrative</span>
+      <span>Local impact only where the statistics support it · No unsupported off-world claim</span>
       <span>Slide 6 / 7</span>
     </div>
   </section>
@@ -351,9 +370,8 @@
         <h3 style="margin-bottom:10px;">Resilient Architecture</h3>
         <ul style="padding-left:18px;color:var(--muted);line-height:1.75;font-size:14px;">
           <li><strong>Backend:</strong> FastAPI + Python 3.12 (<span class="mono">trend.py</span>, <span class="mono">main.py</span>, Docker port 7860 for Hugging Face Spaces).</li>
-          <li><strong>Frontend:</strong> React + Vite dark cockpit deployed on Vercel with frozen JSON fallback (<span class="mono">public/cache/</span>) so the demo runs without login or downtime.</li>
-          <li><strong>3D Showcase Credit:</strong> <span class="mono">bilawalsidhu/gods-eye-view</span> (MIT, TeleGeography CC BY-NC-SA carve-out).</li>
-          <li><strong>Source Code:</strong> <a href="https://github.com/SunLuiz/Curva_do_Pato" target="_blank" rel="noreferrer" style="color:var(--blue);text-decoration:none;">github.com/SunLuiz/Curva_do_Pato</a> — public, no login required.</li>
+          <li><strong>Frontend:</strong> React + Vite dark cockpit, live on Vercel at <a href="https://frontend-rho-seven-69.vercel.app" target="_blank" rel="noreferrer" style="color:var(--blue);text-decoration:none;">frontend-rho-seven-69.vercel.app</a> with frozen JSON fallback (<span class="mono">public/cache/</span>) so the demo runs without login or downtime.</li>
+          <li><strong>Source Code:</strong> <a href="https://github.com/SunLuiz/Curva_do_Pato" target="_blank" rel="noreferrer" style="color:var(--blue);text-decoration:none;">github.com/SunLuiz/Curva_do_Pato</a> — public, MIT licensed, no login required.</li>
         </ul>
       </div>
       <div class="card">

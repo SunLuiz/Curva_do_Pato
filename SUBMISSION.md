@@ -33,22 +33,21 @@ Cockpit-OMNI retrieves 42-year NASA POWER time series (1984–2025), proves stat
 
 ---
 
-## 3. Deploy Instructions (Zero-Downtime Public Links)
+## 3. Public Links — Live and Verified
 
-### Frontend → Vercel (Works Live + Offline Frozen Cache)
-```bash
-cd frontend
-npm install && npm run build
-npx vercel --prod
-```
-- Optional env on Vercel: `VITE_API_BASE=https://<your-hf-space>.hf.space`
-- Even without `VITE_API_BASE`, `frontend/public/cache/*.json` guarantees every preset region, chart, attribution card, FIRMS count, DONKI alert list, and CMR MCP evidence works offline with zero login.
+| Target | URL | Status |
+|---|---|---|
+| **Live demo (frontend)** | https://frontend-rho-seven-69.vercel.app | Live — HTTP 200, no login, no install |
+| **Public source code** | https://github.com/SunLuiz/Curva_do_Pato | Public — HTTP 200 |
+| **Backend (optional)** | not deployed; frontend serves frozen NASA cache | Declared in the UI badge |
 
-### Backend → Hugging Face Space (Docker, CPU Basic 16 GB)
-1. Create a Docker Space on Hugging Face using the **repository root** (`Curva_do_Pato/`) as the root — it ships `Dockerfile` on port `7860` at the top level.
+The frontend serves every preset region, chart, attribution card, FIRMS count, DONKI alert list, and CMR MCP evidence from `frontend/public/cache/*.json`, so the demo runs with the backend offline, with zero login and no install step.
+
+### Optional backend → Hugging Face Space (Docker, CPU Basic 16 GB)
+1. Create a Docker Space using the **repository root** (`Curva_do_Pato/`) as root — it ships `Dockerfile` on port `7860`.
 2. Add Space Secrets: `NASA_API_KEY`, `FIRMS_MAP_KEY`.
-3. Verify `/healthz` and `/api/trend?region=campinas&variable=T2M` in an incognito browser tab.
-4. **Judge / Cold-Start Note (copy into submission page):** *The Hugging Face Docker container may sleep after inactivity; the first live custom-coordinate API request can take ~15–30 seconds to wake up. All preset regions (Campinas, Petrolina, Manaus) load instantaneously with zero wait via the built-in verified cache fallback.*
+3. Verify `/healthz` and `/api/trend?region=campinas&variable=T2M` in an incognito tab.
+4. **Judge / cold-start note:** the HF container may sleep after inactivity; the first live custom-coordinate request can take ~15–30 s to wake. All preset regions (Campinas, Petrolina, Manaus) load instantly via the built-in verified cache fallback.
 
 ---
 
@@ -57,5 +56,9 @@ npx vercel --prod
 - [x] Public repo hygiene verified (`.env` excluded by `.gitignore`)
 - [x] 100% English UI, README, references, AI disclosure, and 7-slide deck
 - [x] No NASA logo used; NASA Space Apps 2026 Campinas badge & explicit data citations included
-- [ ] Deploy Vercel + HF Space and verify URLs in an incognito window on mobile/4G
+- [x] MIT `LICENSE` present (with TeleGeography CC BY-NC-SA carve-out disclosed)
+- [x] Public demo URL verified — HTTP 200, renders without login
+- [x] Declared limitation documented (monthly `WS2M` null ⇒ no ramp-risk claim in UI or docs)
+- [ ] Re-test the live URL in an incognito window on mobile/4G after the final deploy
 - [ ] Click **Submit for Judging** before Sunday 23:00 BRT and tag `submission-final`
+

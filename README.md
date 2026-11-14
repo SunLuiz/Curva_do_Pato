@@ -4,9 +4,42 @@
 > **NASA Space Apps Challenge 2026 — Campinas, SP, Brazil**  
 > **Target Challenge:** [#2 Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/) (Earth · Advanced)
 
+**Live demo (no login, no install):** https://frontend-rho-seven-69.vercel.app  
+**Source:** https://github.com/SunLuiz/Curva_do_Pato · **License:** MIT
+
 **Cockpit-OMNI** is an open, statistically audited Earth observation and trend attribution workbench. Given any geographic region and Earth system variable, it retrieves multi-decade NASA satellite/reanalysis time series (`1984–2025`, `n = 504` months), tests trend significance using Seasonal & Original Mann-Kendall + deseasonalized Theil-Sen regression with 95% confidence intervals, and attributes observed shifts across four physical vectors with transparent operational status (`live`, `cached`, or `roadmap`).
 
 ---
+
+## The headline finding: one engine, opposite causal verdicts by biome
+
+Surface solar brightening can come from **fewer clouds** or from **cleaner air**. The same statistical engine disagrees with itself across Brazilian biomes — and the product publishes the disagreement instead of hiding it:
+
+| Region | Cloud attenuation (p) | Clear-sky irradiance (p) | Verdict |
+|---|---|---|---|
+| **Campinas-SP** | +0.038 %/dec (**p = 0.948, null**) | +0.190 (**p < 1e-16, significant**) | **Aerosol / clear-sky driven** |
+| **Petrolina-PE** | −0.965 %/dec (**p = 2.83e-09**) | +0.013 (**p = 0.290, null**) | **Cloud-driven** |
+| **Manaus-AM** | −0.855 %/dec (**p = 3.02e-08**) | +0.029 (**p = 0.769, null**) | **Cloud-driven** |
+
+This is hypothesis falsification inside the product, not decoration: the Northeast and Amazon brighten because cloud cover drops (clear-sky shows no trend, so it is not an aerosol signal); Campinas brightens because clear-sky rises while cloud attenuation shows no trend at all. The verdict is computed at runtime from the cached series — it is not hardcoded per region.
+
+### Declared limitation (monthly resolution)
+
+Wind speed `WS2M` shows **no significant trend** at any of the three stations (p = 0.489 / 0.173 / 0.451). This dataset is therefore **not valid for sub-hourly ramp-risk or battery-dispatch claims** — that would require hourly series. It is kept out of the product rather than implied, and the grid-ramp persona row is explicitly marked "not supported" in the UI.
+
+---
+
+## Who acts on these numbers
+
+| Persona | Decision it changes | Evidence |
+|---|---|---|
+| Civil defense / urban planning | Size heat-wave response for a multi-decade warming baseline in Campinas | `+0.409 °C/dec` ≈ **+1.72 °C cumulative**, 95% CI [+0.333, +0.489], p < 1e-16 |
+| Solar generation planner (NE corridor) | Decide whether rising irradiance is a durable resource gain or a cloud artifact | Cloud `−0.965 %/dec` (p = 2.83e-09) with clear-sky null (p = 0.290) |
+| Air quality & fire response (Amazon) | Separate smoke-driven aerosol forcing from cloud-cover change | Cloud `−0.855 %/dec` (p = 3.02e-08) with clear-sky null (p = 0.769) |
+| Grid ramp / storage operator | Pre-position storage ahead of an intra-hour ramp | **Not supported** — monthly `WS2M` p = 0.489 / 0.173 / 0.451; needs hourly data |
+
+---
+
 
 ## Challenge #2 Requirements — Item-by-Item Coverage
 

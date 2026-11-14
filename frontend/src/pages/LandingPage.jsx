@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowRight, CheckCircle2, Flame, Globe, LineChart, Radio, ShieldCheck, Sun } from "lucide-react";
+import CausalDivergence from "../components/CausalDivergence";
 
 export default function LandingPage({ onNavigate, fires, spaceWeather }) {
   return (
@@ -110,6 +111,80 @@ export default function LandingPage({ onNavigate, fires, spaceWeather }) {
         </div>
       </section>
 
+      <CausalDivergence />
+
+      <section style={{ marginTop: "2.5rem" }}>
+        <div className="section-header">
+          <h2>Who Acts on These Numbers</h2>
+          <span className="badge">Persona → Decision → Evidence</span>
+        </div>
+        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+          <table className="persona-table">
+            <thead>
+              <tr>
+                <th>Persona</th>
+                <th>Decision it changes</th>
+                <th>Number that supports it</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong>Civil defense / urban planning</strong>
+                  <div style={{ fontSize: "0.76rem", color: "#64748b" }}>Campinas municipality</div>
+                </td>
+                <td>Size heat-wave response and thermal load headroom for a multi-decade warming baseline.</td>
+                <td className="mono" style={{ color: "#38bdf8" }}>
+                  +0.409 °C/dec ~ +1.72 °C cumulative
+                  <div style={{ fontSize: "0.76rem", color: "#94a3b8", fontFamily: "inherit" }}>
+                    95% CI [+0.333, +0.489], p &lt; 1e-16
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Solar generation planner</strong>
+                  <div style={{ fontSize: "0.76rem", color: "#64748b" }}>Semi-arid Northeast corridor</div>
+                </td>
+                <td>Decide whether rising irradiance is a durable resource gain or a cloud artifact before committing capacity.</td>
+                <td className="mono" style={{ color: "#f59e0b" }}>
+                  Cloud −0.965 %/dec, p = 2.83e-09
+                  <div style={{ fontSize: "0.76rem", color: "#94a3b8", fontFamily: "inherit" }}>
+                    Clear-sky p = 0.290 (no trend)
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Air quality &amp; fire response</strong>
+                  <div style={{ fontSize: "0.76rem", color: "#64748b" }}>Amazon basin</div>
+                </td>
+                <td>Separate smoke-driven aerosol forcing from cloud-cover change when advising health authorities.</td>
+                <td className="mono" style={{ color: "#22d3ee" }}>
+                  Cloud −0.855 %/dec, p = 3.02e-08
+                  <div style={{ fontSize: "0.76rem", color: "#94a3b8", fontFamily: "inherit" }}>
+                    Clear-sky p = 0.769 (no trend)
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Grid ramp / storage operator</strong>
+                  <div style={{ fontSize: "0.76rem", color: "#64748b" }}>Declared out of scope</div>
+                </td>
+                <td>Pre-position battery storage ahead of an intra-hour generation ramp.</td>
+                <td className="mono" style={{ color: "#94a3b8" }}>
+                  Not supported — monthly WS2M p = 0.489 / 0.173 / 0.451
+                  <div style={{ fontSize: "0.76rem", color: "#94a3b8", fontFamily: "inherit" }}>
+                    Needs hourly series; kept out of the product
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section style={{ marginTop: "2.5rem" }}>
         <div className="section-header">
           <h2>NASA Data Sources &amp; Open Telemetry</h2>
@@ -173,10 +248,12 @@ export default function LandingPage({ onNavigate, fires, spaceWeather }) {
       <section className="card" style={{ marginTop: "2rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 600 }}>
-            <CheckCircle2 size={18} color="#34d399" /> Multi-Planetary Analog &amp; 3D Globe Showcase
+            <CheckCircle2 size={18} color="#a855f7" /> Off-World Analog Telemetry <span className="badge roadmap">roadmap</span>
           </div>
           <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginTop: "0.3rem", maxWidth: "74ch" }}>
-            Cockpit-OMNI also integrates Mars 2020 Perseverance MEDA &amp; JPL Horizons analog clients in its backend, alongside optional Cesium globe visualization credits to{" "}
+            Mars 2020 Perseverance MEDA &amp; JPL Horizons clients exist in the backend as read-only
+            analog stubs, but no off-world series is computed or displayed in this product. We
+            declare it as a one-line horizon, not as a delivered feature. Globe layer credit:{" "}
             <a href="https://github.com/bilawalsidhu/gods-eye-view" target="_blank" rel="noreferrer">
               God&apos;s Eye View (MIT)
             </a>

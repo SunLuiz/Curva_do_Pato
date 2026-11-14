@@ -89,9 +89,22 @@ export default function App() {
           <div>
             Sources: NASA POWER (MERRA-2 / CERES), NASA FIRMS (VIIRS NOAA-21 NRT), NASA DONKI, NASA Earthdata CMR MCP (C3264430167-LANCEMODIS, NISAR_L2_GUNW_PROVISIONAL_V1), and{" "}
             <a href="https://github.com/bilawalsidhu/gods-eye-view" target="_blank" rel="noreferrer">
-              God&apos;s Eye View (MIT / TeleGeography CC BY-NC-SA carve-out)
+              God's Eye View (MIT / TeleGeography CC BY-NC-SA carve-out)
             </a>
             .
+          </div>
+          <div>
+            Live demo:{" "}
+            <a href="https://frontend-rho-seven-69.vercel.app" target="_blank" rel="noreferrer">
+              frontend-rho-seven-69.vercel.app
+            </a>
+            {" · "}
+            Source:{" "}
+            <a href="https://github.com/SunLuiz/Curva_do_Pato" target="_blank" rel="noreferrer">
+              github.com/SunLuiz/Curva_do_Pato
+            </a>
+            {" · "}
+            License: MIT
           </div>
           <div style={{ color: "#64748b" }}>
             Prototype Notice: Trend estimates and attribution summaries are comparative statistical calculations over historical open NASA datasets (1984–2025) and are not certified operational forecasts.

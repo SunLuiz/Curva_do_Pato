@@ -58,7 +58,7 @@ export default function LandingPage({ onNavigate, fires, spaceWeather }) {
               <div style={{ fontSize: "0.8rem", color: "#94a3b8" }}>NASA FIRMS NRT · CMR C3264430167</div>
             </div>
             <div className="mono" style={{ color: "#f59e0b", fontWeight: 700, fontSize: "1.05rem" }}>
-              {fires ? `${fires.count.toLocaleString()} fires` : "3,313 fires"}
+              {fires ? `${Number(fires.count).toLocaleString("en-US")} fires` : "3,313 fires"}
             </div>
           </div>
 

@@ -50,8 +50,8 @@ export default function App() {
               </svg>
             </div>
             <div>
-              <span className="brand-title">Cockpit-OMNI</span>
-              <span className="brand-sub">Earth System Trend Detective · Space Apps 2026</span>
+              <span className="brand-title">Cockpit-OMNI · Team Curva do Pato</span>
+              <span className="brand-sub">Be An Earth System Trend Detective! · Space Apps 2026</span>
             </div>
           </div>
 
@@ -84,7 +84,7 @@ export default function App() {
       <footer className="footer">
         <div className="footer-inner">
           <div>
-            <strong>Built at NASA Space Apps Challenge 2026 — Campinas, SP, Brazil</strong> · No NASA logo or insignia is used; all NASA datasets are cited directly below.
+            <strong>Team Curva do Pato (Luiz Antonio Gois Junior) · Built at NASA Space Apps Challenge 2026 — Campinas, SP, Brazil</strong> · No NASA logo or insignia is used; all NASA datasets are cited directly below.
           </div>
           <div>
             Sources: NASA POWER (MERRA-2 / CERES), NASA FIRMS (VIIRS NOAA-21 NRT), NASA DONKI, NASA Earthdata CMR MCP (C3264430167-LANCEMODIS, NISAR_L2_GUNW_PROVISIONAL_V1), and{" "}

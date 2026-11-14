@@ -1,5 +1,7 @@
 # Cockpit-OMNI — NASA Space Apps Challenge 2026 Submission Pack
 
+**Team:** Curva do Pato  
+**Participant / Lead:** Luiz Antonio Gois Junior  
 **Location:** Campinas, SP, Brazil  
 **Challenge:** #2 — Be An Earth System Trend Detective! (Earth · Advanced)  
 **Language:** 100% English (app, documentation, repository, pitch deck)
@@ -46,6 +48,7 @@ npx vercel --prod
 1. Create a Docker Space on Hugging Face using the **repository root** (`Curva_do_Pato/`) as the root — it ships `Dockerfile` on port `7860` at the top level.
 2. Add Space Secrets: `NASA_API_KEY`, `FIRMS_MAP_KEY`.
 3. Verify `/healthz` and `/api/trend?region=campinas&variable=T2M` in an incognito browser tab.
+4. **Judge / Cold-Start Note (copy into submission page):** *The Hugging Face Docker container may sleep after inactivity; the first live custom-coordinate API request can take ~15–30 seconds to wake up. All preset regions (Campinas, Petrolina, Manaus) load instantaneously with zero wait via the built-in verified cache fallback.*
 
 ---
 

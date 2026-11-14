@@ -1,0 +1,138 @@
+{
+  "project": "Cockpit-OMNI",
+  "team": "Curva do Pato",
+  "challenge_number": 2,
+  "challenge_title": "Be An Earth System Trend Detective!",
+  "roster": [
+    {
+      "name": "Luiz Antonio Gois Junior",
+      "roles": [
+        "Coordenação",
+        "Dados",
+        "Desenvolvimento",
+        "Design",
+        "História e demo"
+      ]
+    }
+  ],
+  "sprints": [
+    {
+      "id": "sprint-001",
+      "name": "Desafio e frase-objetivo",
+      "target_local": "sábado à tarde",
+      "can_slide_until": "mesmo bloco da tarde, junto com a sprint-002",
+      "owner": "Luiz Antonio Gois Junior",
+      "owner_role": "Coordenação",
+      "status": "Feito",
+      "acceptance_criteria": [
+        "PRD com título oficial (#2 Be An Earth System Trend Detective!), usuário e ação observável"
+      ]
+    },
+    {
+      "id": "sprint-002",
+      "name": "Papéis, quadro e serviço",
+      "target_local": "sábado à tarde",
+      "can_slide_until": "fim da tarde de sábado",
+      "owner": "Luiz Antonio Gois Junior",
+      "owner_role": "Coordenação",
+      "status": "Feito",
+      "acceptance_criteria": [
+        "Responsável atribuído para todas as frentes (Luiz Antonio Gois Junior - Equipe Curva do Pato)",
+        "Essencial e desejável documentados no PRD",
+        "Serviços escolhidos: Vercel (Frontend + cache offline) e Hugging Face Spaces Docker (Backend FastAPI)"
+      ]
+    },
+    {
+      "id": "sprint-003",
+      "name": "Dado da NASA testado",
+      "target_local": "sábado à noite",
+      "can_slide_until": "trocar de ordem com a sprint-004",
+      "owner": "Luiz Antonio Gois Junior",
+      "owner_role": "Dados",
+      "status": "Feito",
+      "acceptance_criteria": [
+        "Endpoints NASA POWER (1984-2025, n=504), NASA FIRMS (VIIRS_NOAA21_NRT), NASA DONKI e Earthdata CMR MCP v1 abertos e validados",
+        "Frase do dado registrada no PRD",
+        "Snapshots verificados salvos em data/ e frontend/public/cache/ para resiliência offline"
+      ]
+    },
+    {
+      "id": "sprint-004",
+      "name": "Esqueleto",
+      "target_local": "sábado à noite",
+      "can_slide_until": "antes da sprint-005",
+      "owner": "Luiz Antonio Gois Junior",
+      "owner_role": "Desenvolvimento",
+      "status": "Feito",
+      "acceptance_criteria": [
+        "Interface React + Vite e API FastAPI estruturadas com rotas Overview, Trend Engine e Attribution & Sources"
+      ]
+    },
+    {
+      "id": "sprint-005",
+      "name": "Essencial na tela",
+      "target_local": "domingo até o meio da tarde",
+      "can_slide_until": "antes de publicar",
+      "owner": "Luiz Antonio Gois Junior",
+      "owner_role": "Desenvolvimento",
+      "status": "Feito",
+      "acceptance_criteria": [
+        "Variável, região, série temporal de 42 anos (504 meses) e testes Seasonal/Original Mann-Kendall + Theil-Sen IC 95% visíveis na tela",
+        "Veredito claro na tela respondendo se a mudança é estatisticamente significativa (α = 0.05)"
+      ]
+    },
+    {
+      "id": "sprint-006",
+      "name": "No ar (Deploy)",
+      "target_local": "domingo à tarde",
+      "can_slide_until": "antes da demo",
+      "owner": "Luiz Antonio Gois Junior",
+      "owner_role": "Desenvolvimento",
+      "status": "Fazendo",
+      "acceptance_criteria": [
+        "Chaves fora do repositório público (.env ignorado no .gitignore)",
+        "Dockerfile pronto na porta 7860 para Hugging Face Spaces e build Vite pronto para Vercel",
+        "Aviso de cold-start do HF Space documentado e fallback imediato via cache congelado",
+        "Abrir URL final publicada em aba anônima sem login"
+      ]
+    },
+    {
+      "id": "sprint-007",
+      "name": "Demo conforme",
+      "target_local": "domingo, fim da tarde",
+      "can_slide_until": "antes da página de envio",
+      "owner": "Luiz Antonio Gois Junior",
+      "owner_role": "História e demo",
+      "status": "Feito",
+      "acceptance_criteria": [
+        "7 slides em 100% inglês (docs/pitch_deck.html)",
+        "Nome da equipe (Curva do Pato) e título oficial (Be An Earth System Trend Detective!) no Slide 1",
+        "Prova real dos dados NASA POWER/FIRMS/DONKI/CMR, impacto e conformidade sem logo da NASA"
+      ]
+    },
+    {
+      "id": "sprint-008",
+      "name": "Página de envio",
+      "target_local": "domingo à noite",
+      "can_slide_until": "antes do botão",
+      "owner": "Luiz Antonio Gois Junior",
+      "owner_role": "Coordenação",
+      "status": "Feito",
+      "acceptance_criteria": [
+        "Textos prontos em SUBMISSION.md, REFERENCES.md e AI_DISCLOSURE.md para colar na página oficial"
+      ]
+    },
+    {
+      "id": "sprint-009",
+      "name": "Enviado (Submit for Judging)",
+      "target_local": "domingo por volta das 23h",
+      "can_slide_until": "domingo 15/11 às 23h59 (prazo fixo)",
+      "owner": "Luiz Antonio Gois Junior",
+      "owner_role": "Coordenação",
+      "status": "A fazer",
+      "acceptance_criteria": [
+        "Colar links finais na página do Space Apps e clicar em Submit for Judging antes das 23h59 de domingo"
+      ]
+    }
+  ]
+}

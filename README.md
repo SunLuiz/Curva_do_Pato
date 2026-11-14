@@ -1,5 +1,6 @@
-# Cockpit-OMNI — Earth System Trend Detective
+# Cockpit-OMNI — Be An Earth System Trend Detective!
 
+> **Team:** Curva do Pato · **Author / Lead:** Luiz Antonio Gois Junior  
 > **NASA Space Apps Challenge 2026 — Campinas, SP, Brazil**  
 > **Target Challenge:** [#2 Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/) (Earth · Advanced)
 

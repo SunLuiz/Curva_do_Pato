@@ -15,6 +15,7 @@ if str(ROOT / "backend") not in sys.path:
 
 from app.clients.horizons_client import HorizonsClient
 from app.clients.meda_client import MedaClient
+from app.clients.ons_client import OnsClient
 from app.clients.power_client import PowerClient
 
 
@@ -80,6 +81,18 @@ def run_live_smoke_checks(out_dir: Path | None = None) -> dict[str, str]:
         print("[MEDA  ] FAIL", e)
     finally:
         c_meda.close()
+
+    # 4) ONS — open data (catalog)
+    c_ons = OnsClient()
+    try:
+        res = c_ons.package_search("geracao eolica", rows=3)
+        save("ons_search.json", {"packages": res})
+        print(f"[ONS   ] OK  {len(res)} datasets found | first: {res[0]['title'] if res else 'n/a'}")
+    except Exception as e:
+        result["ons"] = f"FAIL {e}"
+        print("[ONS   ] FAIL", e)
+    finally:
+        c_ons.close()
 
     print("\n=== SUMMARY ===")
     for k, v in result.items():

@@ -1,0 +1,19 @@
+{
+  "packages": [
+    {
+      "id": "geracao-usina-2",
+      "name": "geracao-usina-2",
+      "title": "Geração por Usina em Base Horária"
+    },
+    {
+      "id": "curva-carga",
+      "name": "curva-carga",
+      "title": "Curva de Carga Horária por Subsistema"
+    },
+    {
+      "id": "fator-capacidade-2",
+      "name": "fator-capacidade-2",
+      "title": "Fator de Capacidade Eólico e Solar Horário"
+    }
+  ]
+}

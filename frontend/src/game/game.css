@@ -969,6 +969,28 @@
   font-weight: 600;
 }
 
+.raw-table.hof-table {
+  font-size: 0.78rem;
+}
+
+.raw-table.hof-table th,
+.raw-table.hof-table td {
+  padding: 0.44rem 0.36rem;
+}
+
+.raw-table.hof-table th:first-child,
+.raw-table.hof-table td:first-child {
+  padding-left: 0.52rem;
+  width: 1.4rem;
+}
+
+.raw-table.hof-table th:last-child,
+.raw-table.hof-table td:last-child {
+  padding-right: 0.52rem;
+  text-align: right;
+}
+
+
 /* Gear Audio Trigger in Start Menu (menu opens collapsed by default) */
 .start-gear-btn {
   display: inline-flex;

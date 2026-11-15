@@ -203,6 +203,8 @@ function parseGameLaunchQuery(searchStr) {
 export default function GamePage({
   profile,
   hallOfFame = [],
+  rankingStatus,
+  onRefreshRanking,
   onSaveProfile,
   onForgetProfile,
   onOpenCockpit,
@@ -1369,7 +1371,14 @@ export default function GamePage({
 
         {/* 5. Ranking (Hall of Fame) & Strict Official Diploma */}
         <div className="grid grid-2" style={{ alignItems: "start" }}>
-          <HallOfFame rows={hallOfFame} currentName={profile.name} />
+          <HallOfFame
+            rows={hallOfFame}
+            currentName={profile.name}
+            currentPilotId={profile.pilotId}
+            lang={l}
+            rankingStatus={rankingStatus}
+            onRefreshRanking={onRefreshRanking}
+          />
           <DiplomaCanvas profile={profile} lang={lang} />
         </div>
       </div>

@@ -1,11 +1,13 @@
-import React, { Suspense, lazy, useCallback, useEffect, useState } from "react";
+import React, { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import AppShell from "./components/AppShell";
 import AskPanel from "./components/AskPanel";
 import StoryPage from "./pages/StoryPage";
 import CockpitPage from "./pages/CockpitPage";
 import { API_BASE, getFires, getSpaceWeather, verifyTrendLive } from "./api";
 import { probeBackend } from "./engine/trend";
+import { fetchGlobalRanking, submitGlobalRanking } from "./engine/rankingClient";
 import {
+  buildRankingEntry,
   forgetProfile,
   loadHallOfFame,
   loadProfile,
@@ -61,7 +63,15 @@ export default function App() {
   const [backendStatus, setBackendStatus] = useState({ live: false, reason: "checking" });
   const [profile, setProfile] = useState(() => loadProfile());
   const [hallOfFame, setHallOfFame] = useState(() => loadHallOfFame());
+  const [rankingStatus, setRankingStatus] = useState({
+    mode: "local_only",
+    storage: "browser_local",
+    syncing: false,
+    syncedAt: null,
+  });
   const [lang, setLang] = useState("en");
+  const rankingLoadedRef = useRef(false);
+  const lastPushedSigRef = useRef("");
 
   useEffect(() => {
     if (initial.normalized) {
@@ -152,17 +162,92 @@ export default function App() {
     return result;
   }, []);
 
-  const handleSaveProfile = useCallback((next) => {
-    const saved = saveProfile(next);
-    setProfile(saved);
-    setHallOfFame(loadHallOfFame());
+  const rankingSignature = useCallback((p) => {
+    const e = buildRankingEntry(p);
+    if (!e) return "";
+    return `${e.pilotId}:${e.name}:${e.xp}:${e.stars}:${e.masteredCount}:${e.missionsWon}:${e.badgesCount}:${e.depth}`;
   }, []);
 
+  const refreshGlobalRanking = useCallback(
+    async (targetProfile = profile) => {
+      setRankingStatus((prev) => ({ ...prev, syncing: true }));
+      const localRows = loadHallOfFame();
+      const fetched = await fetchGlobalRanking({ localRows });
+      let finalResult = fetched;
+
+      const entry = buildRankingEntry(targetProfile);
+      if (fetched.mode === "global_live" && entry) {
+        const remoteMatch = fetched.rows.find((r) => r.pilotId === entry.pilotId);
+        const needsPush =
+          !remoteMatch ||
+          entry.xp > (remoteMatch.xp || 0) ||
+          entry.stars > (remoteMatch.stars || 0) ||
+          entry.masteredCount > (remoteMatch.masteredCount || 0) ||
+          entry.missionsWon > (remoteMatch.missionsWon || 0) ||
+          entry.name !== remoteMatch.name;
+        if (needsPush) {
+          const submitted = await submitGlobalRanking(targetProfile, { localRows: fetched.rows });
+          if (submitted.persisted) {
+            finalResult = submitted;
+            lastPushedSigRef.current = rankingSignature(targetProfile);
+          }
+        }
+      }
+
+      setHallOfFame(finalResult.rows);
+      setRankingStatus({
+        mode: finalResult.mode,
+        storage: finalResult.storage,
+        syncedAt: finalResult.syncedAt,
+        syncing: false,
+      });
+    },
+    [profile, rankingSignature]
+  );
+
+  useEffect(() => {
+    if (route === "/game" && !rankingLoadedRef.current) {
+      rankingLoadedRef.current = true;
+      refreshGlobalRanking(profile);
+    }
+  }, [route, profile, refreshGlobalRanking]);
+
+  const handleSaveProfile = useCallback(
+    (next) => {
+      const saved = saveProfile(next);
+      setProfile(saved);
+      const localUpdated = loadHallOfFame();
+      setHallOfFame(localUpdated);
+
+      const sig = rankingSignature(saved);
+      if (sig && sig !== lastPushedSigRef.current) {
+        lastPushedSigRef.current = sig;
+        setRankingStatus((prev) => ({ ...prev, syncing: true }));
+        submitGlobalRanking(saved, { localRows: localUpdated })
+          .then((res) => {
+            setHallOfFame(res.rows);
+            setRankingStatus({
+              mode: res.mode,
+              storage: res.storage,
+              syncedAt: res.syncedAt,
+              syncing: false,
+            });
+          })
+          .catch(() => {
+            setRankingStatus((prev) => ({ ...prev, syncing: false }));
+          });
+      }
+    },
+    [rankingSignature]
+  );
+
   const handleForgetProfile = useCallback(() => {
-    const cleared = forgetProfile(profile.name);
+    const cleared = forgetProfile(profile.name, undefined, profile.pilotId);
+    lastPushedSigRef.current = "";
     setProfile(cleared);
     setHallOfFame(loadHallOfFame());
-  }, [profile.name]);
+    refreshGlobalRanking(cleared);
+  }, [profile.name, profile.pilotId, refreshGlobalRanking]);
 
   return (
     <AppShell route={route} onNavigate={navigate} lang={lang} setLang={setLang} fullBleed={route === "/"}>
@@ -196,6 +281,8 @@ export default function App() {
           <GamePage
             profile={profile}
             hallOfFame={hallOfFame}
+            rankingStatus={rankingStatus}
+            onRefreshRanking={() => refreshGlobalRanking(profile)}
             onSaveProfile={handleSaveProfile}
             onForgetProfile={handleForgetProfile}
             onOpenCockpit={handleCockpitAction}

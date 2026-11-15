@@ -145,3 +145,24 @@ python -m pytest backend/tests -q
 ## 7. Bilingual Architecture Note (`EN | PT-BR`)
 
 All source code, repository documentation (`README.md`, `SUBMISSION.md`, `REFERENCES.md`, `AI_DISCLOSURE.md`, `AGENTS.md`, `docs/*.md`, `docs/pitch_deck.html`), and default UI states are **100% in English**. The interactive web application includes a live `EN | PT-BR` language toggle in the top header (`frontend/src/content/i18n.js`, `glossary.js`, `story.js`, `missionParams.js`, and bilingual auto-detection in `askEngine.js`) so both international reviewers and Brazilian citizens can inspect the data in their preferred language.
+
+---
+
+## 8. Worldwide Hall of Fame Persistence (`frontend/api/ranking.js`)
+
+Because browser JavaScript is public, GitHub write tokens or database secrets must **never** live in `frontend/src/`. Instead, `frontend/api/ranking.js` provides an open-CORS (`Access-Control-Allow-Origin: *`) Vercel serverless endpoint at `/api/ranking`:
+
+- **Production web visitors (`www.curveofduck.xyz`)** hit same-origin `/api/ranking`.
+- **Local clones (`localhost:5173`, downloaded ZIPs)** automatically connect to `https://www.curveofduck.xyz/api/ranking` (`resolveRankingEndpoint()` in `frontend/src/engine/rankingClient.js`) so both web and local players share one global Top-100 ranking, with seamless `localStorage` fallback when offline.
+
+### How to Enable Persistent Storage on Vercel (Choose 1 of 3 Drivers)
+
+1. **GitHub Gist (Recommended 1-minute GitHub setup, avoids redeploy loops):**
+   - Create a Gist with one file named `curve_of_duck_ranking.json` containing `[]`.
+   - Create a GitHub token scoped only to `gists`.
+   - In Vercel **Project Settings -> Environment Variables**, add `GITHUB_RANKING_TOKEN` and `GITHUB_RANKING_GIST_ID`.
+2. **Dedicated GitHub Branch (`leaderboard-data`):**
+   - Create a `leaderboard-data` branch (never use `main`, which triggers Vercel builds on every score update).
+   - Add `GITHUB_RANKING_TOKEN` (scoped `Contents: Read & Write` to this repo) plus optional `GITHUB_RANKING_REPO` and `GITHUB_RANKING_BRANCH`. Concurrent writes retry automatically on HTTP `409`.
+3. **Upstash / Vercel Redis REST (Best for high concurrency):**
+   - Connect an Upstash Redis / Vercel KV integration so `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (or `KV_REST_API_*`) are injected automatically.

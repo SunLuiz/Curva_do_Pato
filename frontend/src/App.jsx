@@ -3,6 +3,7 @@ import AppShell from "./components/AppShell";
 import AskPanel from "./components/AskPanel";
 import StoryPage from "./pages/StoryPage";
 import CockpitPage from "./pages/CockpitPage";
+import { applyDocumentMeta } from "./content/routeMeta";
 import { API_BASE, getFires, getSpaceWeather, verifyTrendLive } from "./api";
 import { probeBackend } from "./engine/trend";
 import { fetchGlobalRanking, submitGlobalRanking } from "./engine/rankingClient";
@@ -78,6 +79,10 @@ export default function App() {
       window.history.replaceState({}, "", initial.normalized);
     }
   }, []);
+
+  useEffect(() => {
+    applyDocumentMeta({ route, lang });
+  }, [route, lang]);
 
   useEffect(() => {
     const onPop = () => {

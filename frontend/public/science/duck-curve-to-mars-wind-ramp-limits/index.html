@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>From Duck Curve to Mars: Planetary Trend-Detection Analog &amp; Monthly Wind Limits</title>
+    <meta
+      name="description"
+      content="How Cockpit-OMNI bridges Earth's Beer-Lambert solar Duck Curve to Mars 2020 MEDA & Artemis lunar rover physics (Theta vector, 64 m plume inversion, 7 agents + non-LLM auditor) — and why monthly NASA POWER WS2M (p=0.489) cannot claim intra-hour wind ramps."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" sizes="48x48" type="image/png" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#1F6F8B" />
+    <link rel="canonical" href="https://www.curveofduck.xyz/science/duck-curve-to-mars-wind-ramp-limits/" />
+    <link rel="alternate" type="text/plain" title="LLMs Context" href="/llms.txt" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Curve of Duck · Cockpit-OMNI" />
+    <meta property="og:url" content="https://www.curveofduck.xyz/science/duck-curve-to-mars-wind-ramp-limits/" />
+    <meta property="og:title" content="From Duck Curve to Mars: A Planetary Trend-Detection Analog &amp; Why Monthly Wind Data Can't Claim Ramp Risk" />
+    <meta
+      property="og:description"
+      content="One optical law (100*exp(-0.55*tau)) unites Brazilian wildfire smoke and Jezero Crater dust storms, paired with honest WS2M null boundaries (p = 0.489 / 0.1734 / 0.4512)."
+    />
+    <meta property="og:image" content="https://www.curveofduck.xyz/og-cover.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://www.curveofduck.xyz/og-cover.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --surface-0: #FAF7F2;
+        --surface-1: #FFFFFF;
+        --surface-2: #F3EEE5;
+        --hairline: #E4DCCF;
+        --ink: #1C1B19;
+        --ink-soft: #6B6760;
+        --biome-se: #2A7047;
+        --biome-ne: #8F5D15;
+        --biome-n: #1F6F8B;
+        --null-ink: #736446;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: var(--surface-0);
+        color: var(--ink);
+        font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.68;
+      }
+      header {
+        background: var(--surface-1);
+        border-bottom: 1px solid var(--hairline);
+        padding: 0.9rem 1.5rem;
+      }
+      .nav-wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .brand-link {
+        font-family: "Fraunces", Georgia, serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      nav { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      nav a {
+        color: var(--ink-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.88rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid var(--hairline);
+        background: var(--surface-0);
+      }
+      article {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 2.25rem 1.5rem 3.5rem;
+      }
+      .eyebrow {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--biome-n);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      h1 {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: clamp(1.85rem, 3.2vw, 2.48rem);
+        line-height: 1.18;
+        margin-top: 0.55rem;
+      }
+      .meta-line { margin-top: 0.8rem; font-size: 0.9rem; color: var(--ink-soft); }
+      .answer-box {
+        margin-top: 1.4rem;
+        padding: 1.25rem 1.4rem;
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        border-left: 4px solid var(--biome-n);
+        border-radius: 14px;
+      }
+      section { margin-top: 2rem; }
+      h2 { font-family: "Fraunces", Georgia, serif; font-size: 1.42rem; margin-bottom: 0.65rem; }
+      p { margin-top: 0.65rem; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        font-size: 0.9rem;
+      }
+      th, td {
+        text-align: left;
+        padding: 0.65rem;
+        border-bottom: 1px solid var(--hairline);
+      }
+      th {
+        background: var(--surface-2);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--ink-soft);
+        text-transform: uppercase;
+      }
+      code, .mono { font-family: "JetBrains Mono", monospace; font-size: 0.86em; }
+      .null { color: var(--null-ink); font-weight: 700; }
+      footer {
+        border-top: 1px solid var(--hairline);
+        background: var(--surface-1);
+        padding: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+      }
+      .foot-wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+      a { color: var(--biome-n); }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ScholarlyArticle",
+            "@id": "https://www.curveofduck.xyz/science/duck-curve-to-mars-wind-ramp-limits/#article",
+            "headline": "From Duck Curve to Mars: A Planetary Trend-Detection Analog — and Why Monthly Wind Data Can't Claim Ramp Risk",
+            "description": "Unifying Earth solar Duck Curve atmospheric attenuation with Mars 2020 MEDA and Lunar Artemis rover thermodynamics via the Planetary Context Vector Theta, while declaring monthly NASA POWER WS2M null limits.",
+            "datePublished": "2026-11-15",
+            "dateModified": "2026-11-15",
+            "inLanguage": "en",
+            "author": { "@type": "Person", "name": "Luiz Antonio Gois Junior" },
+            "publisher": { "@type": "Organization", "name": "Team Curva do Pato — Cockpit-OMNI", "url": "https://www.curveofduck.xyz/" },
+            "mainEntityOfPage": "https://www.curveofduck.xyz/science/duck-curve-to-mars-wind-ramp-limits/"
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Can NASA POWER monthly wind speed (WS2M) predict hourly wind ramps or battery dispatch?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Across 504 monthly observations (1984-2025), NASA POWER WS2M exhibits no statistically significant trend in Campinas (p = 0.4890), Petrolina (p = 0.1734), or Manaus (p = 0.4512). Monthly 2m averages also smooth out 15-minute hub-height gusts, so Cockpit-OMNI explicitly flags intra-hour ramp risk as unsupported."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How does Cockpit-OMNI link Earth's solar Duck Curve to Mars and Lunar rover physics?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Both Cockpit Space Analog (MPTO) and Curve of Duck: Rover Pilot 3D (/game) apply Beer-Lambert optical attenuation (100 * exp(-0.55 * tau)) and a 6-parameter Planetary Context Vector Theta = [g, rho, cpDust, kRegolith, baseTau, albedoIrGain] across Earth, Mars Jezero Crater (Perseverance MEDA), and Moon South Pole Artemis."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="nav-wrap">
+        <a class="brand-link" href="/">Cockpit-OMNI · Curve of Duck</a>
+        <nav aria-label="Article Navigation">
+          <a href="/">Story</a>
+          <a href="/cockpit">Cockpit</a>
+          <a href="/game">3D Game</a>
+          <a href="/science/">Science Hub</a>
+          <a href="/llms.txt">llms.txt</a>
+        </nav>
+      </div>
+    </header>
+
+    <article>
+      <div class="eyebrow">Monograph C · Planetary Physics Analog &amp; Epistemic Boundaries</div>
+      <h1>From Duck Curve to Mars: A Planetary Trend-Detection Analog — and Why Monthly Wind Data Can't Claim Ramp Risk</h1>
+      <p class="meta-line">
+        <strong>Author:</strong> Luiz Antonio Gois Junior · <strong>Simulator:</strong> <a href="https://www.curveofduck.xyz/game">Rover Pilot 3D (/game)</a> &amp; <a href="https://www.curveofduck.xyz/cockpit?tab=space">Space Analog MPTO</a>
+      </p>
+
+      <div class="answer-box">
+        <strong>Direct Answer:</strong> In <strong>Cockpit-OMNI · Curve of Duck</strong>, Earth's solar Duck Curve (midday photovoltaic surplus followed by sunset ramp, modulated by wildfire smoke and clouds) and Mars Jezero Crater rover survival obey the exact same Beer-Lambert optical attenuation equation: <code>pvYieldPct = 100 * exp(-0.55 * tau)</code>. At the same time, the platform demonstrates scientific falsification honesty by explicitly barring monthly <code>WS2M</code> wind speed (<code>p = 0.4890</code> in Campinas, <code>0.1734</code> in Petrolina, <code>0.4512</code> in Manaus) from intra-hour grid-ramp or turbine-gust claims.
+      </div>
+
+      <section>
+        <h2>1. Why can't monthly NASA POWER wind speed (`WS2M`) support sub-hourly ramp claims?</h2>
+        <p>
+          <strong>Direct Answer:</strong> Monthly 2m wind averages hide sub-hourly gusts and show zero long-term statistical significance at any Brazilian benchmark station (<code>p &gt; 0.17</code> everywhere), so claiming battery-dispatch readiness from <code>WS2M</code> would violate empirical validity.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Station (1984–2025, n = 504)</th>
+              <th><code>WS2M</code> Slope / Decade</th>
+              <th>95% CI</th>
+              <th>Seasonal τ</th>
+              <th>Seasonal p-value</th>
+              <th>Operational Status in Cockpit-OMNI</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Campinas-SP</td><td class="mono">-0.0042 m/s/dec</td><td class="mono">[-0.0191, +0.0103]</td><td class="mono">-0.021</td><td class="mono">0.4890</td><td class="null">Null — Not supported for hourly ramps</td></tr>
+            <tr><td>Petrolina-PE</td><td class="mono">-0.0138 m/s/dec</td><td class="mono">[-0.0433, +0.0168]</td><td class="mono">-0.042</td><td class="mono">0.1734</td><td class="null">Null — Not supported for hourly ramps</td></tr>
+            <tr><td>Manaus-AM</td><td class="mono">-0.0007 m/s/dec</td><td class="mono">[-0.0034, +0.0013]</td><td class="mono">-0.023</td><td class="mono">0.4512</td><td class="null">Null — Not supported for hourly ramps</td></tr>
+          </tbody>
+        </table>
+        <p>
+          To contrast monthly resolution against high-frequency gust physics, Mission <code>M2</code> of <em>Rover Pilot 3D</em> pairs the flat monthly <code>WS2M</code> baseline (<code>p = 0.489</code>) with real <strong>NASA Mars 2020 MEDA Sol 40</strong> telemetry (<code>19,100</code> rows: <code>p50 = 2.11 m/s</code>, <code>p99 = 4.11 m/s</code>, <code>max = 5.36 m/s</code>), teaching players why temporal sampling rate determines operational safety. Mission <code>M3</code> likewise demonstrates deterministic data hygiene by filtering <code>867</code> sentinel <code>999999999.0</code> values (<code>4.54%</code>) out of the raw MEDA stream.
+        </p>
+      </section>
+
+      <section>
+        <h2>2. How does the Planetary Context Vector (Θ) unify Earth, Mars, and the Moon?</h2>
+        <p>
+          <strong>Direct Answer:</strong> Both <code>planetaryPhysics.js</code> and <code>mptoEngine.js</code> execute a single universal transfer physics engine driven by <code>Θ = [g, rho, cpDust, kRegolith, baseTau, albedoIrGain]</code>, explicitly labeled <code>PARAMETRIC PHYSICAL MODEL (MPTO)</code> whenever synthetic trajectories are simulated.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Active World ID</th>
+              <th>Environment</th>
+              <th>Gravity <code>g</code> (m/s²)</th>
+              <th>Air Density <code>rho</code> (kg/m³)</th>
+              <th>Nominal <code>baseTau</code></th>
+              <th>Crater IR Albedo Gain</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">earth_ne</td><td>Petrolina-PE · Caatinga Solar Corridor</td><td class="mono">9.81</td><td class="mono">1.225</td><td class="mono">0.22</td><td class="mono">0.00</td></tr>
+            <tr><td class="mono">earth_se</td><td>Campinas-SP · Atlantic/Cerrado</td><td class="mono">9.81</td><td class="mono">1.225</td><td class="mono">0.30</td><td class="mono">0.00</td></tr>
+            <tr><td class="mono">earth_am</td><td>Manaus-AM · Amazon Basin</td><td class="mono">9.81</td><td class="mono">1.225</td><td class="mono">0.35</td><td class="mono">0.00</td></tr>
+            <tr><td class="mono">mars_jezero</td><td>Mars · Jezero Crater (MEDA)</td><td class="mono">3.71</td><td class="mono">0.020</td><td class="mono">0.60</td><td class="mono">0.04</td></tr>
+            <tr><td class="mono">moon_artemis</td><td>Moon · South Pole Crater &amp; Lava Tube</td><td class="mono">1.62</td><td class="mono">0.000 (vacuum)</td><td class="mono">0.05</td><td class="mono">0.13</td></tr>
+          </tbody>
+        </table>
+        <p>
+          Inside the 3D simulation and MPTO orchestrator, 64 m retro-rocket impulse-response inversion (grounded in Vizcaino et al., AIAA DOI <code>10.2514/1.A35748</code>) separates low-slip compact basalt (<code>1.0x Wh/km</code>) from unconsolidated eolian sand traps in Alpha Crater (<code>&gt;= 44%</code> wheel slip, <code>1.8x Wh/km</code> energy distance), while seven physical agents (<em>Hebe Radiance</em>, <em>Gemini Vision</em>, <em>Sol Invicta</em>, <em>Bios Guardian</em> informed by NASA OSDR <code>OSD-615</code>, <em>Grok Cratera</em>, <em>Storm Watcher</em> fed by <strong>NASA DONKI</strong>, and <em>Prudence</em>) operate under a deterministic non-LLM Statistical Auditor veto and open feeds from <strong>NASA DSN Now</strong> and <strong>CelesTrak NORAD GP</strong>.
+        </p>
+      </section>
+    </article>
+
+    <footer>
+      <div class="foot-wrap">
+        <span>Cockpit-OMNI · Curve of Duck · NASA Space Apps Challenge 2026</span>
+        <span><a href="/science/brazilian-biomes-solar-brightening-1984-2025/">Monograph A</a> · <a href="/science/northeast-brazil-solar-irradiance-clouds-vs-aerosols/">Monograph B</a> · <a href="/game">Launch 3D Rover</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -55,9 +55,9 @@ export default function CockpitPage({
       <div className="section-header">
         <div>
           <span className="badge sig">1984–2025 Earth System &amp; Space Analog Workbench</span>
-          <h2 style={{ marginTop: "0.45rem" }}>
+          <h1 style={{ marginTop: "0.45rem" }}>
             {l === "pt" ? "Cockpit de Tendências e Ação Climática" : "Earth System Trend Cockpit"}
-          </h2>
+          </h1>
         </div>
       </div>
 

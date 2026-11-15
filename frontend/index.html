@@ -3,26 +3,132 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cockpit-OMNI — Earth System Trend Detective</title>
+    <title>Curve of Duck · Cockpit-OMNI — NASA Earth System Trend Detective</title>
     <meta
       name="description"
-      content="Open statistical trend detection, interactive detective academy, and multi-vector attribution over 42 years of NASA Earth observation datasets. Built at NASA Space Apps Challenge 2026 — Campinas."
+      content="Open statistical trend detection, zero-login detective academy, and multi-vector attribution over 42 years of NASA POWER telemetry (1984–2025). Built at NASA Space Apps Challenge 2026 — Campinas."
     />
+    <meta name="theme-color" content="#2A7047" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" sizes="48x48" type="image/png" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="canonical" href="https://www.curveofduck.xyz/" />
+    <link rel="alternate" type="text/plain" title="LLMs Context" href="/llms.txt" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Curve of Duck · Cockpit-OMNI" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="pt_BR" />
     <meta property="og:url" content="https://www.curveofduck.xyz/" />
-    <meta property="og:title" content="Cockpit-OMNI — Earth System Trend Detective" />
+    <meta property="og:title" content="Curve of Duck · Cockpit-OMNI — NASA Earth System Trend Detective" />
     <meta
       property="og:description"
       content="42 years of NASA telemetry, Seasonal Mann-Kendall + Theil-Sen trend verification, open natural-language Q&A, and Curve of Duck 3D Rover Pilot."
     />
+    <meta property="og:image" content="https://www.curveofduck.xyz/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Cockpit-OMNI Curve of Duck — 42-year NASA POWER trends in Campinas, Petrolina, and Manaus"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Curve of Duck · Cockpit-OMNI — NASA Earth System Trend Detective" />
+    <meta
+      name="twitter:description"
+      content="42 years of NASA telemetry, Seasonal Mann-Kendall + Theil-Sen trend verification, open natural-language Q&A, and Curve of Duck 3D Rover Pilot."
+    />
+    <meta name="twitter:image" content="https://www.curveofduck.xyz/og-cover.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://www.curveofduck.xyz/#organization",
+            "name": "Team Curva do Pato",
+            "alternateName": ["Curve of Duck", "Equipe Curva do Pato"],
+            "url": "https://www.curveofduck.xyz/",
+            "sameAs": ["https://github.com/SunLuiz/Curva_do_Pato"],
+            "founder": {
+              "@type": "Person",
+              "@id": "https://www.curveofduck.xyz/#author",
+              "name": "Luiz Antonio Gois Junior"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://www.curveofduck.xyz/#website",
+            "url": "https://www.curveofduck.xyz/",
+            "name": "Curve of Duck · Cockpit-OMNI",
+            "inLanguage": ["en", "pt-BR"],
+            "publisher": { "@id": "https://www.curveofduck.xyz/#organization" }
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://www.curveofduck.xyz/#app",
+            "name": "Cockpit-OMNI · Curve of Duck",
+            "alternateName": ["Cockpit-OMNI", "Curve of Duck: Rover Pilot 3D"],
+            "url": "https://www.curveofduck.xyz/",
+            "applicationCategory": "EducationalApplication",
+            "applicationSubCategory": "Earth Observation & Climate Trend Analytics",
+            "operatingSystem": "Web Browser",
+            "isAccessibleForFree": true,
+            "license": "https://opensource.org/licenses/MIT",
+            "inLanguage": ["en", "pt-BR"],
+            "description": "Open, zero-key statistical Earth observation workbench applying Seasonal Mann-Kendall (period = 12) and deseasonalized Theil-Sen tests across 42 years of NASA POWER telemetry (1984-2025), coupled with NASA FIRMS, DONKI, Earthdata CMR, a zero-login Mastery Academy, and a 3D Three.js planetary rover simulator.",
+            "keywords": [
+              "NASA Space Apps Challenge 2026",
+              "Earth System Trend Detective",
+              "Seasonal Mann-Kendall",
+              "Theil-Sen slope",
+              "NASA POWER",
+              "NASA FIRMS",
+              "Solar Duck Curve",
+              "Mars 2020 MEDA",
+              "Three.js rover simulator"
+            ],
+            "author": { "@id": "https://www.curveofduck.xyz/#author" },
+            "creator": { "@id": "https://www.curveofduck.xyz/#organization" },
+            "codeRepository": "https://github.com/SunLuiz/Curva_do_Pato",
+            "isBasedOn": [
+              { "@type": "Dataset", "name": "NASA POWER (MERRA-2 / CERES) 1984-2025 Monthly Climatology", "url": "https://power.larc.nasa.gov/" },
+              { "@type": "Dataset", "name": "NASA FIRMS VIIRS_NOAA21_NRT", "identifier": "C3264430167-LANCEMODIS", "url": "https://firms.modaps.eosdis.nasa.gov/" },
+              { "@type": "Dataset", "name": "NASA DONKI Space Weather Alerts", "url": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/" },
+              { "@type": "Dataset", "name": "NASA Mars 2020 MEDA & OSDR OSD-615", "url": "https://osdr.nasa.gov/osdr/data/osd/meta/615" }
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://www.curveofduck.xyz/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How does Cockpit-OMNI separate cloud changes from aerosol/clear-sky shifts across Brazilian biomes?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Applying Seasonal Mann-Kendall (period = 12) and deseasonalized Theil-Sen across 504 monthly NASA POWER observations (1984-2025), Petrolina-PE (-0.9647 %/dec cloud attenuation, p = 2.833e-09) and Manaus-AM (-0.8552 %/dec, p = 3.015e-08) brighten due to cloud reduction while clear-sky irradiance shows no trend. Campinas-SP shows flat clouds (p = 0.9476) and rising clear-sky irradiance (+0.1897 MJ/m2/day/dec, p < 1e-16), indicating an aerosol/clear-sky shift."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can NASA POWER monthly WS2M wind speed predict hourly wind ramps?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Monthly WS2M shows no statistically significant trend in Campinas (p = 0.4890), Petrolina (p = 0.1734), or Manaus (p = 0.4512) and smooths out sub-hourly gusts; Cockpit-OMNI marks hourly ramp risk as unsupported."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

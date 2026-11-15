@@ -32,7 +32,13 @@ export default function AppShell({ route, onNavigate, lang = "en", setLang, full
 
   const activeTimbre = getTimbreProfile(audioSnap.mechanismTimbre);
 
-  const handleRouteClick = (path) => {
+  const handleRouteClick = (path, event) => {
+    if (event) {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
+        return;
+      }
+      event.preventDefault();
+    }
     if (path !== route) soundEngine.playActionClick("nav");
     setAudioMenuOpen(false);
     onNavigate(path);
@@ -42,7 +48,7 @@ export default function AppShell({ route, onNavigate, lang = "en", setLang, full
     <div className="app-shell">
       <header className="topbar">
         <div className="topbar-inner" style={{ position: "relative" }}>
-          <button className="brand" onClick={() => handleRouteClick("/")} type="button">
+          <a className="brand" href="/" onClick={(e) => handleRouteClick("/", e)}>
             <div className="brand-mark" aria-hidden="true">
               <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
                 {/* Rover solar deck & chassis */}
@@ -81,20 +87,20 @@ export default function AppShell({ route, onNavigate, lang = "en", setLang, full
               <span className="brand-title">Cockpit-OMNI · Curve of Duck</span>
               <span className="brand-sub">{ui.brandSub}</span>
             </div>
-          </button>
+          </a>
 
           <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", flexWrap: "wrap" }}>
             <nav className="nav-links" aria-label="Primary Navigation">
               {NAV_ITEMS.map(({ path, key, Icon }) => (
-                <button
+                <a
                   key={path}
-                  type="button"
+                  href={path}
                   className={`nav-btn ${route === path ? "active" : ""}`}
                   aria-current={route === path ? "page" : undefined}
-                  onClick={() => handleRouteClick(path)}
+                  onClick={(e) => handleRouteClick(path, e)}
                 >
                   <Icon size={16} /> {ui[key]}
-                </button>
+                </a>
               ))}
             </nav>
 
@@ -202,6 +208,12 @@ export default function AppShell({ route, onNavigate, lang = "en", setLang, full
             <a href="https://github.com/SunLuiz/Curva_do_Pato" target="_blank" rel="noreferrer">
               github.com/SunLuiz/Curva_do_Pato
             </a>
+            {" · "}
+            <a href="/science/">Science Monographs</a>
+            {" · "}
+            <a href="/llms.txt">llms.txt</a>
+            {" · "}
+            <a href="/llms-full.txt">llms-full.txt</a>
             {" · "}
             License: MIT
           </div>

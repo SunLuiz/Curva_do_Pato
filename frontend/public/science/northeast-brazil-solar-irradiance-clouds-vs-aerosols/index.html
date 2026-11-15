@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Is Solar Irradiance Really Rising in Brazil's Northeast? Cloud-Driven vs. Aerosol-Driven Brightening</title>
+    <meta
+      name="description"
+      content="Analysis of 42 years of NASA POWER solar irradiance (1984-2025) in Petrolina-PE, Manaus-AM, and Campinas-SP: why Northeast Brazil solar gain (+0.2558 MJ/m2/day/dec) is cloud-driven (-0.9647 %/dec, p=2.83e-09) while Campinas is clear-sky/aerosol-driven."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" sizes="48x48" type="image/png" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#8F5D15" />
+    <link rel="canonical" href="https://www.curveofduck.xyz/science/northeast-brazil-solar-irradiance-clouds-vs-aerosols/" />
+    <link rel="alternate" type="text/plain" title="LLMs Context" href="/llms.txt" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Curve of Duck · Cockpit-OMNI" />
+    <meta property="og:url" content="https://www.curveofduck.xyz/science/northeast-brazil-solar-irradiance-clouds-vs-aerosols/" />
+    <meta property="og:title" content="Is Solar Irradiance Really Rising in Brazil's Northeast? Cloud-Driven vs. Aerosol-Driven Brightening" />
+    <meta
+      property="og:description"
+      content="In Petrolina-PE, surface solar radiation grows +0.2558 MJ/m2/day/dec via cloud thinning (p=2.833e-09), not cleaner dry-sky air (p=0.2901)."
+    />
+    <meta property="og:image" content="https://www.curveofduck.xyz/og-cover.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://www.curveofduck.xyz/og-cover.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --surface-0: #FAF7F2;
+        --surface-1: #FFFFFF;
+        --surface-2: #F3EEE5;
+        --hairline: #E4DCCF;
+        --ink: #1C1B19;
+        --ink-soft: #6B6760;
+        --biome-se: #2A7047;
+        --biome-ne: #8F5D15;
+        --biome-n: #1F6F8B;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: var(--surface-0);
+        color: var(--ink);
+        font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.68;
+      }
+      header {
+        background: var(--surface-1);
+        border-bottom: 1px solid var(--hairline);
+        padding: 0.9rem 1.5rem;
+      }
+      .nav-wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .brand-link {
+        font-family: "Fraunces", Georgia, serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      nav { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      nav a {
+        color: var(--ink-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.88rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid var(--hairline);
+        background: var(--surface-0);
+      }
+      article {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 2.25rem 1.5rem 3.5rem;
+      }
+      .eyebrow {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--biome-ne);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      h1 {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: clamp(1.85rem, 3.2vw, 2.48rem);
+        line-height: 1.18;
+        margin-top: 0.55rem;
+      }
+      .meta-line { margin-top: 0.8rem; font-size: 0.9rem; color: var(--ink-soft); }
+      .answer-box {
+        margin-top: 1.4rem;
+        padding: 1.25rem 1.4rem;
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        border-left: 4px solid var(--biome-ne);
+        border-radius: 14px;
+      }
+      section { margin-top: 2rem; }
+      h2 { font-family: "Fraunces", Georgia, serif; font-size: 1.42rem; margin-bottom: 0.65rem; }
+      p { margin-top: 0.65rem; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        font-size: 0.9rem;
+      }
+      th, td {
+        text-align: left;
+        padding: 0.65rem;
+        border-bottom: 1px solid var(--hairline);
+      }
+      th {
+        background: var(--surface-2);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--ink-soft);
+        text-transform: uppercase;
+      }
+      code, .mono { font-family: "JetBrains Mono", monospace; font-size: 0.86em; }
+      footer {
+        border-top: 1px solid var(--hairline);
+        background: var(--surface-1);
+        padding: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+      }
+      .foot-wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+      a { color: var(--biome-n); }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ScholarlyArticle",
+            "@id": "https://www.curveofduck.xyz/science/northeast-brazil-solar-irradiance-clouds-vs-aerosols/#article",
+            "headline": "Is Solar Irradiance Really Rising in Brazil's Northeast? Cloud-Driven vs. Aerosol-Driven Brightening",
+            "description": "Comparison of All-Sky irradiance, Clear-Sky irradiance, and Cloud Attenuation Deficit across Petrolina-PE, Manaus-AM, and Campinas-SP over 42 years of NASA POWER data (1984-2025).",
+            "datePublished": "2026-11-15",
+            "dateModified": "2026-11-15",
+            "inLanguage": ["en", "pt-BR"],
+            "author": { "@type": "Person", "name": "Luiz Antonio Gois Junior" },
+            "publisher": { "@type": "Organization", "name": "Team Curva do Pato — Cockpit-OMNI", "url": "https://www.curveofduck.xyz/" },
+            "mainEntityOfPage": "https://www.curveofduck.xyz/science/northeast-brazil-solar-irradiance-clouds-vs-aerosols/"
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is solar irradiance increasing in Petrolina-PE and Brazil's Northeast, and why?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Across 504 monthly NASA POWER observations (1984-2025), All-Sky surface solar irradiance in Petrolina-PE rose +0.2558 MJ/m2/day/decade (+1.075 cumulative, tau = +0.178, p = 9.384e-09). This gain is cloud-driven: Cloud Attenuation Deficit fell -0.9647 %/decade (p = 2.833e-09), whereas Clear-Sky irradiance showed no significant trend (p = 0.2901)."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Qual a tendência de irradiação solar em Petrolina nos últimos 40 anos segundo a NASA?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Entre 1984 e 2025 (504 meses da NASA POWER), a irradiação solar total em Petrolina-PE subiu +0,2558 MJ/m2/dia por década (+1,075 acumulado, p = 9,384e-09), impulsionada pela redução de nuvens (-0,9647 %/década, p = 2,833e-09), enquanto a irradiação de céu limpo ficou estável (p = 0,2901)."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="nav-wrap">
+        <a class="brand-link" href="/">Cockpit-OMNI · Curve of Duck</a>
+        <nav aria-label="Article Navigation">
+          <a href="/">Story</a>
+          <a href="/cockpit">Cockpit</a>
+          <a href="/game">3D Game</a>
+          <a href="/science/">Science Hub</a>
+          <a href="/llms.txt">llms.txt</a>
+        </nav>
+      </div>
+    </header>
+
+    <article>
+      <div class="eyebrow">Monograph B · Solar Resource Planning &amp; Physical Attribution</div>
+      <h1>Is Solar Irradiance Really Rising in Brazil's Northeast? Cloud-Driven vs. Aerosol-Driven Brightening</h1>
+      <p class="meta-line">
+        <strong>Author:</strong> Luiz Antonio Gois Junior · <strong>Workbench:</strong> <a href="https://www.curveofduck.xyz/cockpit?tab=attribution">Cockpit Attribution Tab</a> · <strong>Source:</strong> NASA POWER CERES/MERRA-2 (1984–2025, <code>n = 504</code> months)
+      </p>
+
+      <div class="answer-box">
+        <strong>Direct Answer for Solar Planners:</strong> Yes — surface solar irradiance (<code>ALLSKY_SFC_SW_DWN</code>) in <strong>Petrolina-PE</strong> (Northeast Brazil solar corridor) rose <strong>+0.2558 MJ/m²/day per decade</strong> (<code>+1.075 MJ/m²/day</code> cumulative, <code>95% CI: [+0.1624, +0.3496]</code>, <code>τ = +0.178</code>, <code>p = 9.384e-09</code>) over 1984–2025. However, decomposing All-Sky from Clear-Sky irradiance reveals this gain is <strong>cloud-driven, not aerosol-driven</strong>: <code>CLOUD_ATTEN_PCT</code> fell <strong>-0.9647 %/decade</strong> (<code>p = 2.833e-09</code>) while <code>CLRSKY_SFC_SW_DWN</code> stayed statistically flat (<code>p = 0.2901</code>).
+      </div>
+
+      <section>
+        <h2>1. How can a planner distinguish durable solar resource gain from a cloud-cover artifact?</h2>
+        <p>
+          <strong>Direct Answer:</strong> By computing <strong>Cloud Attenuation Deficit</strong> (<code>CLOUD_ATTEN_PCT = 1 - ALLSKY_SFC_SW_DWN / CLRSKY_SFC_SW_DWN</code>) alongside raw clear-sky irradiance (<code>CLRSKY_SFC_SW_DWN</code>) using the same Seasonal Mann-Kendall engine.
+        </p>
+        <p>
+          If total sunlight reaching PV panels increases solely because cloud attenuation decreases while clear-sky sunlight remains stationary, grid planners face an important meteorological caveat: inter-decadal cloud regimes can oscillate with Atlantic/ENSO cycles and co-occur with regional drying. In Petrolina-PE, cloud reduction coincided with <code>T2M</code> warming of <strong>+0.3012 °C/dec</strong> (<code>p = 4.663e-15</code>), relative humidity decline of <strong>-0.8932 %/dec</strong> (<code>p = 5.157e-05</code>), and rainfall loss of <strong>-0.0721 mm/day/dec</strong> (<code>p = 0.0291</code>) — raising panel cell-temperature derating and solar Duck Curve midday curtailment pressure.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Station</th>
+              <th>All-Sky Irradiance (<code>ALLSKY</code>)</th>
+              <th>Cloud Attenuation (<code>CLOUD_ATTEN_PCT</code>)</th>
+              <th>Clear-Sky Irradiance (<code>CLRSKY</code>)</th>
+              <th>Physical Driver</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Petrolina-PE</strong> (Caatinga NE)</td>
+              <td class="mono">+0.2558 MJ/m²/day/dec (p = 9.384e-09)</td>
+              <td class="mono">-0.9647 %/dec (p = 2.833e-09)</td>
+              <td class="mono">+0.0127 MJ/m²/day/dec (p = 0.2901, null)</td>
+              <td><strong>Cloud thinning</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Manaus-AM</strong> (Amazon)</td>
+              <td class="mono">+0.2413 MJ/m²/day/dec (p = 1.738e-10)</td>
+              <td class="mono">-0.8552 %/dec (p = 3.015e-08)</td>
+              <td class="mono">+0.0289 MJ/m²/day/dec (p = 0.7686, null)</td>
+              <td><strong>Cloud thinning</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Campinas-SP</strong> (Southeast)</td>
+              <td class="mono">+0.1621 MJ/m²/day/dec (p = 0.0008616)</td>
+              <td class="mono">+0.0378 %/dec (p = 0.9476, null)</td>
+              <td class="mono">+0.1897 MJ/m²/day/dec (p &lt; 1e-16)</td>
+              <td><strong>Aerosol / clear-sky shift</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>2. Why does Campinas-SP behave oppositely to Petrolina-PE and Manaus-AM?</h2>
+        <p>
+          <strong>Direct Answer:</strong> In Campinas-SP, <code>CLOUD_ATTEN_PCT</code> shows no trend over 42 years (<code>+0.0378 %/dec</code>, <code>p = 0.9476</code>), whereas <code>CLRSKY_SFC_SW_DWN</code> rises sharply (<code>+0.1897 MJ/m²/day/dec</code>, <code>τ = +0.322</code>, <code>p &lt; 1e-16</code>). This indicates atmospheric aerosol / column water-vapor transparency changes rather than cloud loss — pairing with severe compound drying (<code>RH2M -1.6601 %/dec</code>, <code>PRECTOTCORR -0.2724 mm/day/dec</code>) and wildfire smoke susceptibility tracked via NASA FIRMS (<code>VIIRS_NOAA21_NRT</code>, CMR <code>C3264430167-LANCEMODIS</code>).
+        </p>
+      </section>
+
+      <section lang="pt-BR">
+        <h2>3. Resposta em Português: A irradiação solar no Nordeste (Petrolina-PE) está realmente subindo?</h2>
+        <p>
+          <strong>Sim.</strong> Entre 1984 e 2025 (504 meses da NASA POWER), a irradiação solar total em <strong>Petrolina-PE</strong> aumentou <strong>+0,2558 MJ/m²/dia por década</strong> (+1,075 MJ/m²/dia acumulados, p = 9,384e-09). A atribuição do Cockpit-OMNI comprova que esse aumento decorre da queda de atenuação por nuvens (<strong>-0,9647 %/década</strong>, p = 2,833e-09), pois o céu limpo permaneceu sem tendência estatística (p = 0,2901). Simultaneamente, Petrolina aqueceu <strong>+0,3012 °C/década</strong> e perdeu umidade (-0,8932 %/década), reforçando a necessidade de armazenamento em baterias e gestão térmica da Curva do Pato solar.
+        </p>
+      </section>
+    </article>
+
+    <footer>
+      <div class="foot-wrap">
+        <span>Cockpit-OMNI · Curve of Duck · NASA Space Apps Challenge 2026</span>
+        <span><a href="/science/brazilian-biomes-solar-brightening-1984-2025/">Monograph A</a> · <a href="/science/duck-curve-to-mars-wind-ramp-limits/">Monograph C</a> · <a href="/cockpit">Open Cockpit</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

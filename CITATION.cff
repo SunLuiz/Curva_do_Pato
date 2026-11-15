@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use Cockpit-OMNI / Curve of Duck datasets, statistical engine, or planetary physics model, please cite this software."
+title: "Cockpit-OMNI (Curve of Duck): Open Statistical Earth System Trend Detection & Multi-Physics Planetary Analog"
+authors:
+  - family-names: "Gois Junior"
+    given-names: "Luiz Antonio"
+    affiliation: "Team Curva do Pato — NASA Space Apps Challenge 2026 (Campinas, SP, Brazil)"
+date-released: 2026-11-15
+version: "1.0.0"
+license: MIT
+repository-code: "https://github.com/SunLuiz/Curva_do_Pato"
+url: "https://www.curveofduck.xyz/"
+keywords:
+  - NASA Space Apps Challenge 2026
+  - Earth System Trend Detective
+  - Seasonal Mann-Kendall
+  - Theil-Sen
+  - NASA POWER
+  - NASA FIRMS
+  - Solar Duck Curve
+  - Earthdata CMR
+  - Mars 2020 MEDA
+  - Three.js

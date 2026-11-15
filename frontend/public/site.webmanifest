@@ -1,0 +1,27 @@
+{
+  "name": "Cockpit-OMNI · Curve of Duck",
+  "short_name": "Cockpit-OMNI",
+  "description": "42 years of NASA POWER telemetry, Seasonal Mann-Kendall + Theil-Sen trend verification, open natural-language Q&A, and Curve of Duck 3D Rover Pilot.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF7F2",
+  "theme_color": "#2A7047",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+# Cockpit-OMNI — Earth System Trend Detective
+
+> Cockpit-OMNI turns 42 years of open NASA telemetry (1984–2025, n = 504 months) into an audited Story, offline Mastery Academy, interactive Earth System Cockpit and a 3D Rover Pilot game — proving trends via Seasonal Mann-Kendall + deseasonalized Theil-Sen regression (95% CI) while honestly flagging null signals and roadmap boundaries. Built at NASA Space Apps Challenge 2026 (Campinas, Brazil). Open source, MIT license, zero API keys, zero login.
+
+## HEADLINE FINDING (citável — ver llms-full.txt para todos os valores)
+- **Campinas-SP (aerosol/clear-sky driven):** T2M +0.409 °C/decade (95% CI [+0.333, +0.489], τ = +0.293, p < 1e-16 ≈ +1.72 °C cumulative over 42 years); clear-sky irradiance +0.190 (p < 1e-16) while cloud attenuation shows NO trend (p = 0.948).
+- **Petrolina-PE (cloud-driven):** cloud attenuation −0.965 %/decade (p = 2.83e-09), clear-sky NO trend (p = 0.290) → brightening comes from fewer clouds, not cleaner air.
+- **Manaus-AM (cloud-driven):** cloud attenuation −0.855 %/decade (p = 3.02e-08), clear-sky NO trend (p = 0.769) → reduced cloud cover drives Amazon surface brightening.
+- **One engine, opposite causal verdicts by biome** — the product publishes the disagreement (hypothesis falsification at runtime, not hardcoded).
+- **Declared limitation:** monthly WS2M wind speed shows no significant trend (p = 0.489 / 0.173 / 0.451) → NOT valid for sub-hourly ramp-risk or battery-dispatch claims.
+
+## Important URLs
+- Home (Story): https://www.curveofduck.xyz/
+- Academy (5 real-data modules): https://www.curveofduck.xyz/academy
+- Cockpit (Trends & Presets | Attribution | Sources | Live NASA | Space Analog + Ask OMNI): https://www.curveofduck.xyz/cockpit
+- 3D Game (Curve of Duck: Rover Pilot 3D): https://www.curveofduck.xyz/game
+- Source code: https://github.com/SunLuiz/Curva_do_Pato
+- Scientific papers (full values): https://www.curveofduck.xyz/geo/
+
+## Data & method
+- NASA POWER (CERES & MERRA-2): T2M, PRECTOTCORR, ALLSKY_SFC_SW_DWN, CLRSKY_SFC_SW_DWN, RH2M, WS2M + derived Cloud Attenuation Deficit (1 − ALLSKY/CLRSKY). Monthly, 1984–2025, community=AG.
+- Stations: Campinas-SP (−22.90, −47.06), Petrolina-PE (−9.39, −40.50), Manaus-AM (−3.10, −60.02).
+- Statistics: Seasonal Mann-Kendall (period=12) + Original Mann-Kendall (τ, p-value, α = 0.05) + Deseasonalized Theil-Sen (slope/decade, 95% CI, cumulative shift). ~50 ms per 504-month series, computed in the browser.
+- Extras: NASA FIRMS (3,313 detections), NASA DONKI, NASA DSN Now, NASA OSDR OSD-615, CelesTrak GP, JPL Horizons, Mars 2020 MEDA (Perseverance), open NASA Earthdata CMR.
+
+## Optional
+For the full structured dataset (all 42-year series, CIs, p-values per variable and region), see llms-full.txt.

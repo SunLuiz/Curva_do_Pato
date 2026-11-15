@@ -1,7 +1,29 @@
 {
+  "headers": [
+    {
+      "source": "/(llms\\.txt|llms-full\\.txt)",
+      "headers": [
+        { "key": "Content-Type", "value": "text/markdown; charset=utf-8" },
+        { "key": "X-Robots-Tag", "value": "all" }
+      ]
+    },
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        { "key": "Content-Type", "value": "application/xml; charset=utf-8" }
+      ]
+    }
+  ],
+  "redirects": [
+    { "source": "/academy", "destination": "/game", "permanent": true },
+    { "source": "/trend", "destination": "/cockpit?tab=trend", "permanent": true },
+    { "source": "/attribution", "destination": "/cockpit?tab=attribution", "permanent": true },
+    { "source": "/science", "destination": "/science/", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/healthz", "destination": "/api/healthz" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/((?!api/|healthz|cache/|game/data/|assets/|favicon).*)", "destination": "/index.html" }
+    { "source": "/cockpit", "destination": "/_prerender/cockpit.html" },
+    { "source": "/game", "destination": "/_prerender/game.html" }
   ]
 }

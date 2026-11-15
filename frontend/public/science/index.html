@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Science &amp; Open Telemetry Monographs — Cockpit-OMNI · Curve of Duck</title>
+    <meta
+      name="description"
+      content="Static, citable NASA Earth observation research monographs by Team Curva do Pato: 42-year Seasonal Mann-Kendall + Theil-Sen climate attribution across Campinas, Petrolina, and Manaus, plus Earth-to-Mars Beer-Lambert physics."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" sizes="48x48" type="image/png" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#2A7047" />
+    <link rel="canonical" href="https://www.curveofduck.xyz/science/" />
+    <link rel="alternate" type="text/plain" title="LLMs Context" href="/llms.txt" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Curve of Duck · Cockpit-OMNI" />
+    <meta property="og:url" content="https://www.curveofduck.xyz/science/" />
+    <meta property="og:title" content="Science &amp; Open Telemetry Monographs — Cockpit-OMNI · Curve of Duck" />
+    <meta
+      property="og:description"
+      content="Verifiable 1984–2025 NASA POWER trends, causal attribution tables, declared WS2M limits, and Mars/Moon rover physics in static HTML for researchers and AI search."
+    />
+    <meta property="og:image" content="https://www.curveofduck.xyz/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Science &amp; Open Telemetry Monographs — Cockpit-OMNI · Curve of Duck" />
+    <meta
+      name="twitter:description"
+      content="42 years of NASA POWER trends across Brazilian biomes and planetary rover thermodynamics."
+    />
+    <meta name="twitter:image" content="https://www.curveofduck.xyz/og-cover.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --surface-0: #FAF7F2;
+        --surface-1: #FFFFFF;
+        --surface-2: #F3EEE5;
+        --hairline: #E4DCCF;
+        --hairline-strong: #CFC4B2;
+        --ink: #1C1B19;
+        --ink-soft: #6B6760;
+        --biome-se: #2A7047;
+        --biome-ne: #8F5D15;
+        --biome-n: #1F6F8B;
+        --null-ink: #736446;
+        --danger: #B23A2A;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: var(--surface-0);
+        color: var(--ink);
+        font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.65;
+      }
+      header {
+        background: var(--surface-1);
+        border-bottom: 1px solid var(--hairline);
+        padding: 0.9rem 1.5rem;
+      }
+      .nav-wrap {
+        max-width: 1060px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .brand-link {
+        font-family: "Fraunces", Georgia, serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      nav a {
+        color: var(--ink-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid var(--hairline);
+        background: var(--surface-0);
+      }
+      nav a.active {
+        background: var(--biome-se);
+        color: var(--surface-1);
+        border-color: var(--biome-se);
+      }
+      main {
+        max-width: 1060px;
+        margin: 0 auto;
+        padding: 2.25rem 1.5rem 3.5rem;
+      }
+      .eyebrow {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--biome-se);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      h1 {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: clamp(1.9rem, 3.5vw, 2.65rem);
+        line-height: 1.15;
+        margin-top: 0.5rem;
+        letter-spacing: -0.02em;
+      }
+      .lead {
+        margin-top: 1rem;
+        font-size: 1.08rem;
+        color: var(--ink-soft);
+        max-width: 860px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+        gap: 1.2rem;
+        margin-top: 2rem;
+      }
+      .card {
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        border-radius: 18px;
+        padding: 1.4rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.74rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .tag.se { color: var(--biome-se); }
+      .tag.ne { color: var(--biome-ne); }
+      .tag.n { color: var(--biome-n); }
+      .card h2 {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 1.28rem;
+        line-height: 1.28;
+        margin-top: 0.45rem;
+      }
+      .card p {
+        color: var(--ink-soft);
+        font-size: 0.95rem;
+        margin-top: 0.55rem;
+      }
+      .card a.cta {
+        align-self: flex-start;
+        font-weight: 700;
+        color: var(--biome-n);
+        text-decoration: none;
+        border-bottom: 1px solid currentColor;
+      }
+      section.summary-box {
+        margin-top: 2.2rem;
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        border-radius: 18px;
+        padding: 1.5rem;
+      }
+      section.summary-box h2 {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 1.38rem;
+        margin-bottom: 0.75rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+      }
+      th, td {
+        text-align: left;
+        padding: 0.65rem 0.7rem;
+        border-bottom: 1px solid var(--hairline);
+      }
+      th {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.76rem;
+        color: var(--ink-soft);
+        text-transform: uppercase;
+      }
+      .mono { font-family: "JetBrains Mono", monospace; }
+      footer {
+        border-top: 1px solid var(--hairline);
+        background: var(--surface-1);
+        padding: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+      }
+      .foot-wrap {
+        max-width: 1060px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+      footer a { color: var(--biome-n); }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "CollectionPage",
+            "@id": "https://www.curveofduck.xyz/science/#collection",
+            "url": "https://www.curveofduck.xyz/science/",
+            "name": "Science & Open Telemetry Monographs — Cockpit-OMNI · Curve of Duck",
+            "description": "Citable research monographs documenting 42-year NASA POWER climate attribution across Brazilian biomes and planetary rover thermodynamics.",
+            "inLanguage": ["en", "pt-BR"],
+            "isPartOf": { "@id": "https://www.curveofduck.xyz/#website" },
+            "hasPart": [
+              { "@id": "https://www.curveofduck.xyz/science/brazilian-biomes-solar-brightening-1984-2025/#article" },
+              { "@id": "https://www.curveofduck.xyz/science/northeast-brazil-solar-irradiance-clouds-vs-aerosols/#article" },
+              { "@id": "https://www.curveofduck.xyz/science/duck-curve-to-mars-wind-ramp-limits/#article" }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="nav-wrap">
+        <a class="brand-link" href="/">Cockpit-OMNI · Curve of Duck</a>
+        <nav aria-label="Science Hub Navigation">
+          <a href="/">Story</a>
+          <a href="/cockpit">Cockpit</a>
+          <a href="/game">3D Game &amp; Academy</a>
+          <a class="active" href="/science/">Science Articles</a>
+          <a href="/llms.txt">llms.txt</a>
+          <a href="/llms-full.txt">llms-full.txt</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="eyebrow">NASA Space Apps Challenge 2026 · Team Curva do Pato · Open Science Hub</div>
+      <h1>Citable Earth Observation &amp; Planetary Physics Monographs</h1>
+      <p class="lead">
+        <strong>Cockpit-OMNI (Curve of Duck)</strong> is an open-source, zero-key NASA Earth observation workbench built by Luiz Antonio Gois Junior in Campinas, Brazil. Every research monograph below publishes the full 42-year <strong>NASA POWER (1984–2025, n = 504 months)</strong> Seasonal Mann-Kendall and deseasonalized Theil-Sen findings in plain static HTML alongside machine-readable JSON datasets.
+      </p>
+
+      <div class="grid">
+        <article class="card">
+          <div>
+            <div class="tag se">Monograph A · Benchmark Study</div>
+            <h2>42 Years of NASA POWER Trends Across Brazilian Biomes: Seasonal Mann-Kendall + Theil-Sen Attribution (1984–2025)</h2>
+            <p>
+              Complete 21-metric empirical dataset spanning Campinas-SP, Petrolina-PE, and Manaus-AM. Demonstrates one statistical engine reaching opposite causal verdicts across Atlantic Forest, Caatinga, and Amazon biomes.
+            </p>
+          </div>
+          <a class="cta" href="/science/brazilian-biomes-solar-brightening-1984-2025/">Read Monograph A →</a>
+        </article>
+
+        <article class="card">
+          <div>
+            <div class="tag ne">Monograph B · Solar Energy &amp; Attribution</div>
+            <h2>Is Solar Irradiance Really Rising in Brazil's Northeast? Cloud-Driven vs. Aerosol-Driven Brightening</h2>
+            <p>
+              Separates cloud attenuation loss in Petrolina-PE (-0.9647 %/dec, p = 2.833e-09) and Manaus-AM (-0.8552 %/dec, p = 3.015e-08) from clear-sky/aerosol shifts in Campinas-SP (+0.1897 MJ/m²/day/dec, p &lt; 1e-16).
+            </p>
+          </div>
+          <a class="cta" href="/science/northeast-brazil-solar-irradiance-clouds-vs-aerosols/">Read Monograph B →</a>
+        </article>
+
+        <article class="card">
+          <div>
+            <div class="tag n">Monograph C · Planetary Analog &amp; Limits</div>
+            <h2>From Duck Curve to Mars: A Planetary Trend-Detection Analog — and Why Monthly Wind Data Can't Claim Ramp Risk</h2>
+            <p>
+              Bridges Earth's Beer-Lambert wildfire/cloud Duck Curve to Mars Perseverance MEDA and Artemis lunar rover physics via Θ, while documenting why null monthly WS2M (p = 0.489) forbids intra-hour ramp claims.
+            </p>
+          </div>
+          <a class="cta" href="/science/duck-curve-to-mars-wind-ramp-limits/">Read Monograph C →</a>
+        </article>
+      </div>
+
+      <section class="summary-box">
+        <h2>Audited Headline Verdicts (NASA POWER · 1984–2025 · n = 504 Months)</h2>
+        <p>
+          All calculations below run identically in Python (<code>pymannkendall</code> + <code>scipy.stats.theilslopes</code>) and pure client-side JavaScript without private API keys.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Station (Lat, Lon)</th>
+              <th>2m Temp (T2M)</th>
+              <th>Cloud Attenuation</th>
+              <th>Clear-Sky SW</th>
+              <th>Causal Verdict</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Campinas-SP</strong><br /><span class="mono">-22.90, -47.06</span></td>
+              <td class="mono">+0.4091 °C/dec<br />(95% CI [+0.3329, +0.4891], p &lt; 1e-16)</td>
+              <td class="mono">+0.0378 %/dec<br />(p = 0.9476, null)</td>
+              <td class="mono">+0.1897 MJ/m²/day/dec<br />(p &lt; 1e-16)</td>
+              <td><strong>Aerosol / Clear-Sky Driven</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Petrolina-PE</strong><br /><span class="mono">-9.39, -40.50</span></td>
+              <td class="mono">+0.3012 °C/dec<br />(95% CI [+0.2314, +0.3710], p = 4.663e-15)</td>
+              <td class="mono">-0.9647 %/dec<br />(p = 2.833e-09)</td>
+              <td class="mono">+0.0127 MJ/m²/day/dec<br />(p = 0.2901, null)</td>
+              <td><strong>Cloud-Driven Brightening</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Manaus-AM</strong><br /><span class="mono">-3.10, -60.02</span></td>
+              <td class="mono">+0.3065 °C/dec<br />(95% CI [+0.2543, +0.3593], p &lt; 1e-16)</td>
+              <td class="mono">-0.8552 %/dec<br />(p = 3.015e-08)</td>
+              <td class="mono">+0.0289 MJ/m²/day/dec<br />(p = 0.7686, null)</td>
+              <td><strong>Cloud-Driven Brightening</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="summary-box" lang="pt-BR">
+        <h2>Resumo em Português (PT-BR)</h2>
+        <p>
+          O <strong>Cockpit-OMNI · Curve of Duck</strong> analisa 42 anos de séries mensais abertas da <strong>NASA POWER (1984–2025, n = 504 meses)</strong> com teste de <strong>Mann-Kendall Sazonal (período = 12)</strong> e regressão de <strong>Theil-Sen dessazonalizada (IC 95%)</strong>. O mesmo motor estatístico encontra causas opostas entre biomas brasileiros: em <strong>Petrolina-PE</strong> (-0,9647 %/déc, p = 2,83e-09) e <strong>Manaus-AM</strong> (-0,8552 %/déc, p = 3,02e-08), o aumento de sol no solo vem da redução de nuvens; em <strong>Campinas-SP</strong>, as nuvens ficam estáveis (p = 0,9476) e a mudança ocorre no céu limpo/aerossóis (+0,1897 MJ/m²/dia/déc, p &lt; 1e-16), com aquecimento de +0,4091 °C/déc (+1,718 °C acumulados). O vento mensal <code>WS2M</code> não tem tendência significativa nas três estações (p = 0,489 / 0,1734 / 0,4512) e é declarado explicitamente inadequado para prever rampas horárias.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <div class="foot-wrap">
+        <span>Team Curva do Pato (Luiz Antonio Gois Junior) · NASA Space Apps Challenge 2026 — Campinas, SP, Brazil · MIT License</span>
+        <span>
+          <a href="/cache/manifest.json">JSON Manifest</a> ·
+          <a href="/llms-full.txt">llms-full.txt</a> ·
+          <a href="https://github.com/SunLuiz/Curva_do_Pato" rel="noreferrer">GitHub Source</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

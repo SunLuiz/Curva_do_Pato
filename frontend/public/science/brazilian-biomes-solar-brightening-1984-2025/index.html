@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>42 Years of NASA POWER Trends Across Brazilian Biomes (1984–2025) — Cockpit-OMNI</title>
+    <meta
+      name="description"
+      content="Peer-auditable Seasonal Mann-Kendall and deseasonalized Theil-Sen analysis across 504 monthly NASA POWER observations (1984-2025) in Campinas-SP, Petrolina-PE, and Manaus-AM. Exposes opposite cloud-driven vs. aerosol-driven surface solar brightening."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" sizes="48x48" type="image/png" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#2A7047" />
+    <link rel="canonical" href="https://www.curveofduck.xyz/science/brazilian-biomes-solar-brightening-1984-2025/" />
+    <link rel="alternate" type="text/plain" title="LLMs Context" href="/llms.txt" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Curve of Duck · Cockpit-OMNI" />
+    <meta property="og:url" content="https://www.curveofduck.xyz/science/brazilian-biomes-solar-brightening-1984-2025/" />
+    <meta property="og:title" content="42 Years of NASA POWER Trends Across Brazilian Biomes (1984–2025)" />
+    <meta
+      property="og:description"
+      content="One statistical engine, opposite causal verdicts: Campinas +0.4091 °C/dec & clear-sky brightening vs. Petrolina (-0.9647 %/dec) & Manaus (-0.8552 %/dec) cloud-driven brightening."
+    />
+    <meta property="og:image" content="https://www.curveofduck.xyz/og-cover.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://www.curveofduck.xyz/og-cover.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --surface-0: #FAF7F2;
+        --surface-1: #FFFFFF;
+        --surface-2: #F3EEE5;
+        --hairline: #E4DCCF;
+        --ink: #1C1B19;
+        --ink-soft: #6B6760;
+        --biome-se: #2A7047;
+        --biome-ne: #8F5D15;
+        --biome-n: #1F6F8B;
+        --null-ink: #736446;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: var(--surface-0);
+        color: var(--ink);
+        font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.68;
+      }
+      header {
+        background: var(--surface-1);
+        border-bottom: 1px solid var(--hairline);
+        padding: 0.9rem 1.5rem;
+      }
+      .nav-wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .brand-link {
+        font-family: "Fraunces", Georgia, serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      nav { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      nav a {
+        color: var(--ink-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.88rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid var(--hairline);
+        background: var(--surface-0);
+      }
+      article {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 2.25rem 1.5rem 3.5rem;
+      }
+      .eyebrow {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--biome-se);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      h1 {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: clamp(1.85rem, 3.2vw, 2.5rem);
+        line-height: 1.18;
+        margin-top: 0.55rem;
+        letter-spacing: -0.02em;
+      }
+      .meta-line {
+        margin-top: 0.85rem;
+        font-size: 0.9rem;
+        color: var(--ink-soft);
+      }
+      .abstract {
+        margin-top: 1.4rem;
+        padding: 1.25rem 1.4rem;
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        border-left: 4px solid var(--biome-se);
+        border-radius: 14px;
+      }
+      section { margin-top: 2rem; }
+      h2 {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 1.45rem;
+        margin-bottom: 0.65rem;
+        color: var(--ink);
+      }
+      h3 {
+        font-size: 1.08rem;
+        margin-top: 1.25rem;
+        margin-bottom: 0.45rem;
+        color: var(--biome-n);
+      }
+      p { margin-top: 0.65rem; color: var(--ink); }
+      ul { margin: 0.65rem 0 0 1.35rem; }
+      li { margin-top: 0.35rem; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 0.9rem;
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        font-size: 0.88rem;
+      }
+      th, td {
+        text-align: left;
+        padding: 0.6rem 0.65rem;
+        border-bottom: 1px solid var(--hairline);
+      }
+      th {
+        background: var(--surface-2);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.74rem;
+        color: var(--ink-soft);
+        text-transform: uppercase;
+      }
+      code, .mono { font-family: "JetBrains Mono", monospace; font-size: 0.86em; }
+      .null { color: var(--null-ink); font-weight: 600; }
+      .callout {
+        margin-top: 1.1rem;
+        padding: 1rem 1.2rem;
+        background: var(--surface-2);
+        border-radius: 12px;
+        border: 1px solid var(--hairline);
+      }
+      footer {
+        border-top: 1px solid var(--hairline);
+        background: var(--surface-1);
+        padding: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+      }
+      .foot-wrap {
+        max-width: 980px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+      a { color: var(--biome-n); }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ScholarlyArticle",
+            "@id": "https://www.curveofduck.xyz/science/brazilian-biomes-solar-brightening-1984-2025/#article",
+            "headline": "42 Years of NASA POWER Trends Across Brazilian Biomes: Seasonal Mann-Kendall + Theil-Sen Attribution of Surface Solar Brightening (1984–2025)",
+            "description": "Statistical trend analysis over 504 monthly NASA POWER observations showing opposite causal verdicts for solar brightening in Campinas-SP (aerosol/clear-sky) versus Petrolina-PE and Manaus-AM (cloud thinning).",
+            "datePublished": "2026-11-15",
+            "dateModified": "2026-11-15",
+            "inLanguage": "en",
+            "author": {
+              "@type": "Person",
+              "name": "Luiz Antonio Gois Junior"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Team Curva do Pato — Cockpit-OMNI",
+              "url": "https://www.curveofduck.xyz/"
+            },
+            "mainEntityOfPage": "https://www.curveofduck.xyz/science/brazilian-biomes-solar-brightening-1984-2025/",
+            "keywords": [
+              "NASA POWER",
+              "Seasonal Mann-Kendall",
+              "Theil-Sen slope",
+              "Surface Solar Brightening",
+              "Campinas-SP",
+              "Petrolina-PE",
+              "Manaus-AM",
+              "VIIRS_NOAA21_NRT",
+              "Earthdata CMR"
+            ],
+            "isBasedOn": [
+              {
+                "@type": "Dataset",
+                "@id": "https://www.curveofduck.xyz/science/brazilian-biomes-solar-brightening-1984-2025/#dataset",
+                "name": "Cockpit-OMNI NASA POWER 1984–2025 Monthly Benchmark Snapshot (Campinas, Petrolina, Manaus)",
+                "description": "504-month (1984-01 to 2025-12) Seasonal Mann-Kendall and Deseasonalized Theil-Sen summary across T2M, PRECTOTCORR, RH2M, ALLSKY_SFC_SW_DWN, CLRSKY_SFC_SW_DWN, CLOUD_ATTEN_PCT, and WS2M.",
+                "temporalCoverage": "1984-01/2025-12",
+                "license": "https://opensource.org/licenses/MIT",
+                "spatialCoverage": [
+                  { "@type": "Place", "name": "Campinas-SP, Brazil", "geo": { "@type": "GeoCoordinates", "latitude": -22.9, "longitude": -47.06 } },
+                  { "@type": "Place", "name": "Petrolina-PE, Brazil", "geo": { "@type": "GeoCoordinates", "latitude": -9.39, "longitude": -40.5 } },
+                  { "@type": "Place", "name": "Manaus-AM, Brazil", "geo": { "@type": "GeoCoordinates", "latitude": -3.1, "longitude": -60.02 } }
+                ],
+                "distribution": [
+                  { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://www.curveofduck.xyz/cache/attribution_campinas.json" },
+                  { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://www.curveofduck.xyz/cache/attribution_petrolina.json" },
+                  { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://www.curveofduck.xyz/cache/attribution_manaus.json" }
+                ]
+              }
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What are the verified 1984–2025 warming and precipitation trends in Campinas-SP, Petrolina-PE, and Manaus-AM?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Across 504 monthly NASA POWER observations (1984-2025), 2m air temperature (T2M) warmed +0.4091 °C/decade (+1.718 °C cumulative, 95% CI [+0.3329, +0.4891], p < 1e-16) in Campinas-SP, +0.3012 °C/decade (+1.265 °C cumulative, p = 4.663e-15) in Petrolina-PE, and +0.3065 °C/decade (+1.287 °C cumulative, p < 1e-16) in Manaus-AM. All three stations experienced statistically significant rainfall declines (-0.2724, -0.0721, and -0.4673 mm/day/decade)."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Why does Seasonal Mann-Kendall detect solar brightening in Campinas when ordinary Mann-Kendall fails?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Ordinary pooled Mann-Kendall treats winter-to-summer solar radiation swings as noise and returns p = 0.1968 ('no trend') for Campinas ALLSKY_SFC_SW_DWN. Seasonal Mann-Kendall (period = 12) compares matching calendar months across years and exposes a statistically significant +0.1621 MJ/m2/day/decade increase (tau = +0.103, p = 0.0008616)."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="nav-wrap">
+        <a class="brand-link" href="/">Cockpit-OMNI · Curve of Duck</a>
+        <nav aria-label="Article Navigation">
+          <a href="/">Story</a>
+          <a href="/cockpit">Cockpit</a>
+          <a href="/game">3D Game</a>
+          <a href="/science/">Science Hub</a>
+          <a href="/llms-full.txt">llms-full.txt</a>
+        </nav>
+      </div>
+    </header>
+
+    <article>
+      <div class="eyebrow">Monograph A · NASA Space Apps Challenge 2026 · Campinas, SP, Brazil</div>
+      <h1>42 Years of NASA POWER Trends Across Brazilian Biomes: Seasonal Mann-Kendall + Theil-Sen Attribution of Surface Solar Brightening (1984–2025)</h1>
+      <p class="meta-line">
+        <strong>Author:</strong> Luiz Antonio Gois Junior (Team Curva do Pato) · <strong>Platform:</strong> <a href="https://www.curveofduck.xyz/">Cockpit-OMNI (www.curveofduck.xyz)</a> · <strong>Source Code:</strong> <a href="https://github.com/SunLuiz/Curva_do_Pato" rel="noreferrer">github.com/SunLuiz/Curva_do_Pato</a> (MIT)
+      </p>
+
+      <div class="abstract">
+        <strong>Abstract (Answer-First Summary):</strong> Over 42 continuous years of monthly <strong>NASA POWER (MERRA-2 / CERES)</strong> observations (<code>1984-01</code> to <code>2025-12</code>, <code>n = 504</code> months per series), <strong>Cockpit-OMNI</strong> evaluates seven Earth system variables across three contrasting Brazilian biomes using <strong>Seasonal Mann-Kendall (<code>period = 12</code>, <code>α = 0.05</code>)</strong> and <strong>deseasonalized Theil-Sen regression (95% CI)</strong>. All three stations warmed significantly (<strong>Campinas-SP</strong> <code>+0.4091 °C/dec</code>, <strong>Petrolina-PE</strong> <code>+0.3012 °C/dec</code>, <strong>Manaus-AM</strong> <code>+0.3065 °C/dec</code>) and lost rainfall, while surface shortwave solar irradiance increased everywhere. Crucially, the exact same statistical engine delivers <strong>opposite physical causal verdicts</strong>: solar brightening in Petrolina-PE (<code>-0.9647 %/dec</code> cloud attenuation, <code>p = 2.833e-09</code>; clear-sky null <code>p = 0.2901</code>) and Manaus-AM (<code>-0.8552 %/dec</code> cloud attenuation, <code>p = 3.015e-08</code>; clear-sky null <code>p = 0.7686</code>) is <strong>cloud-driven</strong>, whereas Campinas-SP exhibits stationary clouds (<code>p = 0.9476</code>) alongside surging clear-sky irradiance (<code>+0.1897 MJ/m²/day/dec</code>, <code>p &lt; 1e-16</code>), isolating an <strong>aerosol / clear-sky atmospheric transparency shift</strong>. Monthly 2m wind speed (<code>WS2M</code>) shows zero significant trend at any station (<code>p = 0.4890 / 0.1734 / 0.4512</code>) and is explicitly barred from sub-hourly ramp claims.
+      </div>
+
+      <section>
+        <h2>1. How does Cockpit-OMNI compute non-parametric climate trends without seasonal distortion?</h2>
+        <p>
+          <strong>Direct Answer:</strong> Cockpit-OMNI computes trends deterministically in both Python (<code>pymannkendall</code> + <code>scipy.stats.theilslopes</code>) and pure browser JavaScript (<code>frontend/src/engine/trend.js</code>) by comparing matching calendar months across 42 years (<code>Seasonal Mann-Kendall, period = 12</code>), removing NASA POWER annual summary rows (<code>YYYY13</code>) and <code>-999.0</code> sentinel values prior to estimating median deseasonalized Theil-Sen slopes.
+        </p>
+        <p>
+          Ordinary least-squares regression fails on multi-decade climatology because single El Niño spikes skew the slope and regular summer-winter oscillations mask secular change. For example, in Campinas-SP all-sky irradiance (<code>ALLSKY_SFC_SW_DWN</code>), an ordinary un-seasonalized Mann-Kendall test produces <code>p = 0.1968</code> (falsely labeling the series "no trend"), whereas Seasonal Mann-Kendall isolates the true decadal signal at <code>p = 0.0008616</code> (<code>τ = +0.103</code>, <code>+0.1621 MJ/m²/day/dec</code>).
+        </p>
+      </section>
+
+      <section>
+        <h2>2. Complete 21-Metric Empirical Benchmark (NASA POWER, 1984–2025, n = 504 Months)</h2>
+        <p>
+          <strong>Direct Answer:</strong> Every metric below is stored in the open zero-key cache of <a href="https://www.curveofduck.xyz/cockpit">www.curveofduck.xyz/cockpit</a> and verified automatically by <code>scripts/verify_answers.mjs</code> against the frozen 2026-11-14T15:04 UTC snapshot.
+        </p>
+
+        <h3>2.1 Campinas-SP (-22.90, -47.06) — Atlantic Forest / Cerrado Transition (Aerosol / Clear-Sky Driven)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Unit</th>
+              <th>Slope / Decade</th>
+              <th>95% Confidence Interval</th>
+              <th>42-yr Total</th>
+              <th>Seasonal τ</th>
+              <th>Seasonal p-value</th>
+              <th>Verdict (α = 0.05)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>T2M</code></td><td>°C</td><td class="mono">+0.4091</td><td class="mono">[+0.3329, +0.4891]</td><td class="mono">+1.718</td><td class="mono">+0.293</td><td class="mono">&lt; 1e-16</td><td>Increasing</td></tr>
+            <tr><td><code>PRECTOTCORR</code></td><td>mm/day</td><td class="mono">-0.2724</td><td class="mono">[-0.3881, -0.1559]</td><td class="mono">-1.144</td><td class="mono">-0.149</td><td class="mono">1.59e-06</td><td>Decreasing</td></tr>
+            <tr><td><code>RH2M</code></td><td>%</td><td class="mono">-1.6601</td><td class="mono">[-1.9845, -1.3400]</td><td class="mono">-6.972</td><td class="mono">-0.296</td><td class="mono">&lt; 1e-16</td><td>Decreasing</td></tr>
+            <tr><td><code>ALLSKY_SFC_SW_DWN</code></td><td>MJ/m²/day</td><td class="mono">+0.1621</td><td class="mono">[+0.0591, +0.2667]</td><td class="mono">+0.681</td><td class="mono">+0.103</td><td class="mono">0.0008616</td><td>Increasing</td></tr>
+            <tr><td><code>CLRSKY_SFC_SW_DWN</code></td><td>MJ/m²/day</td><td class="mono">+0.1897</td><td class="mono">[+0.1577, +0.2232]</td><td class="mono">+0.797</td><td class="mono">+0.322</td><td class="mono">&lt; 1e-16</td><td>Increasing</td></tr>
+            <tr><td><code>CLOUD_ATTEN_PCT</code></td><td>%</td><td class="mono">+0.0378</td><td class="mono">[-0.3877, +0.4698]</td><td class="mono">+0.159</td><td class="mono">+0.002</td><td class="mono">0.9476</td><td class="null">Null (no trend)</td></tr>
+            <tr><td><code>WS2M</code></td><td>m/s</td><td class="mono">-0.0042</td><td class="mono">[-0.0191, +0.0103]</td><td class="mono">-0.018</td><td class="mono">-0.021</td><td class="mono">0.4890</td><td class="null">Null (no trend)</td></tr>
+          </tbody>
+        </table>
+
+        <h3>2.2 Petrolina-PE (-9.39, -40.50) — Caatinga Semi-Arid Solar Corridor (Cloud-Driven)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Unit</th>
+              <th>Slope / Decade</th>
+              <th>95% Confidence Interval</th>
+              <th>42-yr Total</th>
+              <th>Seasonal τ</th>
+              <th>Seasonal p-value</th>
+              <th>Verdict (α = 0.05)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>T2M</code></td><td>°C</td><td class="mono">+0.3012</td><td class="mono">[+0.2314, +0.3710]</td><td class="mono">+1.265</td><td class="mono">+0.242</td><td class="mono">4.663e-15</td><td>Increasing</td></tr>
+            <tr><td><code>PRECTOTCORR</code></td><td>mm/day</td><td class="mono">-0.0721</td><td class="mono">[-0.1265, -0.0250]</td><td class="mono">-0.303</td><td class="mono">-0.068</td><td class="mono">0.0291</td><td>Decreasing</td></tr>
+            <tr><td><code>RH2M</code></td><td>%</td><td class="mono">-0.8932</td><td class="mono">[-1.2997, -0.4790]</td><td class="mono">-3.751</td><td class="mono">-0.125</td><td class="mono">5.157e-05</td><td>Decreasing</td></tr>
+            <tr><td><code>ALLSKY_SFC_SW_DWN</code></td><td>MJ/m²/day</td><td class="mono">+0.2558</td><td class="mono">[+0.1624, +0.3496]</td><td class="mono">+1.075</td><td class="mono">+0.178</td><td class="mono">9.384e-09</td><td>Increasing</td></tr>
+            <tr><td><code>CLRSKY_SFC_SW_DWN</code></td><td>MJ/m²/day</td><td class="mono">+0.0127</td><td class="mono">[-0.0093, +0.0350]</td><td class="mono">+0.053</td><td class="mono">+0.033</td><td class="mono">0.2901</td><td class="null">Null (no trend)</td></tr>
+            <tr><td><code>CLOUD_ATTEN_PCT</code></td><td>%</td><td class="mono">-0.9647</td><td class="mono">[-1.2794, -0.6302]</td><td class="mono">-4.052</td><td class="mono">-0.184</td><td class="mono">2.833e-09</td><td>Decreasing</td></tr>
+            <tr><td><code>WS2M</code></td><td>m/s</td><td class="mono">-0.0138</td><td class="mono">[-0.0433, +0.0168]</td><td class="mono">-0.058</td><td class="mono">-0.042</td><td class="mono">0.1734</td><td class="null">Null (no trend)</td></tr>
+          </tbody>
+        </table>
+
+        <h3>2.3 Manaus-AM (-3.10, -60.02) — Central Amazon Rainforest (Cloud-Driven)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Variable</th>
+              <th>Unit</th>
+              <th>Slope / Decade</th>
+              <th>95% Confidence Interval</th>
+              <th>42-yr Total</th>
+              <th>Seasonal τ</th>
+              <th>Seasonal p-value</th>
+              <th>Verdict (α = 0.05)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>T2M</code></td><td>°C</td><td class="mono">+0.3065</td><td class="mono">[+0.2543, +0.3593]</td><td class="mono">+1.287</td><td class="mono">+0.381</td><td class="mono">&lt; 1e-16</td><td>Increasing</td></tr>
+            <tr><td><code>PRECTOTCORR</code></td><td>mm/day</td><td class="mono">-0.4673</td><td class="mono">[-0.5989, -0.3344]</td><td class="mono">-1.963</td><td class="mono">-0.204</td><td class="mono">4.238e-11</td><td>Decreasing</td></tr>
+            <tr><td><code>RH2M</code></td><td>%</td><td class="mono">-0.5149</td><td class="mono">[-0.7309, -0.3099]</td><td class="mono">-2.163</td><td class="mono">-0.133</td><td class="mono">1.645e-05</td><td>Decreasing</td></tr>
+            <tr><td><code>ALLSKY_SFC_SW_DWN</code></td><td>MJ/m²/day</td><td class="mono">+0.2413</td><td class="mono">[+0.1690, +0.3120]</td><td class="mono">+1.013</td><td class="mono">+0.198</td><td class="mono">1.738e-10</td><td>Increasing</td></tr>
+            <tr><td><code>CLRSKY_SFC_SW_DWN</code></td><td>MJ/m²/day</td><td class="mono">+0.0289</td><td class="mono">[0.0000, +0.0582]</td><td class="mono">+0.121</td><td class="mono">+0.009</td><td class="mono">0.7686</td><td class="null">Null (no trend)</td></tr>
+            <tr><td><code>CLOUD_ATTEN_PCT</code></td><td>%</td><td class="mono">-0.8552</td><td class="mono">[-1.1442, -0.5651]</td><td class="mono">-3.592</td><td class="mono">-0.172</td><td class="mono">3.015e-08</td><td>Decreasing</td></tr>
+            <tr><td><code>WS2M</code></td><td>m/s</td><td class="mono">-0.0007</td><td class="mono">[-0.0034, +0.0013]</td><td class="mono">-0.003</td><td class="mono">-0.023</td><td class="mono">0.4512</td><td class="null">Null (no trend)</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>3. Multi-Vector Attribution &amp; Verified NASA Dataset Provenance</h2>
+        <p>
+          <strong>Direct Answer:</strong> Cockpit-OMNI pairs NASA POWER decadal trends with near-real-time thermal fire anomalies (<strong>NASA FIRMS <code>VIIRS_NOAA21_NRT</code></strong>, CMR Concept ID <code>C3264430167-LANCEMODIS</code>), space weather alerts (<strong>NASA DONKI</strong>), and cataloged InSAR/thermal surface deformation products (<strong>NASA Earthdata CMR MCP</strong>: <code>NISAR_L2_GUNW_PROVISIONAL_V1</code> and <code>ECO_L2T_LSTE</code>, honestly labeled <code>roadmap</code>).
+        </p>
+        <div class="callout">
+          <strong>Machine-Readable Verification Endpoints:</strong>
+          <ul>
+            <li><a href="/cache/attribution_campinas.json">/cache/attribution_campinas.json</a> · <a href="/cache/attribution_petrolina.json">/cache/attribution_petrolina.json</a> · <a href="/cache/attribution_manaus.json">/cache/attribution_manaus.json</a></li>
+            <li><a href="/cache/cmr_evidence.json">/cache/cmr_evidence.json</a> (Earthdata CMR MCP protocol <code>2025-06-18</code>)</li>
+            <li>Interactive workbench: <a href="/cockpit">Launch Earth System Cockpit</a> or read <a href="/science/northeast-brazil-solar-irradiance-clouds-vs-aerosols/">Monograph B on Northeast Solar Brightening</a>.</li>
+          </ul>
+        </div>
+      </section>
+    </article>
+
+    <footer>
+      <div class="foot-wrap">
+        <span>Team Curva do Pato (Luiz Antonio Gois Junior) · NASA Space Apps Challenge 2026 — Campinas, SP, Brazil · MIT License</span>
+        <span><a href="/science/">All Monographs</a> · <a href="/llms.txt">llms.txt</a> · <a href="https://github.com/SunLuiz/Curva_do_Pato" rel="noreferrer">GitHub</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

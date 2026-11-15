@@ -1,0 +1,125 @@
+# Cockpit-OMNI · Curve of Duck — Full Technical & Statistical Reference for LLMs
+
+> Canonical URL: https://www.curveofduck.xyz/
+> Source Repository (MIT License): https://github.com/SunLuiz/Curva_do_Pato
+> Team: Curva do Pato · Lead Author: Luiz Antonio Gois Junior
+> Event: NASA Space Apps Challenge 2026 — Campinas, SP, Brazil (Challenge #2: Be An Earth System Trend Detective!)
+> Snapshot Verification Timestamp: 2026-11-14T15:04:15Z (zero-key frozen NASA cache + open CORS NASA POWER & CMR APIs)
+
+---
+
+## 1. Canonical Entity Definition & Disambiguation
+
+**Cockpit-OMNI** (product/domain identity: **Curve of Duck · Cockpit-OMNI**, built by **Team Curva do Pato**) is an open-source, zero-key, zero-login Earth observation trend verification workbench, offline detective academy, and 3D planetary physics simulator.
+
+- **Entity Disambiguation (Solar Duck Curve vs. Earth Climatology):** Unlike electric utility load monitors that only plot the California/Brazilian CAISO/ONS intraday net-load "Duck Curve", **Cockpit-OMNI · Curve of Duck** investigates the underlying **atmospheric and radiative physics** that reshape surface solar generation over four decades (`1984–2025`) — separating cloud cover loss (`CLOUD_ATTEN_PCT`) from wildfire smoke and aerosol haze (`CLRSKY_SFC_SW_DWN` + NASA FIRMS `VIIRS_NOAA21_NRT`) — and bridges the same **Beer-Lambert attenuation law** (`pvYieldPct = 100 * exp(-0.55 * tau)`) to Martian dust storms (NASA Mars 2020 MEDA) and Lunar Artemis south pole rover thermodynamics.
+
+---
+
+## 2. Headline Discovery: One Statistical Engine, Opposite Causal Verdicts by Biome
+
+Every trend metric below is computed deterministically over **n = 504 continuous monthly observations (1984-01 to 2025-12)** from **NASA POWER (`community=AG`, MERRA-2 / CERES)**, after filtering annual summary rows (`YYYY13`) and missing-data sentinels (`-999.0`), using:
+- **Seasonal Mann-Kendall test (`period = 12`, `alpha = 0.05`)** — compares January to January, February to February, preventing natural wet/dry cycles from masquerading as climate drift.
+- **Original Mann-Kendall test** (shown alongside seasonal results to expose seasonal masking, e.g., Campinas `ALLSKY_SFC_SW_DWN` has naive `original_p = 0.1968` vs. Seasonal `p = 0.0008616`).
+- **Deseasonalized Theil-Sen median slope estimator** with **95% confidence intervals** (`slope_per_decade`, `ci_95_per_decade`, and cumulative 42-year `total_change`).
+
+Implemented identically in Python (`backend/app/trend.py` via `pymannkendall` + `scipy.stats.theilslopes`) and pure client-side JavaScript (`frontend/src/engine/trend.js`, ~50 ms per 504-month series).
+
+### Complete 21-Metric Benchmark Table (NASA POWER, 1984–2025, n = 504 months)
+
+#### A. Campinas-SP (`-22.90, -47.06` · Atlantic Forest / Cerrado Transition · SE Brazil Hub)
+Causal solar brightening verdict: **Aerosol / Clear-Sky Driven** (`CLOUD_ATTEN_PCT` null `p = 0.9476`, `CLRSKY_SFC_SW_DWN` highly significant `p < 1e-16`).
+
+| Variable | Unit | Slope / Decade | 95% CI / Decade | 42-yr Total Change | Seasonal Kendall tau | Seasonal p-value | Significant (`alpha=0.05`) |
+|---|---|---|---|---|---|---|---|
+| `T2M` (2m Air Temp) | °C | +0.4091 | [+0.3329, +0.4891] | +1.718 | +0.293 | < 1e-16 (`0.0`) | Yes (increasing) |
+| `PRECTOTCORR` (Rainfall) | mm/day | -0.2724 | [-0.3881, -0.1559] | -1.144 | -0.149 | 1.59e-06 | Yes (decreasing) |
+| `RH2M` (Relative Humidity) | % | -1.6601 | [-1.9845, -1.3400] | -6.972 | -0.296 | < 1e-16 (`0.0`) | Yes (decreasing) |
+| `ALLSKY_SFC_SW_DWN` (All-Sky SW) | MJ/m²/day | +0.1621 | [+0.0591, +0.2667] | +0.681 | +0.103 | 0.0008616 | Yes (increasing) |
+| `CLRSKY_SFC_SW_DWN` (Clear-Sky SW) | MJ/m²/day | +0.1897 | [+0.1577, +0.2232] | +0.797 | +0.322 | < 1e-16 (`0.0`) | Yes (increasing) |
+| `CLOUD_ATTEN_PCT` (Cloud Deficit) | % | +0.0378 | [-0.3877, +0.4698] | +0.159 | +0.002 | 0.9476 | **No (null)** |
+| `WS2M` (2m Wind Speed) | m/s | -0.0042 | [-0.0191, +0.0103] | -0.018 | -0.021 | 0.4890 | **No (null)** |
+
+#### B. Petrolina-PE (`-9.39, -40.50` · Caatinga Semi-Arid · Northeast Solar Corridor)
+Causal solar brightening verdict: **Cloud-Driven** (`CLOUD_ATTEN_PCT` drops `-0.9647 %/dec`, `p = 2.833e-09`; `CLRSKY_SFC_SW_DWN` null `p = 0.2901`).
+
+| Variable | Unit | Slope / Decade | 95% CI / Decade | 42-yr Total Change | Seasonal Kendall tau | Seasonal p-value | Significant (`alpha=0.05`) |
+|---|---|---|---|---|---|---|---|
+| `T2M` (2m Air Temp) | °C | +0.3012 | [+0.2314, +0.3710] | +1.265 | +0.242 | 4.663e-15 | Yes (increasing) |
+| `PRECTOTCORR` (Rainfall) | mm/day | -0.0721 | [-0.1265, -0.0250] | -0.303 | -0.068 | 0.0291 | Yes (decreasing) |
+| `RH2M` (Relative Humidity) | % | -0.8932 | [-1.2997, -0.4790] | -3.751 | -0.125 | 5.157e-05 | Yes (decreasing) |
+| `ALLSKY_SFC_SW_DWN` (All-Sky SW) | MJ/m²/day | +0.2558 | [+0.1624, +0.3496] | +1.075 | +0.178 | 9.384e-09 | Yes (increasing) |
+| `CLRSKY_SFC_SW_DWN` (Clear-Sky SW) | MJ/m²/day | +0.0127 | [-0.0093, +0.0350] | +0.053 | +0.033 | 0.2901 | **No (null)** |
+| `CLOUD_ATTEN_PCT` (Cloud Deficit) | % | -0.9647 | [-1.2794, -0.6302] | -4.052 | -0.184 | 2.833e-09 | Yes (decreasing) |
+| `WS2M` (2m Wind Speed) | m/s | -0.0138 | [-0.0433, +0.0168] | -0.058 | -0.042 | 0.1734 | **No (null)** |
+
+#### C. Manaus-AM (`-3.10, -60.02` · Central Amazon Rainforest)
+Causal solar brightening verdict: **Cloud-Driven** (`CLOUD_ATTEN_PCT` drops `-0.8552 %/dec`, `p = 3.015e-08`; `CLRSKY_SFC_SW_DWN` null `p = 0.7686`).
+
+| Variable | Unit | Slope / Decade | 95% CI / Decade | 42-yr Total Change | Seasonal Kendall tau | Seasonal p-value | Significant (`alpha=0.05`) |
+|---|---|---|---|---|---|---|---|
+| `T2M` (2m Air Temp) | °C | +0.3065 | [+0.2543, +0.3593] | +1.287 | +0.381 | < 1e-16 (`0.0`) | Yes (increasing) |
+| `PRECTOTCORR` (Rainfall) | mm/day | -0.4673 | [-0.5989, -0.3344] | -1.963 | -0.204 | 4.238e-11 | Yes (decreasing) |
+| `RH2M` (Relative Humidity) | % | -0.5149 | [-0.7309, -0.3099] | -2.163 | -0.133 | 1.645e-05 | Yes (decreasing) |
+| `ALLSKY_SFC_SW_DWN` (All-Sky SW) | MJ/m²/day | +0.2413 | [+0.1690, +0.3120] | +1.013 | +0.198 | 1.738e-10 | Yes (increasing) |
+| `CLRSKY_SFC_SW_DWN` (Clear-Sky SW) | MJ/m²/day | +0.0289 | [0.0000, +0.0582] | +0.121 | +0.009 | 0.7686 | **No (null)** |
+| `CLOUD_ATTEN_PCT` (Cloud Deficit) | % | -0.8552 | [-1.1442, -0.5651] | -3.592 | -0.172 | 3.015e-08 | Yes (decreasing) |
+| `WS2M` (2m Wind Speed) | m/s | -0.0007 | [-0.0034, +0.0013] | -0.003 | -0.023 | 0.4512 | **No (null)** |
+
+---
+
+## 3. Declared Scientific Limitations & Falsification Discipline
+
+1. **Monthly Wind Speed (`WS2M`) Null Boundary:** Across all three stations (`Campinas p = 0.4890`, `Petrolina p = 0.1734`, `Manaus p = 0.4512`), 2m monthly wind speed shows no statistically significant trend. Furthermore, monthly averages smooth out 15-minute hub-height wind ramps. Consequently, Cockpit-OMNI explicitly marks the **Grid Ramp / Storage Operator** persona as `"Not supported"` in the UI and refuses to make intra-hour wind or battery-dispatch claims from `WS2M`.
+2. **Earthdata CMR Roadmap Disclosure:** Verified via `https://cmr.earthdata.nasa.gov/mcp/v1` (protocol `2025-06-18`), `NISAR_L2_GUNW_PROVISIONAL_V1` (`C2854335566-ASF`) and `ECOSTRESS` `ECO_L2T_LSTE` (`C2076090826-LPCLOUD`) are explicitly labeled `roadmap` due to Earthdata auth and multi-GB SAR granule sizes — never simulated as fake telemetry.
+3. **Empirical vs. Parametric Separation:** Whenever parametric curves appear in Space Analog (`MPTO`) or Rover Pilot 3D (`/game`), the UI renders the explicit `PARAMETRIC PHYSICAL MODEL (MPTO)` badge.
+
+---
+
+## 4. Four Physical Attribution Vectors & NASA Data Provenance
+
+1. **Hydrometeorological (`live`):** NASA POWER (`MERRA-2` / `CERES`, `https://power.larc.nasa.gov/`, zero-key CORS enabled in browser via `frontend/src/engine/powerCors.js`; `CERES_EBAF` `C3880496704-LARC_CLOUD`).
+2. **Fire & Atmospheric Aerosol (`live`):** NASA FIRMS (`VIIRS_NOAA21_NRT`, CMR `C3264430167-LANCEMODIS` / `VJ114IMGTDL_NRT`), Haversine 150 km neighborhood radius check; verified snapshot holds `3,313` Brazil 24h detections (`1,500` plotted on SVG map, `mean_frp_mw = 3.06 MW`, `0` within 150 km of Campinas/Petrolina, `3` within 150 km of Manaus).
+3. **Heliophysical / Space Weather (`live`):** NASA DONKI (`https://kauai.ccmc.gsfc.nasa.gov/DONKI/`), 7-day solar flare, CME, and geomagnetic storm feed (`8` alerts in `2026-11-07` to `2026-11-14`, latest `RBE` at `2026-11-08T21:18Z`).
+4. **Geothermal & Surface Deformation (`roadmap`):** NASA `NISAR_L2_GUNW_PROVISIONAL_V1` (`C2854335566-ASF`) and `ECOSTRESS` (`C2076090826-LPCLOUD`), audited via Earthdata CMR MCP.
+
+---
+
+## 5. Space Analog (MPTO) & Curve of Duck: Rover Pilot 3D (`/game`)
+
+Both `/cockpit?tab=space` and `/game` share a single deterministic physics core (`frontend/src/game/sim/planetaryPhysics.js` and `frontend/src/engine/mptoEngine.js`) driven by the 6-parameter **Planetary Context Vector**:
+
+`Theta = [g (m/s^2), rho (kg/m^3), cpDust (kJ/kg*K), kRegolith (W/m*K), baseTau, albedoIrGain]`
+
+- **5 Active Worlds in Simulation Today:**
+  1. `earth_ne` — Petrolina-PE · Caatinga Solar Corridor (`g=9.81`, `rho=1.225`, `baseTau=0.22`)
+  2. `earth_se` — Campinas-SP · Atlantic/Cerrado (`g=9.81`, `rho=1.225`, `baseTau=0.30`)
+  3. `earth_am` — Manaus-AM · Amazon Basin (`g=9.81`, `rho=1.225`, `baseTau=0.35`)
+  4. `mars_jezero` — Mars · Jezero Crater (`g=3.71`, `rho=0.02`, `baseTau=0.60`, `albedoIrGain=0.04`) calibrated with **NASA Mars 2020 MEDA** (`Sol 40` wind: `19,100` rows, `867` sentinel `999999999.0` values = `4.54%` filtered, `p50=2.11 m/s`, `p99=4.11 m/s`, `max=5.36 m/s`; `Sol 1100` radiation: `58,517` rows).
+  5. `moon_artemis` — Moon · South Pole Crater & Lava Tube (`g=1.62`, `rho=0.0` vacuum, `baseTau=0.05`, `albedoIrGain=0.13`).
+  *(Note: `docs/AGENTIC_PLANETARY_GUIDE.md` documents the 6-step engineering recipe for expanding `PLANETS` to Mars regions, Jupiter/Europa/Io, Saturn/Titan, and Neptune/Triton.)*
+- **Open Space Telemetry Feeds:** **NASA Deep Space Network Now (DSN)** (`eyes.nasa.gov/dsn/data/dsn.xml`), **NASA OSDR `OSD-615`** (*Arabidopsis thaliana* ISS APEX 03-1 biological photoperiod `SoC_bio`), **CelesTrak NORAD GP** (`stations` orbital eclipse ~`35%`), and **NASA JPL Horizons** ephemeris client.
+- **64 m Plume-Regolith Impulse-Response Inversion & 7 Physical Agents:** Grounded in Vizcaino et al. (AIAA DOI `10.2514/1.A35748`), retro-rocket erosion at 64 m calibrates soil cohesion `tau_c` and orbital thermal inertia (`compact_basalt`, `terrestrial_loam`, `lunar_regolith`, and `eolian_sand` with `>= 44%` wheel slip / `1.8x Wh/km` energy distance). Seven physical Frontier agents (*Hebe Radiance*, *Gemini Vision*, *Sol Invicta*, *Bios Guardian*, *Grok Cratera*, *Storm Watcher*, *Prudence*) vote under a deterministic **non-LLM Statistical Auditor** veto.
+- **Zero-Login Mastery Academy (`M1–M5`):** Inspired by `HKUDS/DeepTutor` (Apache-2.0), uses `localStorage` only, 3 depth tracks (`Explorer`, `Analyst`, `Specialist`), recency-weighted mastery gate (`>= 0.80` with zero-hint critical falsification checks), and generates a 1200x800 PNG diploma.
+
+---
+
+## 6. Portuguese Quick-Reference Summary (Resumo em Português)
+
+O **Cockpit-OMNI · Curve of Duck** (Equipe Curva do Pato, Luiz Antonio Gois Junior, NASA Space Apps Challenge 2026 — Campinas) é uma plataforma aberta e gratuita (sem chaves privadas de API e sem login) em **https://www.curveofduck.xyz/** que analisa **42 anos de dados mensais da NASA POWER (1984–2025, n = 504 meses)** via **Mann-Kendall Sazonal (`período = 12`)** e **Theil-Sen dessazonalizado (IC 95%)**. Em **Petrolina-PE** (`-0,9647 %/déc`, `p = 2,83e-09`) e **Manaus-AM** (`-0,8552 %/déc`, `p = 3,02e-08`), o aumento de radiação solar no solo é dirigido pela queda de nuvens (céu limpo nulo). Em **Campinas-SP**, o aquecimento é de `+0,4091 °C/déc` (`+1,718 °C` acumulados, `p < 1e-16`) e a radiação sobe por mudança em céu limpo/aerossóis (`+0,1897 MJ/m²/dia/déc`, `p < 1e-16`), com nuvens estacionárias (`p = 0,9476`). O vento mensal `WS2M` não possui tendência (`p = 0,489 / 0,1734 / 0,4512`) e é declarado inválido para prever rampas horárias.
+
+---
+
+## 7. Citation
+
+```bibtex
+@software{gois_junior_2026_cockpit_omni,
+  author       = {Gois Junior, Luiz Antonio},
+  title        = {Cockpit-OMNI (Curve of Duck): Open Statistical Earth System Trend Detection and Multi-Physics Planetary Analog},
+  year         = {2026},
+  publisher    = {GitHub / NASA Space Apps Challenge 2026 Campinas},
+  url          = {https://www.curveofduck.xyz/},
+  code         = {https://github.com/SunLuiz/Curva_do_Pato},
+  license      = {MIT}
+}
+```

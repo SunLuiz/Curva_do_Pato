@@ -1,8 +1,22 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+function prerenderPreviewMiddleware() {
+  return {
+    name: "prerender-preview-routes",
+    configurePreviewServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        const cleanUrl = (req.url || "/").split("?")[0];
+        if (cleanUrl === "/cockpit") req.url = "/_prerender/cockpit.html";
+        else if (cleanUrl === "/game") req.url = "/_prerender/game.html";
+        next();
+      });
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), prerenderPreviewMiddleware()],
   build: {
     // Three.js WebGL runtime (~546 kB raw / ~135 kB gzip) is lazy-loaded only on /game
     chunkSizeWarningLimit: 600,

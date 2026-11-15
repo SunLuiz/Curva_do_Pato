@@ -605,11 +605,11 @@ export default function GamePage({
               </button>
             )}
           </div>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.32rem", marginTop: "0.3rem" }}>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "1.32rem", marginTop: "0.3rem" }}>
             {l === "pt"
               ? "Curve of Duck · Rover Pilot 3D (O Planeta Respira)"
               : "Curve of Duck · Rover Pilot 3D (The Planet Breathes)"}
-          </h2>
+          </h1>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", flexWrap: "wrap" }}>

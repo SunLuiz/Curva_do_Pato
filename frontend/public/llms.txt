@@ -1,0 +1,36 @@
+# Cockpit-OMNI · Curve of Duck
+
+> Open-source, zero-key NASA Earth observation and statistical trend attribution platform built by Team Curva do Pato (Luiz Antonio Gois Junior) for NASA Space Apps Challenge 2026 (Campinas, SP, Brazil — Challenge #2: Be An Earth System Trend Detective!). Live at https://www.curveofduck.xyz/ and MIT-licensed at https://github.com/SunLuiz/Curva_do_Pato.
+
+Cockpit-OMNI retrieves 42 years of monthly NASA POWER telemetry (1984–2025, n = 504 months per series), isolates multi-decade drift from seasonal swings via Seasonal Mann-Kendall (period = 12, alpha = 0.05) and deseasonalized Theil-Sen slopes (95% CI), and proves that one statistical engine yields opposite physical causal verdicts across Brazilian biomes: aerosol/clear-sky brightening in Campinas-SP vs. cloud-driven brightening in Petrolina-PE and Manaus-AM. The same Beer-Lambert attenuation law (100 * exp(-0.55 * tau)) links Earth's solar Duck Curve to Mars (Perseverance MEDA) and Lunar Artemis thermodynamics in Curve of Duck: Rover Pilot 3D.
+
+## Core Application Routes
+
+- [Story & 7-Slide Narrative Deck](https://www.curveofduck.xyz/): Interactive bilingual (EN | PT-BR) overview, architecture, and key 42-year trend findings.
+- [Earth System Trend Cockpit & Ask OMNI](https://www.curveofduck.xyz/cockpit): Interactive 504-month Seasonal Mann-Kendall + Theil-Sen workbench, 5 citizen Action Presets (GREEN/AMBER/RED), live/cached NASA FIRMS & DONKI feeds, Earthdata CMR provenance, Space Analog (MPTO), CSV/JSON download, and zero-key natural-language Q&A.
+- [Curve of Duck: Rover Pilot 3D & Academy](https://www.curveofduck.xyz/game): Three.js 3D rover simulator across Earth (Campinas, Petrolina, Manaus), Mars (Jezero Crater), and Moon (South Pole Artemis), plus 5-module zero-login Detective Academy (`>= 0.80` unassisted mastery gate).
+
+## Static Scientific Articles (HTML · Crawlable Without JavaScript)
+
+- [Science & Monographs Index](https://www.curveofduck.xyz/science/): Research hub indexing all empirical findings, equations, and machine-readable datasets.
+- [42 Years of NASA POWER Trends Across Brazilian Biomes (1984–2025)](https://www.curveofduck.xyz/science/brazilian-biomes-solar-brightening-1984-2025/): Anchorman benchmark paper with full 21-metric Seasonal Mann-Kendall + Theil-Sen table across Campinas-SP, Petrolina-PE, and Manaus-AM.
+- [Is Solar Irradiance Really Rising in Brazil's Northeast? Cloud-Driven vs. Aerosol-Driven Brightening](https://www.curveofduck.xyz/science/northeast-brazil-solar-irradiance-clouds-vs-aerosols/): Causal falsification comparing Petrolina-PE and Manaus-AM (cloud thinning) against Campinas-SP (clear-sky/aerosol shift).
+- [From Duck Curve to Mars: A Planetary Trend-Detection Analog — and Why Monthly Wind Data Can't Claim Ramp Risk](https://www.curveofduck.xyz/science/duck-curve-to-mars-wind-ramp-limits/): Beer-Lambert solar Duck Curve bridge, MPTO planetary vector Theta, Mars 2020 MEDA telemetry, and explicit monthly WS2M null-trend boundaries.
+
+## Complete LLM Reference
+
+- [Full Technical & Statistical Reference (llms-full.txt)](https://www.curveofduck.xyz/llms-full.txt): Single-file complete Markdown reference with all 21 NASA POWER statistics, CMR concept IDs, declared limitations, MPTO equations, and verified Q&A.
+
+## Audited Zero-Key JSON Snapshots
+
+- [Cache Manifest](https://www.curveofduck.xyz/cache/manifest.json): Frozen snapshot timestamp (`2026-11-14T15:04:15Z`).
+- [Campinas-SP Multi-Vector Attribution](https://www.curveofduck.xyz/cache/attribution_campinas.json): T2M `+0.4091 °C/dec`, clear-sky `+0.1897 MJ/m²/day/dec` (`p < 1e-16`), clouds null (`p = 0.9476`).
+- [Petrolina-PE Multi-Vector Attribution](https://www.curveofduck.xyz/cache/attribution_petrolina.json): T2M `+0.3012 °C/dec`, cloud attenuation `-0.9647 %/dec` (`p = 2.833e-09`), clear-sky null (`p = 0.2901`).
+- [Manaus-AM Multi-Vector Attribution](https://www.curveofduck.xyz/cache/attribution_manaus.json): T2M `+0.3065 °C/dec`, cloud attenuation `-0.8552 %/dec` (`p = 3.015e-08`), clear-sky null (`p = 0.7686`).
+- [NASA Earthdata CMR MCP Evidence](https://www.curveofduck.xyz/cache/cmr_evidence.json): Verified Concept IDs (`C3264430167-LANCEMODIS`, `C2854335566-ASF`, `C2076090826-LPCLOUD`, `C3880496704-LARC_CLOUD`).
+
+## Scientific Guardrails & Declared Limitations
+
+- Monthly 2m wind speed (`WS2M`) shows NO statistically significant trend at any station (`Campinas p = 0.489`, `Petrolina p = 0.1734`, `Manaus p = 0.4512`) and is explicitly marked invalid for sub-hourly wind-ramp or battery-dispatch claims.
+- Parametric 3D rover and Space Analog curves are explicitly badged `PARAMETRIC PHYSICAL MODEL (MPTO)` and separated from frozen empirical NASA telemetry.
+- NASA `NISAR` (`NISAR_L2_GUNW_PROVISIONAL_V1`) and `ECOSTRESS` (`ECO_L2T_LSTE`) are verified Earthdata CMR MCP citations explicitly flagged as `roadmap`, never fabricated in charts.

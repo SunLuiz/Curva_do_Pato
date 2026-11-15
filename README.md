@@ -5,7 +5,8 @@
 > **Target Challenge:** [#2 Be An Earth System Trend Detective!](https://www.spaceappschallenge.org/2026/challenges/) (Earth · Advanced)
 
 **Live demo (no login, no install):** https://www.curveofduck.xyz/  
-**Source:** https://github.com/SunLuiz/Curva_do_Pato · **License:** MIT
+**Research Monographs & LLM Reference:** [Science Hub](https://www.curveofduck.xyz/science/) · [`llms.txt`](https://www.curveofduck.xyz/llms.txt) · [`llms-full.txt`](https://www.curveofduck.xyz/llms-full.txt)  
+**Source:** https://github.com/SunLuiz/Curva_do_Pato · **License:** MIT · **Citation:** [CITATION.cff](./CITATION.cff)
 
 **Cockpit-OMNI** is an open, statistically audited Earth observation and trend attribution workbench. Given any geographic region and Earth system variable, it retrieves multi-decade NASA satellite/reanalysis time series (`1984–2025`, `n = 504` months), tests trend significance using Seasonal & Original Mann-Kendall + deseasonalized Theil-Sen regression with 95% confidence intervals, and attributes observed shifts across four physical vectors with transparent operational status (`live`, `cached`, or `roadmap`).
 

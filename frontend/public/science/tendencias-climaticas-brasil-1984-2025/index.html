@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Como o Clima e a Energia Solar Mudaram no Brasil em 42 Anos (1984–2025) — Cockpit-OMNI · Curve of Duck</title>
+    <meta
+      name="description"
+      content="Guia completo com 42 anos de dados abertos da NASA (1984–2025) em Campinas-SP, Petrolina-PE e Manaus-AM. Entenda em linguagem simples onde o sol aumentou por queda de nuvens vs. céu limpo/aerossóis e como testar qualquer cidade do Brasil sem login."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" sizes="48x48" type="image/png" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#2A7047" />
+    <link rel="canonical" href="https://www.curveofduck.xyz/science/tendencias-climaticas-brasil-1984-2025/" />
+    <link rel="alternate" hreflang="pt-BR" href="https://www.curveofduck.xyz/science/tendencias-climaticas-brasil-1984-2025/" />
+    <link rel="alternate" hreflang="en" href="https://www.curveofduck.xyz/science/brazilian-biomes-solar-brightening-1984-2025/" />
+    <link rel="alternate" hreflang="x-default" href="https://www.curveofduck.xyz/science/brazilian-biomes-solar-brightening-1984-2025/" />
+    <link rel="alternate" type="text/plain" title="LLMs Context" href="/llms.txt" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Curve of Duck · Cockpit-OMNI" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:url" content="https://www.curveofduck.xyz/science/tendencias-climaticas-brasil-1984-2025/" />
+    <meta property="og:title" content="Como o Clima e a Energia Solar Mudaram no Brasil em 42 Anos (1984–2025)" />
+    <meta
+      property="og:description"
+      content="Campinas (+1,72 °C e efeito em céu limpo), Petrolina (-0,965 %/déc de nuvens) e Manaus (-0,855 %/déc de nuvens): entenda a física por trás de 504 meses da NASA POWER."
+    />
+    <meta property="og:image" content="https://www.curveofduck.xyz/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="42 Anos de Dados da NASA no Brasil: Campinas, Petrolina e Manaus" />
+    <meta
+      name="twitter:description"
+      content="Mesma estatística (Mann-Kendall Sazonal + Theil-Sen), vereditos opostos entre Sudeste, Nordeste e Amazônia — sem login e sem chaves."
+    />
+    <meta name="twitter:image" content="https://www.curveofduck.xyz/og-cover.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --surface-0: #FAF7F2;
+        --surface-1: #FFFFFF;
+        --surface-2: #F3EEE5;
+        --hairline: #E4DCCF;
+        --hairline-strong: #CFC4B2;
+        --ink: #1C1B19;
+        --ink-soft: #6B6760;
+        --biome-se: #2A7047;
+        --biome-ne: #8F5D15;
+        --biome-n: #1F6F8B;
+        --null-ink: #736446;
+        --danger: #B23A2A;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: var(--surface-0);
+        color: var(--ink);
+        font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 1.03rem;
+        line-height: 1.72;
+      }
+      header {
+        background: var(--surface-1);
+        border-bottom: 1px solid var(--hairline);
+        padding: 0.9rem 1.5rem;
+      }
+      .nav-wrap {
+        max-width: 920px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .brand-link {
+        font-family: "Fraunces", Georgia, serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      nav { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      nav a {
+        color: var(--ink-soft);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.88rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid var(--hairline);
+        background: var(--surface-0);
+      }
+      nav a.active {
+        background: var(--biome-se);
+        color: var(--surface-1);
+        border-color: var(--biome-se);
+      }
+      article {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 2.25rem 1.5rem 3.5rem;
+      }
+      .eyebrow {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--biome-se);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      h1 {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: clamp(1.9rem, 3.3vw, 2.55rem);
+        line-height: 1.18;
+        margin-top: 0.55rem;
+        letter-spacing: -0.02em;
+      }
+      .subtitle {
+        margin-top: 0.75rem;
+        font-size: 1.12rem;
+        color: var(--ink-soft);
+      }
+      .meta-line {
+        margin-top: 0.85rem;
+        font-size: 0.9rem;
+        color: var(--ink-soft);
+      }
+      .tldr-box {
+        margin-top: 1.5rem;
+        padding: 1.35rem 1.5rem;
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        border-left: 5px solid var(--biome-se);
+        border-radius: 16px;
+      }
+      .tldr-box h2 {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 1.24rem;
+        margin-bottom: 0.55rem;
+      }
+      .callout {
+        margin-top: 1.25rem;
+        padding: 1.15rem 1.3rem;
+        background: var(--surface-2);
+        border: 1px solid var(--hairline-strong);
+        border-radius: 14px;
+      }
+      .callout.warn {
+        border-left: 4px solid var(--null-ink);
+      }
+      .callout strong.label {
+        display: block;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--biome-se);
+        margin-bottom: 0.35rem;
+      }
+      .callout.warn strong.label {
+        color: var(--null-ink);
+      }
+      section { margin-top: 2.3rem; }
+      h2 {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 1.5rem;
+        line-height: 1.25;
+        margin-bottom: 0.75rem;
+      }
+      h3 {
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 1.2rem;
+        margin-top: 1.35rem;
+        margin-bottom: 0.45rem;
+      }
+      p { margin-top: 0.75rem; max-width: 74ch; }
+      ul, ol { margin-top: 0.75rem; padding-left: 1.35rem; max-width: 74ch; }
+      li { margin-top: 0.5rem; }
+      .answer-lead {
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        border-radius: 12px;
+        padding: 0.9rem 1.15rem;
+        margin-top: 0.5rem;
+      }
+      .biome-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem;
+        margin-top: 1.2rem;
+      }
+      .biome-card {
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        border-radius: 16px;
+        padding: 1.25rem;
+      }
+      .biome-card.se { border-top: 4px solid var(--biome-se); }
+      .biome-card.ne { border-top: 4px solid var(--biome-ne); }
+      .biome-card.n { border-top: 4px solid var(--biome-n); }
+      .biome-tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .biome-card.se .biome-tag { color: var(--biome-se); }
+      .biome-card.ne .biome-tag { color: var(--biome-ne); }
+      .biome-card.n .biome-tag { color: var(--biome-n); }
+      .biome-card h3 { margin-top: 0.45rem; }
+      .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        margin-top: 1rem;
+        border: 1px solid var(--hairline);
+        border-radius: 14px;
+        background: var(--surface-1);
+      }
+      table {
+        width: 100%;
+        min-width: 640px;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th, td {
+        text-align: left;
+        padding: 0.7rem 0.8rem;
+        border-bottom: 1px solid var(--hairline);
+        vertical-align: top;
+      }
+      th {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.76rem;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        background: var(--surface-2);
+      }
+      tr:last-child td { border-bottom: none; }
+      .mono { font-family: "JetBrains Mono", monospace; font-size: 0.86rem; }
+      .sig { color: var(--biome-se); font-weight: 700; }
+      .null { color: var(--null-ink); font-weight: 700; }
+      .faq-item {
+        background: var(--surface-1);
+        border: 1px solid var(--hairline);
+        border-radius: 14px;
+        padding: 1.1rem 1.25rem;
+        margin-top: 0.85rem;
+      }
+      .faq-item h3 { margin-top: 0; font-size: 1.12rem; }
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+      }
+      .btn-primary {
+        display: inline-block;
+        background: var(--biome-se);
+        color: var(--surface-1);
+        text-decoration: none;
+        font-weight: 700;
+        padding: 0.65rem 1.15rem;
+        border-radius: 10px;
+      }
+      .btn-secondary {
+        display: inline-block;
+        background: var(--surface-1);
+        color: var(--ink);
+        border: 1px solid var(--hairline-strong);
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.65rem 1.15rem;
+        border-radius: 10px;
+      }
+      a { color: var(--biome-n); }
+      footer {
+        border-top: 1px solid var(--hairline);
+        background: var(--surface-1);
+        padding: 1.5rem;
+        font-size: 0.86rem;
+        color: var(--ink-soft);
+      }
+      .foot-wrap {
+        max-width: 920px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ScholarlyArticle",
+            "@id": "https://www.curveofduck.xyz/science/tendencias-climaticas-brasil-1984-2025/#article",
+            "mainEntityOfPage": "https://www.curveofduck.xyz/science/tendencias-climaticas-brasil-1984-2025/",
+            "headline": "Como o Clima e a Energia Solar Mudaram no Brasil em 42 Anos (1984–2025): Campinas, Petrolina e Manaus segundo Dados da NASA",
+            "alternativeHeadline": "Tendências climáticas no Brasil com Mann-Kendall Sazonal e Theil-Sen sobre NASA POWER",
+            "inLanguage": "pt-BR",
+            "datePublished": "2026-11-15",
+            "dateModified": "2026-11-15",
+            "author": { "@type": "Person", "@id": "https://www.curveofduck.xyz/#author", "name": "Luiz Antonio Gois Junior" },
+            "publisher": { "@type": "Organization", "@id": "https://www.curveofduck.xyz/#organization", "name": "Team Curva do Pato" },
+            "about": [
+              "Tendências climáticas no Brasil 1984–2025",
+              "Campinas-SP",
+              "Petrolina-PE",
+              "Manaus-AM",
+              "NASA POWER",
+              "Mann-Kendall Sazonal",
+              "Curva do Pato solar"
+            ],
+            "spatialCoverage": [
+              { "@type": "Place", "name": "Campinas, São Paulo, Brazil", "geo": { "@type": "GeoCoordinates", "latitude": -22.9, "longitude": -47.06 } },
+              { "@type": "Place", "name": "Petrolina, Pernambuco, Brazil", "geo": { "@type": "GeoCoordinates", "latitude": -9.39, "longitude": -40.5 } },
+              { "@type": "Place", "name": "Manaus, Amazonas, Brazil", "geo": { "@type": "GeoCoordinates", "latitude": -3.1, "longitude": -60.02 } }
+            ],
+            "citation": [
+              "NASA POWER (MERRA-2 / CERES) Monthly Climatology 1984–2025 (n = 504 months)",
+              "NASA FIRMS VIIRS_NOAA21_NRT (C3264430167-LANCEMODIS)",
+              "NASA DONKI Space Weather Alerts",
+              "NASA Mars 2020 Perseverance MEDA"
+            ]
+          },
+          {
+            "@type": "Dataset",
+            "@id": "https://www.curveofduck.xyz/science/tendencias-climaticas-brasil-1984-2025/#dataset",
+            "name": "NASA POWER Brazil 3-Biome Monthly Attribution Cache (1984–2025)",
+            "description": "Séries mensais de 504 meses para Campinas-SP, Petrolina-PE e Manaus-AM com temperatura (T2M), chuva (PRECTOTCORR), umidade (RH2M), irradiação solar (ALLSKY/CLRSKY), atenuação por nuvens e vento a 2 metros (WS2M).",
+            "license": "https://opensource.org/licenses/MIT",
+            "temporalCoverage": "1984-01/2025-12",
+            "distribution": [
+              { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://www.curveofduck.xyz/cache/attribution_campinas.json" },
+              { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://www.curveofduck.xyz/cache/attribution_petrolina.json" },
+              { "@type": "DataDownload", "encodingFormat": "application/json", "contentUrl": "https://www.curveofduck.xyz/cache/attribution_manaus.json" }
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://www.curveofduck.xyz/science/tendencias-climaticas-brasil-1984-2025/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Quanto a temperatura subiu em Campinas, Petrolina e Manaus nos últimos 42 anos?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Segundo 504 meses da NASA POWER (1984–2025), Campinas-SP aqueceu +0,4091 °C por década (+1,718 °C no acumulado, p < 1e-16), Manaus-AM aqueceu +0,3065 °C por década (+1,287 °C, p < 1e-16) e Petrolina-PE aqueceu +0,3012 °C por década (+1,265 °C, p = 4,663e-15)."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Por que entra mais sol no chão no Brasil desde 1984 — e o motivo é o mesmo em todo o país?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Não. Embora a radiação solar total (ALLSKY_SFC_SW_DWN) tenha subido nas três cidades, em Petrolina-PE (-0,9647 %/déc de atenuação por nuvens, p = 2,833e-09) e Manaus-AM (-0,8552 %/déc, p = 3,015e-08) o ganho vem de menos cobertura de nuvens, sem tendência em céu limpo. Em Campinas-SP, a cobertura de nuvens não mudou (p = 0,9476) e o ganho ocorre no céu limpo (+0,1897 MJ/m²/dia/déc, p < 1e-16), apontando mudança em aerossóis e transparência atmosférica."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Posso usar o Cockpit-OMNI na minha própria cidade do Brasil sem login?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Sim. Em https://www.curveofduck.xyz/cockpit não há login nem chave privada de API: basta informar a coordenada (lat, lon) ou usar o assistente Ask OMNI para consultar diretamente a API aberta CORS da NASA POWER e calcular Mann-Kendall Sazonal e Theil-Sen no próprio navegador."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Os dados de vento WS2M servem para prever rajadas de hora em hora na rede elétrica?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Não. O vento mensal a 2 metros (WS2M) não apresentou tendência estatística significativa em Campinas (p = 0,4890), Petrolina (p = 0,1734) nem Manaus (p = 0,4512), e médias mensais apagam rajadas de 15 minutos ou 1 hora. A plataforma declara esse limite explicitamente como não suportado."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="nav-wrap">
+        <a class="brand-link" href="/">Cockpit-OMNI · Curve of Duck</a>
+        <nav aria-label="Navegação do Portal Científico">
+          <a href="/">História (Story)</a>
+          <a href="/cockpit">Cockpit</a>
+          <a href="/game">Jogo 3D &amp; Academy</a>
+          <a class="active" href="/science/">Artigos Científicos</a>
+          <a href="/llms.txt">llms.txt</a>
+        </nav>
+      </div>
+    </header>
+
+    <article>
+      <div class="eyebrow">NASA Space Apps Challenge 2026 · Campinas, SP · Guia Completo em Português (PT-BR)</div>
+      <h1>Como o Clima e a Energia Solar Mudaram no Brasil em 42 Anos (1984–2025)</h1>
+      <p class="subtitle">
+        Um guia claro e sem jargões sobre o que <strong>504 meses de satélites da NASA</strong> revelam para quem vive, planta ou gera energia em <strong>Campinas-SP</strong>, <strong>Petrolina-PE</strong>, <strong>Manaus-AM</strong> — ou quer testar a própria cidade no navegador.
+      </p>
+      <p class="meta-line">
+        Por <strong>Luiz Antonio Gois Junior</strong> · Equipe Curva do Pato · Publicado em <time datetime="2026-11-15">15/11/2026</time> ·
+        <a href="/science/brazilian-biomes-solar-brightening-1984-2025/">English Benchmark Version</a>
+      </p>
+
+      <aside class="tldr-box" aria-label="Resumo rápido">
+        <h2>Em 30 segundos: o que você vai descobrir aqui</h2>
+        <ul>
+          <li><strong>Três regiões do Brasil, dois mecanismos opostos:</strong> no Semiárido (Petrolina-PE) e na Amazônia (Manaus-AM), entra mais sol no solo porque a cobertura de nuvens caiu; em Campinas-SP, o céu nublado ficou igual e a mudança veio da transparência em céu limpo.</li>
+          <li><strong>Aquecimento comprovado fora do ruído:</strong> entre 1984 e 2025, Campinas ganhou quase <strong>+1,72 °C</strong> acumulados (<code>+0,4091 °C/década</code>), Manaus subiu <strong>+1,29 °C</strong> e Petrolina subiu <strong>+1,27 °C</strong> — todos com menos chuva e ar mais seco.</li>
+          <li><strong>Transparência onde a maioria erra:</strong> o vento mensal (<code>WS2M</code>) deu resultado nulo nas três cidades (<code>p = 0,489 / 0,173 / 0,451</code>). O sistema assume esse limite em público em vez de chutar previsão horária.</li>
+          <li><strong>Aberta para qualquer município brasileiro:</strong> você pode consultar sua própria coordenada no <a href="/cockpit">Cockpit-OMNI</a> sem conta, sem login e sem chave de API.</li>
+        </ul>
+      </aside>
+
+      <section id="entidade">
+        <h2>1. O que é o Cockpit-OMNI · Curve of Duck — e por que esse nome no Brasil?</h2>
+        <div class="answer-lead">
+          <strong>Resposta direta:</strong> O <strong>Cockpit-OMNI · Curve of Duck</strong> é uma plataforma web aberta, gratuita e sem login, criada em <strong>Campinas (SP)</strong> para o <strong>NASA Space Apps Challenge 2026 (Desafio #2: <em>Be An Earth System Trend Detective!</em>)</strong>. Em vez de mostrar gráficos soltos, ela separa oscilações normais de estação para provar o que realmente mudou em 42 anos de clima e energia solar no Brasil.
+        </div>
+        <p>
+          Quem acompanha o setor elétrico já ouviu falar da famosa <strong>“Curva do Pato”</strong> (<em>Duck Curve</em>): ao meio-dia sobra geração solar na rede; no fim da tarde o sol cai rápido e o sistema precisa compensar de repente.
+        </p>
+        <p>
+          Porém, o <strong>Cockpit-OMNI · Curve of Duck</strong> não é um painel de tarifas de energia elétrica. Nós usamos o nome como ponte para o problema físico que fica por trás da tomada: <strong>o que está mudando no céu acima dos painéis solares brasileiros?</strong>
+        </p>
+        <p>
+          Quando nuvens somem ou fumaça de queimadas cobre uma região, a luz até o solo obedece à mesma física óptica — a <strong>Lei de Beer-Lambert</strong> — que também derruba a bateria de rovers da NASA durante tempestades de poeira em Marte.
+        </p>
+      </section>
+
+      <section id="tres-regioes">
+        <h2>2. O retrato do Brasil em três regiões: Campinas, Petrolina e Manaus (1984–2025)</h2>
+        <div class="answer-lead">
+          <strong>Resposta direta:</strong> Rodando exatamente o mesmo algoritmo sobre <strong>504 meses seguidos da NASA POWER</strong> (janeiro de 1984 a dezembro de 2025), descobrimos que <strong>todo o tripé esquentou e secou</strong>, mas o motivo do aumento de radiação solar no solo se inverte dependendo do bioma brasileiro.
+        </div>
+
+        <div class="biome-grid">
+          <div class="biome-card se">
+            <div class="biome-tag">Sudeste · Mata Atlântica / Cerrado</div>
+            <h3>Campinas-SP (<code>-22.90, -47.06</code>)</h3>
+            <p>
+              <strong>O dia a dia local:</strong> foi o ponto que mais aqueceu entre os três: <strong>+0,4091 °C por década</strong> — o equivalente a <strong>+1,718 °C</strong> em 42 anos, com ar <strong>6,97 pontos percentuais mais seco</strong> e queda na chuva diária média.
+            </p>
+            <p>
+              <strong>O veredito do céu:</strong> a atenuação por nuvens <strong>não mudou</strong> (<code>p = 0,9476</code>). Mas a radiação em céu limpo subiu forte (<code>+0,1897 MJ/m²/dia/déc</code>, <code>p &lt; 1e-16</code>): a mudança está na carga de aerossóis e transparência do ar seco.
+            </p>
+          </div>
+
+          <div class="biome-card ne">
+            <div class="biome-tag">Nordeste · Caatinga / Vale do São Francisco</div>
+            <h3>Petrolina-PE (<code>-9.39, -40.50</code>)</h3>
+            <p>
+              <strong>O dia a dia local:</strong> coração da fruticultura irrigada e do corredor solar nordestino. A temperatura subiu <strong>+0,3012 °C por década</strong> (<code>+1,265 °C</code> acumulados) e o sol total no solo avançou <strong>+0,2558 MJ/m²/dia por década</strong>.
+            </p>
+            <p>
+              <strong>O veredito do céu:</strong> aqui aconteceu o inverso de Campinas. Em céu claro quase nada mudou (<code>p = 0,2901</code>), mas a cobertura de nuvens recuou <strong>-0,9647 % por década</strong> (<code>p = 2,833e-09</code>). O ganho solar é puxado por menos nuvens.
+            </p>
+          </div>
+
+          <div class="biome-card n">
+            <div class="biome-tag">Norte · Amazônia Central</div>
+            <h3>Manaus-AM (<code>-3.10, -60.02</code>)</h3>
+            <p>
+              <strong>O dia a dia local:</strong> registrou a maior perda de chuva do estudo: <strong>-0,4673 mm/dia por década</strong> (<code>-1,963 mm/dia</code> em 42 anos, <code>p = 4,238e-11</code>), acompanhada de aquecimento contínuo de <strong>+0,3065 °C por década</strong>.
+            </p>
+            <p>
+              <strong>O veredito do céu:</strong> assim como Petrolina, o céu limpo permaneceu estável (<code>p = 0,7686</code>), enquanto a atenuação por nuvens despencou <strong>-0,8552 % por década</strong> (<code>p = 3,015e-08</code>), com focos de fogo ativos monitorados por satélite no entorno.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong class="label">Por que isso importa para quem planeja no Brasil?</strong>
+          Em um país continental, uma única regra nacional engana. Um engenheiro solar no Sertão do São Francisco olha para redução de nuvens; em Campinas, olha para ar mais seco e transparência de céu claro; na Amazônia, cruza perda de nuvens e chuva com plumas reais de queimadas captadas pelo sensor VIIRS da NASA FIRMS num raio de 150 km.
+        </div>
+      </section>
+
+      <section id="tabela-numeros">
+        <h2>3. Todos os números oficiais na tela (NASA POWER · 1984–2025 · n = 504 meses)</h2>
+        <p>
+          Para leitores, pesquisadores e sistemas de busca verificarem sem precisar rodar código, abaixo estão as 21 séries auditadas com taxa por década (Theil-Sen dessazonalizado), intervalo de confiança de 95% e p-valor de Mann-Kendall Sazonal (<code>período = 12</code>, significância em <code>α = 0,05</code>).
+        </p>
+
+        <h3>Tabela 1 — Resumo comparativo por estação brasileira</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Cidade / Bioma (Lat, Lon)</th>
+                <th>Temperatura 2m (<code>T2M</code>)</th>
+                <th>Chuva (<code>PRECTOTCORR</code>) &amp; Umidade (<code>RH2M</code>)</th>
+                <th>Atenuação por Nuvens (<code>CLOUD_ATTEN_PCT</code>)</th>
+                <th>Céu Limpo (<code>CLRSKY_SFC_SW_DWN</code>)</th>
+                <th>Veredito Causal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Campinas-SP</strong><br /><span class="mono">-22.90, -47.06</span><br />Mata Atlântica / Cerrado</td>
+                <td class="mono"><span class="sig">+0,4091 °C/déc</span><br />IC [+0,3329; +0,4891]<br />Acum: +1,718 °C · p &lt; 1e-16</td>
+                <td class="mono">Chuva: -0,2724 mm/dia/déc (p = 1,59e-06)<br />Umidade: -1,6601 %/déc (p &lt; 1e-16)</td>
+                <td class="mono"><span class="null">+0,0378 %/déc (Nulo)</span><br />IC [-0,3877; +0,4698]<br />τ = +0,002 · p = 0,9476</td>
+                <td class="mono"><span class="sig">+0,1897 MJ/m²/dia/déc</span><br />IC [+0,1577; +0,2232]<br />τ = +0,322 · p &lt; 1e-16</td>
+                <td><strong>Aerossóis / Céu Limpo</strong><br />Nuvens estacionárias; o ar seco/céu claro explica a alta solar.</td>
+              </tr>
+              <tr>
+                <td><strong>Petrolina-PE</strong><br /><span class="mono">-9.39, -40.50</span><br />Caatinga Semiárida</td>
+                <td class="mono"><span class="sig">+0,3012 °C/déc</span><br />IC [+0,2314; +0,3710]<br />Acum: +1,265 °C · p = 4,663e-15</td>
+                <td class="mono">Chuva: -0,0721 mm/dia/déc (p = 0,0291)<br />Umidade: -0,8932 %/déc (p = 5,157e-05)</td>
+                <td class="mono"><span class="sig">-0,9647 %/déc</span><br />IC [-1,2794; -0,6302]<br />τ = -0,184 · p = 2,833e-09</td>
+                <td class="mono"><span class="null">+0,0127 MJ/m²/dia/déc (Nulo)</span><br />IC [-0,0093; +0,0350]<br />τ = +0,033 · p = 0,2901</td>
+                <td><strong>Redução de Nuvens</strong><br />Céu limpo estável; menos nebulosidade entrega +1,075 MJ/m²/dia.</td>
+              </tr>
+              <tr>
+                <td><strong>Manaus-AM</strong><br /><span class="mono">-3.10, -60.02</span><br />Amazônia Central</td>
+                <td class="mono"><span class="sig">+0,3065 °C/déc</span><br />IC [+0,2543; +0,3593]<br />Acum: +1,287 °C · p &lt; 1e-16</td>
+                <td class="mono">Chuva: -0,4673 mm/dia/déc (p = 4,238e-11)<br />Umidade: -0,5149 %/déc (p = 1,645e-05)</td>
+                <td class="mono"><span class="sig">-0,8552 %/déc</span><br />IC [-1,1442; -0,5651]<br />τ = -0,172 · p = 3,015e-08</td>
+                <td class="mono"><span class="null">+0,0289 MJ/m²/dia/déc (Nulo)</span><br />IC [0,0000; +0,0582]<br />τ = +0,009 · p = 0,7686</td>
+                <td><strong>Redução de Nuvens</strong><br />Forte queda de chuva e nuvens; 3 focos FIRMS em 150 km no snapshot.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Tabela 2 — Radiação solar total (<code>ALLSKY_SFC_SW_DWN</code>) e limite declarado de vento (<code>WS2M</code>)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Cidade</th>
+                <th>Sol Total no Solo (<code>ALLSKY_SFC_SW_DWN</code>)</th>
+                <th>Vento Mensal a 2m (<code>WS2M</code>)</th>
+                <th>Status na Plataforma</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Campinas-SP</strong></td>
+                <td class="mono"><span class="sig">+0,1621 MJ/m²/dia/déc</span> (IC [+0,0591; +0,2667], acum. +0,681, τ = +0,103, p = 0,0008616)</td>
+                <td class="mono"><span class="null">-0,0042 m/s/déc</span> (IC [-0,0191; +0,0103], τ = -0,021, p = 0,4890)</td>
+                <td>Sem tendência no vento mensal</td>
+              </tr>
+              <tr>
+                <td><strong>Petrolina-PE</strong></td>
+                <td class="mono"><span class="sig">+0,2558 MJ/m²/dia/déc</span> (IC [+0,1624; +0,3496], acum. +1,075, τ = +0,178, p = 9,384e-09)</td>
+                <td class="mono"><span class="null">-0,0138 m/s/déc</span> (IC [-0,0433; +0,0168], τ = -0,042, p = 0,1734)</td>
+                <td>Sem tendência no vento mensal</td>
+              </tr>
+              <tr>
+                <td><strong>Manaus-AM</strong></td>
+                <td class="mono"><span class="sig">+0,2413 MJ/m²/dia/déc</span> (IC [+0,1690; +0,3120], acum. +1,013, τ = +0,198, p = 1,738e-10)</td>
+                <td class="mono"><span class="null">-0,0007 m/s/déc</span> (IC [-0,0034; +0,0013], τ = -0,023, p = 0,4512)</td>
+                <td>Sem tendência no vento mensal</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="metodo-simples">
+        <h2>4. Como saber se não é apenas um El Niño ou o verão normal?</h2>
+        <div class="answer-lead">
+          <strong>Resposta direta:</strong> Em vez de traçar uma reta simples (que se confunde com estações do ano e eventos extremos), o Cockpit-OMNI usa <strong>Mann-Kendall Sazonal (período = 12)</strong> e <strong>Theil-Sen dessazonalizado</strong> — comparando janeiro apenas com outros janeiros e julho apenas com outros julhos.
+        </div>
+        <p>
+          Pense na sua cidade no Brasil: comparar fevereiro chuvoso com agosto seco nunca revela mudança climática — revela apenas o calendário. Uma regressão linear comum também pode ser puxada pelo rabo quando ocorre um único ano extremo de El Niño.
+        </p>
+        <p>
+          Por isso, nosso motor (idêntico em Python via <code>pymannkendall</code> + <code>scipy.stats.theilslopes</code> e em JavaScript puro no navegador, rodando em ~50 ms por série) segue três travas de segurança:
+        </p>
+        <ol>
+          <li><strong>Limpeza automática da NASA POWER:</strong> remove as linhas anuais sintéticas <code>YYYY13</code> e valores faltantes marcados como <code>-999.0</code> antes de qualquer cálculo.</li>
+          <li><strong>Pareamento mês a mês (<code>período = 12</code>):</strong> revela tendências escondidas pela sazonalidade. Em Campinas, um teste ingênuo de <code>ALLSKY_SFC_SW_DWN</code> daria falso negativo (<code>p = 0,1968</code>), enquanto o teste sazonal expõe o sinal real (<code>p = 0,0008616</code>).</li>
+          <li><strong>Mediana robusta (Theil-Sen):</strong> mede a inclinação típica década a década sem superestimar picos isolados e informa sempre o intervalo de confiança de 95%.</li>
+        </ol>
+      </section>
+
+      <section id="sua-cidade">
+        <h2>5. Como consultar a sua própria cidade no Brasil em 30 segundos (sem login)</h2>
+        <div class="answer-lead">
+          <strong>Resposta direta:</strong> Todo o site roda 100% no seu navegador com endpoints CORS abertos da NASA (<code>power.larc.nasa.gov</code> e <code>cmr.earthdata.nasa.gov</code>) e cache auditado — sem cadastro, sem cartão e sem chave privada.
+        </div>
+        <p>
+          Quer investigar o seu município fora de Campinas, Petrolina e Manaus? Siga estes três passos na página <a href="/cockpit">Cockpit</a>:
+        </p>
+        <ul>
+          <li><strong>Passo 1 — Escolha um Preset de Ação em português:</strong> use os 5 atalhos cidadãos (<em>Ondas de Calor</em>, <em>Estiagem</em>, <em>Queimadas em 150 km</em>, <em>Tempestade Solar</em> e <em>Resumo da Cidade</em>) traduzidos em semáforo direto (Verde, Âmbar ou Vermelho).</li>
+          <li><strong>Passo 2 — Pergunte ao Ask OMNI ou digite coordenadas:</strong> no assistente natural bilíngue, pergunte por anos específicos (ex.: <em>“Campinas 2010–2025”</em>) ou informe qualquer coordenada <code>(latitude, longitude)</code> do Brasil para buscar os dados históricos direto da NASA POWER.</li>
+          <li><strong>Passo 3 — Confira a evidência ao vivo:</strong> veja os focos de calor de 24h da <strong>NASA FIRMS</strong> (<code>3.313</code> detecções no snapshot brasileiro, média de <code>3,06 MW</code>) e alertas geomagnéticos de 7 dias da <strong>NASA DONKI</strong> (<code>8</code> alertas no snapshot).</li>
+        </ul>
+
+        <div class="cta-row">
+          <a class="btn-primary" href="/cockpit">Abrir Cockpit na Minha Cidade →</a>
+          <a class="btn-secondary" href="/game">Treinar na Academy &amp; Rover 3D →</a>
+        </div>
+      </section>
+
+      <section id="limites-marte">
+        <h2>6. Limites honestos e a ponte do Brasil até Marte e à Lua</h2>
+        <div class="answer-lead">
+          <strong>Resposta direta:</strong> O Cockpit-OMNI declara seus limites com o mesmo destaque dos acertos: vento mensal (<code>WS2M</code>) não prevê rajadas horárias e satélites ainda em integração (<code>NISAR</code> e <code>ECOSTRESS</code>) ficam marcados como <code>roadmap</code>.
+        </div>
+
+        <div class="callout warn">
+          <strong class="label">Limite Crítico Declarado (Por que não inventamos previsão de rajada)</strong>
+          Em Campinas (<code>p = 0,4890</code>), Petrolina (<code>p = 0,1734</code>) e Manaus (<code>p = 0,4512</code>), a série mensal de vento a 2 metros (<code>WS2M</code>) não mostrou tendência estatística. Além disso, médias mensais escondem variações rápidas de 15 minutos ou 1 hora na altura de turbinas. Por isso, o painel bloqueia a persona de despacho horário como <strong>“Não suportado”</strong>.
+        </div>
+
+        <p>
+          Já na aba <em>Space Analog (MPTO)</em> e no simulador <a href="/game">Curve of Duck: Rover Pilot 3D</a>, a mesma equação exponencial de atenuação solar (<code>100 × exp(-0,55 × τ)</code>) conecta os três biomas brasileiros a dois mundos espaciais ativos:
+        </p>
+        <ul>
+          <li><strong>Marte — Cratera Jezero:</strong> calibrado com telemetria real da estação <strong>NASA Mars 2020 MEDA</strong> (<code>Sol 40</code> com <code>19.100</code> registros e limpeza automática de <code>867</code> sentinelas <code>999999999.0</code> = <code>4,54%</code>, além do <code>Sol 1100</code>).</li>
+          <li><strong>Lua — Polo Sul Artemis:</strong> ambiente em vácuo (<code>ρ = 0 kg/m³</code>, zero arrasto de vento) com ganho infravermelho de cratera de <code>13%</code>.</li>
+          <li><strong>Aprendizado sem login:</strong> a <em>Trend Detective Academy</em> traz 5 módulos com dados reais da NASA, exige nota <code>&gt;= 0,80</code> sem dicas em itens críticos de falseamento e emite certificado PNG local (com botão explícito para apagar os dados do navegador).</li>
+        </ul>
+      </section>
+
+      <section id="faq">
+        <h2>7. Perguntas frequentes (FAQ)</h2>
+
+        <div class="faq-item">
+          <h3>O Cockpit-OMNI usa inteligência artificial generativa para inventar respostas climáticas?</h3>
+          <p>
+            <strong>Não.</strong> Todas as inclinações de Theil-Sen, intervalos de confiança de 95% e p-valores são 100% determinísticos e auditáveis sobre os números da NASA POWER. O assistente <em>Ask OMNI</em> não depende de API paga nem alucina números: ele consulta diretamente as séries do cache e as APIs abertas da NASA.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Por que Campinas-SP aqueceu mais rápido que Manaus-AM e Petrolina-PE nos 42 anos analisados?</h3>
+          <p>
+            Nas medições mensais da NASA POWER (1984–2025), Campinas-SP apresentou taxa de <strong>+0,4091 °C/década</strong> (<code>+1,718 °C</code> acumulados) e a maior queda de umidade relativa (<code>-1,6601 %/década</code>, acumulada em <code>-6,972%</code>), enquanto Petrolina ficou em <strong>+0,3012 °C/década</strong> e Manaus em <strong>+0,3065 °C/década</strong>.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Se eu tenho projeto de energia solar no Nordeste, esse aumento de sol em Petrolina é garantido para sempre?</h3>
+          <p>
+            Não deve ser tratado como garantia perpétua sem monitorar nuvens. Em Petrolina-PE, os dados provam que a radiação total subiu (<code>+0,2558 MJ/m²/dia/déc</code>) porque a atenuação por nuvens caiu (<code>-0,9647 %/déc</code>, <code>p = 2,833e-09</code>), enquanto o céu limpo ficou estável (<code>p = 0,2901</code>). Como o ganho depende de regime de nuvens, ele acompanha a dinâmica hidrológica regional.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Onde baixar os arquivos JSON auditados e citar o projeto?</h3>
+          <p>
+            Todos os snapshots abertos ficam em <a href="/cache/manifest.json">/cache/manifest.json</a>, <a href="/cache/attribution_campinas.json">Campinas</a>, <a href="/cache/attribution_petrolina.json">Petrolina</a> e <a href="/cache/attribution_manaus.json">Manaus</a>. O índice para LLMs está em <a href="/llms.txt">/llms.txt</a>, o dossiê completo em <a href="/llms-full.txt">/llms-full.txt</a> e o código MIT em <a href="https://github.com/SunLuiz/Curva_do_Pato" rel="noreferrer">github.com/SunLuiz/Curva_do_Pato</a>.
+          </p>
+        </div>
+      </section>
+    </article>
+
+    <footer>
+      <div class="foot-wrap">
+        <span>Equipe Curva do Pato (Luiz Antonio Gois Junior) · NASA Space Apps Challenge 2026 — Campinas, SP, Brasil · Licença MIT</span>
+        <span>
+          <a href="/science/">Hub Científico</a> ·
+          <a href="/science/brazilian-biomes-solar-brightening-1984-2025/">English Paper</a> ·
+          <a href="/llms-full.txt">llms-full.txt</a> ·
+          <a href="https://github.com/SunLuiz/Curva_do_Pato" rel="noreferrer">GitHub</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

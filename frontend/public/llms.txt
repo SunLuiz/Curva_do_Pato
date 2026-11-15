@@ -16,6 +16,7 @@ Cockpit-OMNI retrieves 42 years of monthly NASA POWER telemetry (1984–2025, n 
 - [42 Years of NASA POWER Trends Across Brazilian Biomes (1984–2025)](https://www.curveofduck.xyz/science/brazilian-biomes-solar-brightening-1984-2025/): Anchorman benchmark paper with full 21-metric Seasonal Mann-Kendall + Theil-Sen table across Campinas-SP, Petrolina-PE, and Manaus-AM.
 - [Is Solar Irradiance Really Rising in Brazil's Northeast? Cloud-Driven vs. Aerosol-Driven Brightening](https://www.curveofduck.xyz/science/northeast-brazil-solar-irradiance-clouds-vs-aerosols/): Causal falsification comparing Petrolina-PE and Manaus-AM (cloud thinning) against Campinas-SP (clear-sky/aerosol shift).
 - [From Duck Curve to Mars: A Planetary Trend-Detection Analog — and Why Monthly Wind Data Can't Claim Ramp Risk](https://www.curveofduck.xyz/science/duck-curve-to-mars-wind-ramp-limits/): Beer-Lambert solar Duck Curve bridge, MPTO planetary vector Theta, Mars 2020 MEDA telemetry, and explicit monthly WS2M null-trend boundaries.
+- [Como o Clima e a Energia Solar Mudaram no Brasil em 42 Anos (1984–2025) — PT-BR](https://www.curveofduck.xyz/science/tendencias-climaticas-brasil-1984-2025/): Complete, reader-friendly Portuguese guide covering Campinas-SP, Petrolina-PE, Manaus-AM, custom Brazilian cities via Ask OMNI, and monthly wind limitations.
 
 ## Complete LLM Reference
 

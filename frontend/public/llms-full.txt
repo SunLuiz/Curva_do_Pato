@@ -106,6 +106,8 @@ Both `/cockpit?tab=space` and `/game` share a single deterministic physics core 
 
 ## 6. Portuguese Quick-Reference Summary (Resumo em Português)
 
+> Full localized Portuguese article: https://www.curveofduck.xyz/science/tendencias-climaticas-brasil-1984-2025/
+
 O **Cockpit-OMNI · Curve of Duck** (Equipe Curva do Pato, Luiz Antonio Gois Junior, NASA Space Apps Challenge 2026 — Campinas) é uma plataforma aberta e gratuita (sem chaves privadas de API e sem login) em **https://www.curveofduck.xyz/** que analisa **42 anos de dados mensais da NASA POWER (1984–2025, n = 504 meses)** via **Mann-Kendall Sazonal (`período = 12`)** e **Theil-Sen dessazonalizado (IC 95%)**. Em **Petrolina-PE** (`-0,9647 %/déc`, `p = 2,83e-09`) e **Manaus-AM** (`-0,8552 %/déc`, `p = 3,02e-08`), o aumento de radiação solar no solo é dirigido pela queda de nuvens (céu limpo nulo). Em **Campinas-SP**, o aquecimento é de `+0,4091 °C/déc` (`+1,718 °C` acumulados, `p < 1e-16`) e a radiação sobe por mudança em céu limpo/aerossóis (`+0,1897 MJ/m²/dia/déc`, `p < 1e-16`), com nuvens estacionárias (`p = 0,9476`). O vento mensal `WS2M` não possui tendência (`p = 0,489 / 0,1734 / 0,4512`) e é declarado inválido para prever rampas horárias.
 
 ---

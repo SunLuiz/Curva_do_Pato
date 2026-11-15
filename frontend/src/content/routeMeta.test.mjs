@@ -42,6 +42,7 @@ test("GEO and SEO public artifacts exist with non-empty verified content", () =>
     "science/brazilian-biomes-solar-brightening-1984-2025/index.html",
     "science/northeast-brazil-solar-irradiance-clouds-vs-aerosols/index.html",
     "science/duck-curve-to-mars-wind-ramp-limits/index.html",
+    "science/tendencias-climaticas-brasil-1984-2025/index.html",
   ];
   for (const rel of requiredFiles) {
     const full = path.join(PUBLIC_DIR, rel);

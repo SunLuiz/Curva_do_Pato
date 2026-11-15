@@ -60,4 +60,10 @@ test("GEO and SEO public artifacts exist with non-empty verified content", () =>
   assert.match(llmsFull, /-0\.9647/);
   assert.match(llmsFull, /-0\.8552/);
   assert.match(llmsFull, /0\.4890/);
+
+  const googleVerify = fs.readFileSync(path.join(PUBLIC_DIR, "googlefc76bad6f15cb47b.html"), "utf8").trim();
+  assert.equal(googleVerify, "google-site-verification: googlefc76bad6f15cb47b.html");
+
+  const bingVerify = fs.readFileSync(path.join(PUBLIC_DIR, "BingSiteAuth.xml"), "utf8");
+  assert.match(bingVerify, /<user>03C3384C55AC50338B411746526795EF<\/user>/);
 });

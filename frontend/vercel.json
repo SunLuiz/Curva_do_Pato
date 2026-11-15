@@ -12,6 +12,12 @@
       "headers": [
         { "key": "Content-Type", "value": "application/xml; charset=utf-8" }
       ]
+    },
+    {
+      "source": "/BingSiteAuth.xml",
+      "headers": [
+        { "key": "Content-Type", "value": "application/xml; charset=utf-8" }
+      ]
     }
   ],
   "redirects": [

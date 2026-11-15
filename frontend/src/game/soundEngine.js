@@ -338,6 +338,79 @@ export function getTimbreProfile(timbreId = "ocarina") {
   return MECHANISM_TIMBRES.find((t) => t.id === timbreId) || MECHANISM_TIMBRES[0];
 }
 
+export const AUDIO_STUDIO_PRESETS = [
+  {
+    id: "studio_ocarina",
+    activeSongId: "title",
+    mechanismTimbre: "ocarina",
+    ringtoneId: "lullaby",
+    labelEn: "Ocarina Harmonic Studio",
+    labelPt: "Estúdio Harmônico · Ocarina",
+    badgeEn: "N64 Breath Sine",
+    badgePt: "Onda Senoidal N64",
+    descEn: "Soft Helmholtz ceramic ocarina acoustics & gentle Dorian chimes across UI.",
+    descPt: "Ocarina cerâmica Helmholtz + sino dórico suave em toda a interface.",
+  },
+  {
+    id: "studio_mario",
+    activeSongId: "mario",
+    mechanismTimbre: "square_mario",
+    ringtoneId: "mario",
+    labelEn: "8-Bit Chiptune · Mario",
+    labelPt: "Chiptune 8-Bit · Mario",
+    badgeEn: "NES Ricoh 2A03",
+    badgePt: "NES Ricoh 2A03",
+    descEn: "Syncopated dual-square pulses + triangle bass across buttons, presets & quiz.",
+    descPt: "Pulso 8-bit sincopado + baixo triangular nos botões, presets e quiz.",
+  },
+  {
+    id: "studio_superman",
+    activeSongId: "superman",
+    mechanismTimbre: "brass_superman",
+    ringtoneId: "superman",
+    labelEn: "Heroic Arcade Brass · Superman",
+    labelPt: "Fanfarra Arcade · Superman",
+    badgeEn: "Sawtooth Fifths",
+    badgePt: "Quinta Justa Brass",
+    descEn: "Bright stacked sawtooth trumpets for rover launch, docking & high alerts.",
+    descPt: "Naipe de trompetes brilhantes para partida, acoplamento e vitórias.",
+  },
+  {
+    id: "studio_batman",
+    activeSongId: "batman",
+    mechanismTimbre: "brass_batman",
+    ringtoneId: "batman",
+    labelEn: "Gothic Noir Brass · Batman",
+    labelPt: "Metais Góticos · Batman",
+    badgeEn: "Sunsoft Low Saw",
+    badgePt: "Metais Graves Noir",
+    descEn: "Dark minor sawtooth horns & tense low-pass mechanisms for dusk operations.",
+    descPt: "Metais em tom menor e mecanismos filtrados graves para alerta noturno.",
+  },
+  {
+    id: "studio_spiderman",
+    activeSongId: "spiderman",
+    mechanismTimbre: "pulse_spiderman",
+    ringtoneId: "spiderman",
+    labelEn: "Blues-Rock FM · Spider-Man '67",
+    labelPt: "Blues-Rock FM · Homem-Aranha",
+    badgeEn: "Punchy Synth Riff",
+    badgePt: "Riff Synth Curto",
+    descEn: "Fast-attack blues-rock square pulses for switches, sliders & Ask OMNI.",
+    descPt: "Pulso blues-rock de ataque rápido em abas, controles e Ask OMNI.",
+  },
+];
+
+export function getMatchingStudioPresetId(activeSongId, mechanismTimbre, ringtoneId) {
+  const found = AUDIO_STUDIO_PRESETS.find(
+    (p) =>
+      p.activeSongId === activeSongId &&
+      p.mechanismTimbre === mechanismTimbre &&
+      p.ringtoneId === ringtoneId
+  );
+  return found ? found.id : "custom";
+}
+
 // Simple 8-step melodic contour intervals modulated smoothly by telemetry level & slope
 const TELEMETRY_PHRASE_OFFSETS = [0, 2, 1, 3, 2, 4, 2, 1];
 
@@ -543,6 +616,11 @@ class GameSoundEngine {
       activeSongId: this.activeSongId,
       ringtoneId: this.ringtoneId,
       mechanismTimbre: this.mechanismTimbre,
+      studioPresetId: getMatchingStudioPresetId(
+        this.activeSongId,
+        this.mechanismTimbre,
+        this.ringtoneId
+      ),
     };
   }
 
@@ -598,6 +676,17 @@ class GameSoundEngine {
     this.mechanismTimbre = timbreId;
     this._savePrefs();
     this._notify();
+  }
+
+  applyStudioPreset(presetId) {
+    const preset = AUDIO_STUDIO_PRESETS.find((p) => p.id === presetId);
+    if (!preset) return null;
+    this.activeSongId = preset.activeSongId;
+    this.mechanismTimbre = preset.mechanismTimbre;
+    this.ringtoneId = preset.ringtoneId;
+    this._savePrefs();
+    this._notify();
+    return preset;
   }
 
   _syncMasterOutput() {
@@ -1236,6 +1325,15 @@ class GameSoundEngine {
   playMorphHum() {
     if (this.muted) return;
     this.playMechanismNote(OCARINA_NOTES.D5, 0.42, 0, { gain: 0.15 });
+  }
+
+  playLaunchSequence() {
+    if (this.muted) return;
+    this.playTone({ freq: 118, endFreq: 256, duration: 0.58, type: "triangle", gain: 0.1 });
+    this.playMechanismNote(OCARINA_NOTES.D5, 0.14, 0.04, { gain: 0.11 });
+    this.playMechanismNote(OCARINA_NOTES.F5, 0.14, 0.18, { gain: 0.12 });
+    this.playMechanismNote(OCARINA_NOTES.A5, 0.16, 0.32, { gain: 0.13 });
+    this.playMechanismNote(OCARINA_NOTES.D6, 0.34, 0.48, { gain: 0.15 });
   }
 
   playOutcome(won) {

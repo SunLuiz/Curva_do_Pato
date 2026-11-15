@@ -248,6 +248,8 @@ export default function GamePage({
     setCamMode((m) => (m === "chase" ? "survey" : "chase"));
   }, []);
 
+  const [startInFullscreen, setStartInFullscreen] = useState(false);
+
   const toggleFullscreen = useCallback(() => {
     const el = viewportRef.current;
     if (!el) return;
@@ -256,6 +258,12 @@ export default function GamePage({
     } else {
       document.exitFullscreen?.().catch(() => {});
     }
+  }, []);
+
+  const enterFullscreen = useCallback(() => {
+    const el = viewportRef.current;
+    if (!el || document.fullscreenElement) return;
+    el.requestFullscreen?.().catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -728,52 +736,60 @@ export default function GamePage({
         })}
       </div>
 
-      {/* View 0: Start Menu with Ocarina Theme, Pilot Verification & Language Settings */}
-      {viewMode === "start" && (
-        <StartMenuModal
-          lang={l}
-          onChangeLang={handleChangeLang}
-          muted={muted}
-          onToggleMute={handleToggleMute}
-          volume={volume}
-          onChangeVolume={handleChangeVolume}
-          musicEnabled={musicEnabled}
-          onToggleMusic={handleToggleMusic}
-          selectedMissionId={selectedMissionId}
-          pilotName={profile.name || ""}
-          onSavePilotName={handleSavePilotName}
-          nameGateAlert={nameGateAlert}
-          onStartPlay={(verifiedName) =>
-            launchRun({
-              ...runConfig,
-              missionId: selectedMissionId,
-              verifiedPilotName: verifiedName,
-            })
-          }
-          onOpenIntro={() => {
-            soundEngine.stopMusic();
-            setViewMode("intro");
-          }}
-        />
-      )}
+      <div
+        ref={viewportRef}
+        className={`game-stage-shell ${isFullscreen ? "is-fullscreen" : ""}`}
+      >
+        {/* View 0: Start Menu with Ocarina Theme, Pilot Verification & Language Settings */}
+        {viewMode === "start" && (
+          <StartMenuModal
+            lang={l}
+            onChangeLang={handleChangeLang}
+            muted={muted}
+            onToggleMute={handleToggleMute}
+            volume={volume}
+            onChangeVolume={handleChangeVolume}
+            musicEnabled={musicEnabled}
+            onToggleMusic={handleToggleMusic}
+            isFullscreen={isFullscreen}
+            onToggleFullscreen={toggleFullscreen}
+            onEnterFullscreen={enterFullscreen}
+            startInFullscreen={startInFullscreen}
+            onToggleStartInFullscreen={() => setStartInFullscreen((v) => !v)}
+            selectedMissionId={selectedMissionId}
+            pilotName={profile.name || ""}
+            onSavePilotName={handleSavePilotName}
+            nameGateAlert={nameGateAlert}
+            onStartPlay={(verifiedName) =>
+              launchRun({
+                ...runConfig,
+                missionId: selectedMissionId,
+                verifiedPilotName: verifiedName,
+              })
+            }
+            onOpenIntro={() => {
+              soundEngine.stopMusic();
+              setViewMode("intro");
+            }}
+          />
+        )}
 
-      {/* View 1: 5-Act Interactive SVG Vector Intro */}
-      {viewMode === "intro" && (
-        <NarrativeIntro lang={l} muted={muted} onToggleMute={handleToggleMute} onFinish={handleFinishIntro} />
-      )}
+        {/* View 1: 5-Act Interactive SVG Vector Intro */}
+        {viewMode === "intro" && (
+          <NarrativeIntro lang={l} muted={muted} onToggleMute={handleToggleMute} onFinish={handleFinishIntro} />
+        )}
 
-      {/* View 2: Custom Difficulty Mission Lab */}
-      {viewMode === "lab" && (
-        <MissionLabPanel lang={l} initialDepth={depth} onLaunch={launchRun} />
-      )}
+        {/* View 2: Custom Difficulty Mission Lab */}
+        {viewMode === "lab" && (
+          <MissionLabPanel lang={l} initialDepth={depth} onLaunch={launchRun} />
+        )}
 
-      {/* View 3: Active 3D Rover Simulation & Live Telemetry (Unified Fullscreen Game Stage) */}
-      {viewMode === "play" && snapshot && (
-        <div
-          ref={viewportRef}
-          className={`viewport-frame ${isFullscreen ? "is-fullscreen" : ""}`}
-          aria-label="3D Rover Pilot Viewport"
-        >
+        {/* View 3: Active 3D Rover Simulation & Live Telemetry (Unified Fullscreen Game Stage) */}
+        {viewMode === "play" && snapshot && (
+          <div
+            className={`viewport-frame ${isFullscreen ? "is-fullscreen" : ""}`}
+            aria-label="3D Rover Pilot Viewport"
+          >
           <RoverViewport3D
             key={`${snapshot.missionId}-${snapshot.planetId}-${runCounter}`}
             missionId={snapshot.missionId}
@@ -1167,8 +1183,9 @@ export default function GamePage({
               </div>
             </div>
           )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
 
       {/* SECTION BELOW 3D VIEWPORT: Learning Metrics, Browser Quiz Option, Merits & Diploma */}
       <div style={{ display: "grid", gap: "1.25rem", marginTop: "0.5rem" }}>

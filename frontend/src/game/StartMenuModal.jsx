@@ -4,6 +4,8 @@ import {
   CheckCircle2,
   Eye,
   Globe,
+  Maximize2,
+  Minimize2,
   Play,
   Settings,
   Sparkles,
@@ -13,7 +15,12 @@ import {
 } from "lucide-react";
 import { validatePilotName } from "../academy/storage";
 import AudioSettingsMenu from "../components/AudioSettingsMenu";
-import { SOUND_THEMES, getTimbreProfile, soundEngine } from "./soundEngine";
+import {
+  AUDIO_STUDIO_PRESETS,
+  SOUND_THEMES,
+  getTimbreProfile,
+  soundEngine,
+} from "./soundEngine";
 
 export default function StartMenuModal({
   lang = "en",
@@ -24,6 +31,11 @@ export default function StartMenuModal({
   onChangeVolume,
   musicEnabled = true,
   onToggleMusic,
+  isFullscreen = false,
+  onToggleFullscreen,
+  onEnterFullscreen,
+  startInFullscreen = false,
+  onToggleStartInFullscreen,
   selectedMissionId = "M1",
   pilotName = "",
   onSavePilotName,
@@ -33,11 +45,21 @@ export default function StartMenuModal({
 }) {
   const l = lang === "pt" ? "pt" : "en";
   const nameInputRef = useRef(null);
+  const launchTimerRef = useRef(null);
   const [nameInput, setNameInput] = useState(pilotName || "");
   const [submittedError, setSubmittedError] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [launching, setLaunching] = useState(false);
   const [audioSnap, setAudioSnap] = useState(() => soundEngine.getState());
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (launchTimerRef.current) {
+        clearTimeout(launchTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     setNameInput(pilotName || "");
@@ -137,14 +159,32 @@ export default function StartMenuModal({
   };
 
   const handleLaunchClick = () => {
+    if (launching) return;
     const cleanName = ensureVerifiedPilot();
     if (!cleanName) return;
+
+    // Must request fullscreen synchronously inside the user-click gesture
+    if (startInFullscreen && !isFullscreen) {
+      onEnterFullscreen?.();
+    }
+
     soundEngine.stopMusic();
-    soundEngine.playActionClick("dock");
-    onStartPlay?.(cleanName);
+    soundEngine.playLaunchSequence();
+    setLaunching(true);
+
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const rolloutMs = prefersReduced ? 110 : 880;
+
+    launchTimerRef.current = setTimeout(() => {
+      launchTimerRef.current = null;
+      onStartPlay?.(cleanName);
+    }, rolloutMs);
   };
 
   const handleIntroClick = () => {
+    if (launching) return;
     const cleanName = ensureVerifiedPilot();
     if (!cleanName) return;
     soundEngine.stopMusic();
@@ -158,19 +198,72 @@ export default function StartMenuModal({
     if (!muted) soundEngine.playActionClick("nav");
   };
 
+  const handleFullscreenClick = () => {
+    if (!muted) soundEngine.playActionClick("nav");
+    onToggleFullscreen?.();
+  };
+
   const activeTimbre = getTimbreProfile(audioSnap.mechanismTimbre);
   const activeSongMeta = SOUND_THEMES.find((t) => t.id === preferredSongId) || SOUND_THEMES[0];
+  const activeStudioPreset = AUDIO_STUDIO_PRESETS.find((p) => p.id === audioSnap.studioPresetId);
 
   return (
     <section className="start-menu-stage" aria-label="Game Start Menu">
       <div className="start-menu-hero">
-        <div className="start-menu-kicker">
-          <Sparkles size={13} />
-          <span>
-            {l === "pt"
-              ? "MENU START · ROVER PILOT 3D · ORQUESTRAÇÃO MPTO (7 AGENTES)"
-              : "START MENU · ROVER PILOT 3D · 7-AGENT MPTO ORCHESTRATION"}
-          </span>
+        <div className="start-menu-topbar">
+          <div className="start-menu-kicker">
+            <Sparkles size={13} />
+            <span>
+              {l === "pt"
+                ? "MENU START · ROVER PILOT 3D · ORQUESTRAÇÃO MPTO (7 AGENTES)"
+                : "START MENU · ROVER PILOT 3D · 7-AGENT MPTO ORCHESTRATION"}
+            </span>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", flexWrap: "wrap" }}>
+            {activeStudioPreset && (
+              <button
+                type="button"
+                className="start-gear-chip"
+                onClick={handleToggleGear}
+                style={{ cursor: "pointer", color: "var(--hud-cyan)" }}
+                title={
+                  l === "pt"
+                    ? "Clique para trocar o Preset Game Studio"
+                    : "Click to change Game Studio Audio Preset"
+                }
+              >
+                <span>{l === "pt" ? activeStudioPreset.labelPt : activeStudioPreset.labelEn}</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              className={`hud-cam-btn ${isFullscreen ? "active-green" : "active-cyan"}`}
+              onClick={handleFullscreenClick}
+              aria-pressed={isFullscreen}
+              title={
+                isFullscreen
+                  ? l === "pt"
+                    ? "Sair da Tela Cheia"
+                    : "Exit Fullscreen"
+                  : l === "pt"
+                    ? "Abrir Jogo em Tela Cheia"
+                    : "Enter Fullscreen Now"
+              }
+            >
+              {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              <span>
+                {isFullscreen
+                  ? l === "pt"
+                    ? "Tela Cheia Ativa"
+                    : "Fullscreen On"
+                  : l === "pt"
+                    ? "Tela Cheia"
+                    : "Fullscreen"}
+              </span>
+            </button>
+          </div>
         </div>
 
         <h2 className="start-menu-title">
@@ -184,6 +277,158 @@ export default function StartMenuModal({
             ? "Controle Rover-01 em tempo real enquanto vento planetário (ρ), sonar de distância e telemetria sonora (Ocarina / 8-Bit / Sawtooth) traduzem em áudio cada subida e descida da curva."
             : "Pilot Rover-01 in real time while atmospheric wind (ρ), proximity sonar, and synthesized telemetry audio (Ocarina / 8-Bit / Sawtooth) turn every curve trend into live sound cues."}
         </p>
+
+        {/* Live Animated Rover Patrol & Launch Sequence Runway */}
+        <div
+          className={`start-rover-stage ${launching ? "is-launching" : ""}`}
+          role="img"
+          aria-label={
+            launching
+              ? l === "pt"
+                ? "Rover-01 acelerando pelo pórtico de saída para iniciar a missão"
+                : "Rover-01 accelerating through the launch gate to start the mission"
+              : l === "pt"
+                ? "Rover-01 em patrulha contínua sobre o terreno planetário"
+                : "Rover-01 cruising on standby patrol across planetary terrain"
+          }
+        >
+          <div className="start-rover-hud-top">
+            <span className="start-rover-hud-badge">
+              {launching
+                ? l === "pt"
+                  ? "IGNIÇÃO ROVER-01 · PARTINDO PARA MISSÃO ▸▸▸"
+                  : "ROVER-01 IGNITION · ENGAGING MISSION ▸▸▸"
+                : l === "pt"
+                  ? `ROVER-01 EM PATRULHA · SETOR ${selectedMissionId}`
+                  : `ROVER-01 ON PATROL · SECTOR ${selectedMissionId}`}
+            </span>
+            <span>
+              {launching
+                ? "v = 3.8 m/s · LOCK OK"
+                : isFullscreen || startInFullscreen
+                  ? l === "pt"
+                    ? "PISTA EM TELA CHEIA PRONTA"
+                    : "FULLSCREEN RUNWAY ARMED"
+                  : "0.6 m/s · STANDBY"}
+            </span>
+          </div>
+
+          {/* Endless Parallax Ridge Horizon */}
+          <svg
+            className="start-rover-backdrop-svg"
+            viewBox="0 0 1200 156"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <g opacity="0.55">
+              <circle cx="90" cy="34" r="1.4" fill="var(--cockpit-ink)" />
+              <circle cx="210" cy="22" r="1.2" fill="var(--hud-cyan)" />
+              <circle cx="340" cy="46" r="1.6" fill="var(--cockpit-ink)" />
+              <circle cx="490" cy="26" r="1.2" fill="var(--hud-amber)" />
+              <circle cx="690" cy="34" r="1.4" fill="var(--cockpit-ink)" />
+              <circle cx="810" cy="22" r="1.2" fill="var(--hud-cyan)" />
+              <circle cx="940" cy="46" r="1.6" fill="var(--cockpit-ink)" />
+              <circle cx="1090" cy="26" r="1.2" fill="var(--hud-amber)" />
+            </g>
+            <path
+              d="M0 126 L75 94 L155 112 L250 78 L345 108 L455 86 L555 114 L600 126 L675 94 L755 112 L850 78 L945 108 L1055 86 L1155 114 L1200 126 L1200 156 L0 156 Z"
+              fill="var(--mars-rust)"
+              opacity="0.28"
+            />
+          </svg>
+
+          <div className="start-rover-ground" aria-hidden="true" />
+
+          {/* Mission Departure Gate on the right */}
+          <div className="start-rover-gate" aria-hidden="true">
+            <span>{launching ? "GO!" : "GATE"}</span>
+            <span className="start-rover-gate-beacon" />
+            <span className="start-rover-gate-post" />
+          </div>
+
+          {/* 6-Wheel Rocker-Bogie Rover Rig */}
+          <div className="start-rover-rig" aria-hidden="true">
+            <svg className="start-rover-svg" viewBox="0 0 180 90">
+              {/* Cyan Optical LIDAR Scan Beam */}
+              <polygon
+                className="start-rover-beam"
+                points="126,24 178,42 178,76 122,52"
+                fill="var(--hud-cyan)"
+              />
+
+              {/* Rear Regolith Dust Plumes */}
+              <g className="start-rover-dust" fill="var(--mars-dust)">
+                <circle cx="24" cy="70" r="4.5" opacity="0.65" />
+                <circle cx="13" cy="67" r="6" opacity="0.45" />
+                <circle cx="4" cy="64" r="3.5" opacity="0.35" />
+              </g>
+
+              {/* High-Torque Departure Thruster Flare (visible on Play click) */}
+              <g className="start-rover-thrust">
+                <polygon points="34,47 4,41 12,48 2,54 34,53" fill="var(--hud-cyan)" opacity="0.88" />
+                <polygon points="34,49 12,47 16,50 11,53 34,51" fill="var(--hud-green)" />
+              </g>
+
+              {/* Rocker-Bogie Suspension Struts */}
+              <path
+                d="M44 68 L62 48 L88 68 M88 68 L112 48 L130 68"
+                fill="none"
+                stroke="var(--cockpit-soft)"
+                strokeWidth="3.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+              {/* Main Rover Warm Box & Solar Array Deck */}
+              <rect
+                x="44"
+                y="34"
+                width="82"
+                height="20"
+                rx="4"
+                fill="var(--cockpit-panel)"
+                stroke="var(--hud-cyan)"
+                strokeWidth="2"
+              />
+              <polygon
+                points="38,34 114,34 106,27 42,27"
+                fill="var(--hud-amber)"
+                opacity="0.88"
+              />
+              <rect x="54" y="38" width="22" height="10" rx="2" fill="var(--mars-rust)" />
+              <rect x="82" y="38" width="28" height="10" rx="2" fill="var(--cockpit-bg)" stroke="var(--hud-cyan)" strokeWidth="1.2" />
+
+              {/* Optical Mast & Stereo Camera Head */}
+              <line x1="114" y1="34" x2="118" y2="14" stroke="var(--cockpit-ink)" strokeWidth="3.2" strokeLinecap="round" />
+              <rect
+                x="110"
+                y="8"
+                width="20"
+                height="11"
+                rx="3"
+                fill="var(--cockpit-panel)"
+                stroke="var(--hud-cyan)"
+                strokeWidth="1.8"
+              />
+              <circle cx="125" cy="13.5" r="2.6" fill="var(--hud-green)" />
+
+              {/* High-Gain Dish */}
+              <path d="M52 27 Q58 17 65 25" fill="none" stroke="var(--hud-cyan)" strokeWidth="2.2" />
+
+              {/* Three Visible Articulated Wheels with Rotating Spokes (outer g fixes translate; inner g spins around 0,0) */}
+              {[44, 88, 130].map((wx) => (
+                <g key={wx} transform={`translate(${wx}, 68)`}>
+                  <g className="start-rover-wheel">
+                    <circle cx="0" cy="0" r="12" fill="var(--cockpit-bg)" stroke="var(--mars-dust)" strokeWidth="3" />
+                    <line x1="-9" y1="0" x2="9" y2="0" stroke="var(--hud-cyan)" strokeWidth="1.8" />
+                    <line x1="0" y1="-9" x2="0" y2="9" stroke="var(--hud-cyan)" strokeWidth="1.8" />
+                    <circle cx="0" cy="0" r="3.2" fill="var(--hud-amber)" />
+                  </g>
+                </g>
+              ))}
+            </svg>
+          </div>
+        </div>
 
         {/* Step 1: Trainee Name Registration & Verification before Play */}
         <form className="start-identity-box" onSubmit={handleVerifySubmit} noValidate>
@@ -248,17 +493,47 @@ export default function StartMenuModal({
           </div>
         </form>
 
-        {/* Primary Play Action + Closed-by-default Sound Gear Trigger */}
+        {/* Primary Play Action + Start-in-Fullscreen Toggle + Closed-by-default Sound Gear Trigger */}
         <div className="start-menu-action-bar">
           <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
-            <button type="button" className="btn-start-play" onClick={handleLaunchClick}>
+            <button
+              type="button"
+              className="btn-start-play"
+              disabled={launching}
+              onClick={handleLaunchClick}
+            >
               <Play size={18} />
               <span>
-                {l === "pt" ? `Jogar Missão ${selectedMissionId}` : `Play Mission ${selectedMissionId}`}
+                {launching
+                  ? l === "pt"
+                    ? "Rover-01 Partindo..."
+                    : "Launching Rover-01..."
+                  : l === "pt"
+                    ? `Jogar Missão ${selectedMissionId}`
+                    : `Play Mission ${selectedMissionId}`}
               </span>
             </button>
 
-            <button type="button" className="btn-hud-ghost" onClick={handleIntroClick}>
+            <label className={`start-fs-check-pill ${startInFullscreen ? "is-checked" : ""}`}>
+              <input
+                type="checkbox"
+                checked={Boolean(startInFullscreen)}
+                onChange={() => {
+                  if (!muted) soundEngine.playActionClick("nav");
+                  onToggleStartInFullscreen?.();
+                }}
+              />
+              <span>
+                {l === "pt" ? "Iniciar em Tela Cheia" : "Start in Fullscreen"}
+              </span>
+            </label>
+
+            <button
+              type="button"
+              className="btn-hud-ghost"
+              disabled={launching}
+              onClick={handleIntroClick}
+            >
               <Eye size={15} />
               <span>{l === "pt" ? "História (5 Atos)" : "Story Intro (5 Acts)"}</span>
             </button>

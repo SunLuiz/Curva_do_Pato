@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Check, Music, Play, Radio, Settings, Sliders, Square, Volume2, VolumeX, X } from "lucide-react";
+import { Check, Disc3, Music, Play, Radio, Settings, Sliders, Square, Volume2, VolumeX, X } from "lucide-react";
 import {
+  AUDIO_STUDIO_PRESETS,
   ECOSYSTEM_AUDIO_AUDIT,
   MECHANISM_TIMBRES,
   OCARINA_N64_PADS,
@@ -77,6 +78,20 @@ export default function AudioSettingsMenu({
     soundEngine.setMechanismTimbre(timbreId);
     if (!audioState.muted) {
       soundEngine.playActionClick("quiz_ok");
+    }
+  };
+
+  const handleApplyStudioPreset = (presetId) => {
+    const applied = soundEngine.applyStudioPreset(presetId);
+    if (!applied) return;
+    if (audioState.muted) {
+      soundEngine.setMuted(false);
+      onAfterMuteToggle?.(false);
+    }
+    if (audioState.activeTheme) {
+      soundEngine.playTheme(applied.activeSongId, { loop: !compact });
+    } else {
+      soundEngine.playActionClick("preset");
     }
   };
 
@@ -218,6 +233,68 @@ export default function AudioSettingsMenu({
             style={{ width: 92, accentColor: accentColor, cursor: "pointer" }}
           />
         </label>
+      </div>
+
+      {/* 0. Game Studio Presets (One-Click Complete Sound Packages) */}
+      <div style={{ display: "grid", gap: "0.48rem" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "0.4rem",
+          }}
+        >
+          <strong style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", fontSize: "0.85rem", color: okColor }}>
+            <Disc3 size={14} />
+            {l === "pt"
+              ? "0. Presets Game Studio (Tema + Timbre + Toque em 1 Clique):"
+              : "0. Game Studio Audio Presets (1-Click Theme + Timbre + Ringtone):"}
+          </strong>
+          <span className="mono" style={{ fontSize: "0.69rem", color: softColor }}>
+            {audioState.studioPresetId === "custom"
+              ? l === "pt"
+                ? "MIX PERSONALIZADO"
+                : "CUSTOM STUDIO MIX"
+              : audioState.studioPresetId.replace("studio_", "").toUpperCase()}
+          </span>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(195px, 1fr))", gap: "0.45rem" }}>
+          {AUDIO_STUDIO_PRESETS.map((preset) => {
+            const active = audioState.studioPresetId === preset.id;
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => handleApplyStudioPreset(preset.id)}
+                style={{
+                  textAlign: "left",
+                  padding: "0.52rem 0.65rem",
+                  borderRadius: "var(--radius-sm)",
+                  background: active ? insetBg : "transparent",
+                  border: `1px solid ${active ? okColor : borderColor}`,
+                  color: inkColor,
+                  cursor: "pointer",
+                  display: "grid",
+                  gap: "0.18rem",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.35rem", fontSize: "0.78rem", fontWeight: 700 }}>
+                  <span>{l === "pt" ? preset.labelPt : preset.labelEn}</span>
+                  {active && <Check size={13} color={okColor} />}
+                </div>
+                <div className="mono" style={{ fontSize: "0.66rem", color: accentColor }}>
+                  {l === "pt" ? preset.badgePt : preset.badgeEn}
+                </div>
+                <div style={{ fontSize: "0.69rem", color: softColor, lineHeight: 1.3 }}>
+                  {l === "pt" ? preset.descPt : preset.descEn}
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Mechanism Timbre Selector (Waves across UI & Rover Telemetry) */}

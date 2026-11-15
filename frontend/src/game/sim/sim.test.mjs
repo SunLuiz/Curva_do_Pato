@@ -19,6 +19,7 @@ import { computeOraclePolicy, evaluateMissionOutcome } from "./oracle.js";
 import { createMissionRuntime, stepSimulation, triggerRoverAction } from "./roverSimulation.js";
 import { loadProfile, saveProfile, validatePilotName } from "../../academy/storage.js";
 import {
+  AUDIO_STUDIO_PRESETS,
   CLASSIC_INTROS,
   ECOSYSTEM_AUDIO_AUDIT,
   MECHANISM_TIMBRES,
@@ -28,6 +29,7 @@ import {
   computeCurveAudioParams,
   computeProximityAudioParams,
   computeWindAudioParams,
+  getMatchingStudioPresetId,
   soundEngine,
 } from "../soundEngine.js";
 
@@ -425,9 +427,45 @@ test("Classic retro themes, selectable mechanism timbres & ecosystem audio state
   assert.equal(st.mechanismTimbre, "square_mario");
   assert.equal(st.ringtoneId, "batman");
   assert.equal(st.activeSongId, "superman");
+  assert.equal(st.studioPresetId, "custom");
 
   // Restore defaults cleanly
   soundEngine.setMechanismTimbre("ocarina");
   soundEngine.setRingtoneId("mario");
   soundEngine.setActiveSongId("title");
+});
+
+test("Game Studio Audio Presets apply complete song + timbre + ringtone bundles atomically", () => {
+  assert.equal(AUDIO_STUDIO_PRESETS.length, 5);
+  for (const preset of AUDIO_STUDIO_PRESETS) {
+    assert.ok(SOUND_THEMES.some((t) => t.id === preset.activeSongId));
+    assert.ok(MECHANISM_TIMBRES.some((t) => t.id === preset.mechanismTimbre));
+    assert.ok(SOUND_THEMES.some((t) => t.id === preset.ringtoneId));
+    assert.equal(
+      getMatchingStudioPresetId(preset.activeSongId, preset.mechanismTimbre, preset.ringtoneId),
+      preset.id
+    );
+  }
+
+  const mario = soundEngine.applyStudioPreset("studio_mario");
+  assert.ok(mario);
+  let st = soundEngine.getState();
+  assert.equal(st.activeSongId, "mario");
+  assert.equal(st.mechanismTimbre, "square_mario");
+  assert.equal(st.ringtoneId, "mario");
+  assert.equal(st.studioPresetId, "studio_mario");
+
+  const batman = soundEngine.applyStudioPreset("studio_batman");
+  assert.ok(batman);
+  st = soundEngine.getState();
+  assert.equal(st.activeSongId, "batman");
+  assert.equal(st.mechanismTimbre, "brass_batman");
+  assert.equal(st.ringtoneId, "batman");
+  assert.equal(st.studioPresetId, "studio_batman");
+
+  assert.equal(soundEngine.applyStudioPreset("unknown_preset"), null);
+
+  // Restore clean studio default
+  soundEngine.applyStudioPreset("studio_ocarina");
+  soundEngine.setRingtoneId("mario");
 });

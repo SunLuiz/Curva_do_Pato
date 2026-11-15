@@ -17,6 +17,7 @@ export default function CockpitPage({
   spaceWeather,
   backendStatus,
   onVerifyLive,
+  onNavigate,
   lang = "en",
 }) {
   const l = lang === "pt" ? "pt" : "en";
@@ -298,7 +299,7 @@ export default function CockpitPage({
         </div>
       )}
 
-      {tab === "space" && <SpaceAnalogTab lang={l} />}
+      {tab === "space" && <SpaceAnalogTab lang={l} onNavigate={onNavigate} />}
 
       {tab === "live" && (
         <div className="grid-2">

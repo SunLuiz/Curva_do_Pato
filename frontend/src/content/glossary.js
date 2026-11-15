@@ -144,4 +144,60 @@ export const GLOSSARY = {
         "Calculada como 100 × (1 − ALLSKY / CLRSKY). Separa o que é sombra de nuvens do escurecimento causado por fumaça e aerossóis.",
     },
   },
+  impulse_inversion: {
+    en: {
+      term: "Active Impulse-Response Inversion (64 m)",
+      short: "Solving regolith cohesion τ_c from lander exhaust plume scouring during terminal descent.",
+      detail:
+        "Because descent thrust (τ_jet = ½ ρ v²) is known at ~64 m altitude, observing plume onset calibrates critical cohesion τ_c (Pa) and links orbital thermal inertia to wheel slip.",
+    },
+    pt: {
+      term: "Inversão por Impulso Ativo (64 m)",
+      short: "Cálculo da coesão do solo τ_c a partir da pluma de pouso dos retrofoguetes.",
+      detail:
+        "Como o empuxo da turbina (τ_jet = ½ ρ v²) é conhecido a ~64 m, o início do levantamento de poeira revela τ_c (Pa) e calibra o mapa orbital de patinagem.",
+    },
+  },
+  wheel_slip: {
+    en: {
+      term: "Geotechnical Wheel Slip & Wh/km Penalty",
+      short: "Fraction of commanded wheel speed lost in loose soil, inflating energy cost per km.",
+      detail:
+        "Unconsolidated eolian sand (τ_c = 24 Pa, d_p = 120 μm) triggers >44% slip and 1.8× Wh/km vs. compact basalt (τ_c = 85 Pa, 6% slip, 1.0× Wh/km).",
+    },
+    pt: {
+      term: "Patinagem Geotécnica & Custo Wh/km",
+      short: "Fração da velocidade das rodas perdida no solo fofo, multiplicando o gasto elétrico.",
+      detail:
+        "Areia eólica solta (τ_c = 24 Pa, 120 μm) gera >44% de patinagem e 1,8× Wh/km contra 6% e 1,0× Wh/km em basalto compacto (τ_c = 85 Pa).",
+    },
+  },
+  frame_delta: {
+    en: {
+      term: "Frame-to-Frame Optical Delta |I_t − I_{t−1}|",
+      short: "Visual pixel shift combining atmospheric dust turbidity (τ) and rover motion blur.",
+      detail:
+        "Halting the rover (ROVER_STILL = 1) eliminates the motion-blur term so vision cameras isolate genuine dust-plume changes from movement artifacts.",
+    },
+    pt: {
+      term: "Derivada Óptica |I_t − I_{t−1}|",
+      short: "Variação entre quadros somando turbidez atmosférica (τ) e desfoque de movimento.",
+      detail:
+        "Pausar o rover (ROVER_STILL = 1) zera o termo de desfoque, permitindo que a câmera isole tempestades reais sem alarme falso de deslocamento.",
+    },
+  },
+  sentinel_value: {
+    en: {
+      term: "Sensor Sentinel Value (999999999.0)",
+      short: "Out-of-domain telemetry fill value (4.54% of MEDA Sol 40 rows) signaling instrument gaps.",
+      detail:
+        "867 of 19,100 rows in Mars 2020 MEDA Sol 40 contain 999999999.0. Sanitizing non-physical outliers prevents false gust alarms and mission aborts.",
+    },
+    pt: {
+      term: "Valor Sentinela (999999999.0)",
+      short: "Código de preenchimento fora do domínio físico (4,54% das linhas do MEDA Sol 40).",
+      detail:
+        "867 das 19.100 linhas do MEDA Sol 40 marcam 999999999.0 para falhas de leitura. Filtrar sentinelas evita falsos alarmes de rajada.",
+    },
+  },
 };

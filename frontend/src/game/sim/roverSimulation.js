@@ -28,6 +28,7 @@ export function createMissionRuntime({
   missionId = "M2",
   planetId = null,
   depth = "explorer",
+  tauOverride = null,
   severity = "P90",
   dropoutRate = null,
   seed = 2026,
@@ -37,8 +38,21 @@ export function createMissionRuntime({
 } = {}) {
   const def = MISSION_DEFS[missionId] || MISSION_DEFS.M2;
   const resolvedPlanetId = planetId || def.defaultPlanet;
-  const planet = getPlanet(resolvedPlanetId);
-  const timeline = generateMissionTelemetry(missionId, { severity, dropoutRate, seed });
+  const basePlanet = getPlanet(resolvedPlanetId);
+  const validTau =
+    tauOverride !== null && tauOverride !== undefined && Number.isFinite(Number(tauOverride))
+      ? Math.max(0.05, Math.min(5.0, Number(tauOverride)))
+      : null;
+  const planet = validTau !== null ? { ...basePlanet, baseTau: validTau } : basePlanet;
+  const rawTimeline = generateMissionTelemetry(missionId, { severity, dropoutRate, seed });
+  const tauShift = validTau !== null ? validTau - basePlanet.baseTau : 0;
+  const timeline =
+    validTau !== null
+      ? rawTimeline.map((pt) => ({
+          ...pt,
+          tau: Math.max(0.05, Number(((pt.tau ?? basePlanet.baseTau) + tauShift).toFixed(2))),
+        }))
+      : rawTimeline;
   const oraclePins = computeOraclePolicy(missionId, timeline);
   const zones = getMissionZones(missionId);
   const start = def.startPos || { x: 0, z: 0, heading: 0 };

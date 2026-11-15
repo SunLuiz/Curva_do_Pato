@@ -221,13 +221,16 @@ export function computeGeotechnicalSlip({
   inHazard = false,
   onRidge = false,
   slope = 0,
+  profileOverride = null,
 }) {
   let profile = IMPULSE_CALIBRATION_PROFILES.compact_basalt;
-  if (missionId === "M3" && inHazard && !onRidge) {
+  if (profileOverride && IMPULSE_CALIBRATION_PROFILES[profileOverride]) {
+    profile = IMPULSE_CALIBRATION_PROFILES[profileOverride];
+  } else if (missionId === "M3" && inHazard && !onRidge) {
     profile = IMPULSE_CALIBRATION_PROFILES.eolian_sand;
-  } else if (planet?.id === "moon_south_pole") {
+  } else if (planet?.id === "moon_artemis" || planet?.id === "moon_south_pole") {
     profile = onRidge ? IMPULSE_CALIBRATION_PROFILES.compact_basalt : IMPULSE_CALIBRATION_PROFILES.lunar_regolith;
-  } else if (planet?.id === "earth_semi_arid") {
+  } else if (planet?.id === "earth_semi_arid" || planet?.id?.startsWith("earth_")) {
     profile = IMPULSE_CALIBRATION_PROFILES.terrestrial_loam;
   }
 

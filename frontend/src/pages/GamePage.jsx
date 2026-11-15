@@ -34,6 +34,7 @@ import NavCamMini from "../game/hud/NavCamMini";
 import MissionDebrief from "../game/hud/MissionDebrief";
 import MissionLabPanel from "../game/hud/MissionLabPanel";
 import { MISSION_DEFS, MISSION_ORDER } from "../game/missions/missionParams";
+import { PLANETS } from "../game/sim/planetaryPhysics";
 import {
   clearRuntime,
   dispatchAction,
@@ -172,6 +173,26 @@ function getMissionObjectives(snapshot, lang = "en") {
   return [];
 }
 
+function parseGameLaunchQuery(searchStr) {
+  if (!searchStr || typeof searchStr !== "string") return null;
+  const qp = new URLSearchParams(searchStr);
+  const rawMission = qp.get("mission");
+  const rawPlanet = qp.get("planet");
+  const rawDepth = qp.get("depth");
+  const rawTau = qp.get("tau");
+  const missionId = MISSION_ORDER.includes(rawMission) ? rawMission : null;
+  const planetId = rawPlanet && PLANETS[rawPlanet] ? rawPlanet : null;
+  const depth = DEPTH_TRACKS.some((t) => t.id === rawDepth) ? rawDepth : null;
+  const parsedTau = rawTau !== null && rawTau !== "" ? Number(rawTau) : null;
+  const tauOverride =
+    parsedTau !== null && Number.isFinite(parsedTau) && parsedTau >= 0.05 && parsedTau <= 5.0
+      ? parsedTau
+      : null;
+
+  if (!missionId && !planetId && !depth && tauOverride === null) return null;
+  return { missionId, planetId, depth, tauOverride };
+}
+
 export default function GamePage({
   profile,
   hallOfFame = [],
@@ -179,13 +200,19 @@ export default function GamePage({
   onForgetProfile,
   onOpenCockpit,
   onNavigate,
+  launchSearch = "",
   lang = "en",
 }) {
   const l = lang === "pt" ? "pt" : "en";
   const gameState = profile.game || {};
-  const [viewMode, setViewMode] = useState(gameState.introSeen ? "play" : "intro"); // intro | play | lab
-  const [selectedMissionId, setSelectedMissionId] = useState("M1");
-  const [depth, setDepth] = useState(profile.depth || "explorer");
+  const initialQuery = parseGameLaunchQuery(
+    launchSearch || (typeof window !== "undefined" ? window.location.search : "")
+  );
+  const [viewMode, setViewMode] = useState(
+    initialQuery ? "play" : gameState.introSeen ? "play" : "intro"
+  ); // intro | play | lab
+  const [selectedMissionId, setSelectedMissionId] = useState(initialQuery?.missionId || "M1");
+  const [depth, setDepth] = useState(initialQuery?.depth || profile.depth || "explorer");
   const [usedHint, setUsedHint] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -226,9 +253,10 @@ export default function GamePage({
   }, []);
 
   const [runConfig, setRunConfig] = useState({
-    missionId: "M1",
-    planetId: null,
-    depth: profile.depth || "explorer",
+    missionId: initialQuery?.missionId || "M1",
+    planetId: initialQuery?.planetId || null,
+    depth: initialQuery?.depth || profile.depth || "explorer",
+    tauOverride: initialQuery?.tauOverride ?? null,
     severity: "P90",
     dropoutRate: null,
     seed: 2026,
@@ -251,6 +279,7 @@ export default function GamePage({
         missionId: cfg.missionId || "M1",
         planetId: cfg.planetId || null,
         depth: cfg.depth || depth,
+        tauOverride: cfg.tauOverride ?? null,
         severity: cfg.severity || "P90",
         dropoutRate: cfg.dropoutRate ?? null,
         seed: cfg.seed || 2026,
@@ -271,6 +300,25 @@ export default function GamePage({
     },
     [depth, gameState.missions, profile.streak]
   );
+
+  const lastLaunchSearchRef = useRef(launchSearch);
+  useEffect(() => {
+    if (launchSearch === lastLaunchSearchRef.current) return;
+    lastLaunchSearchRef.current = launchSearch;
+    const parsed = parseGameLaunchQuery(launchSearch);
+    if (parsed) {
+      if (parsed.depth) setDepth(parsed.depth);
+      launchRun({
+        missionId: parsed.missionId || "M5",
+        planetId: parsed.planetId || null,
+        depth: parsed.depth || depth,
+        tauOverride: parsed.tauOverride ?? null,
+        severity: "P90",
+        dropoutRate: null,
+        seed: 2026,
+      });
+    }
+  }, [launchSearch, depth, launchRun]);
 
   // Start initial mission automatically when entering play mode without an active runtime
   useEffect(() => {
@@ -392,7 +440,7 @@ export default function GamePage({
   const labUnlocked = judgeUnlock || (Boolean(gameState.missions?.M1?.won) && Boolean(gameState.missions?.M2?.won));
 
   const isMissionUnlocked = (id) => {
-    if (judgeUnlock || id === "M1") return true;
+    if (judgeUnlock || id === "M1" || runConfig.missionId === id) return true;
     const idx = MISSION_ORDER.indexOf(id);
     const prevId = MISSION_ORDER[idx - 1];
     return Boolean(gameState.missions?.[prevId]?.won);
@@ -437,6 +485,11 @@ export default function GamePage({
             <span className="badge">
               <Zap size={12} /> {profile.xp || 0} XP · {profile.stars || 0} ★ · {completedCount}/5 3D
             </span>
+            {snapshot?.planet && (
+              <span className="badge live">
+                Θ: {snapshot.planet.body} · g={snapshot.planet.g} · τ₀={snapshot.planet.baseTau}
+              </span>
+            )}
             {!profile.name?.trim() && (
               <button
                 type="button"

@@ -315,4 +315,9 @@ test("Active Impulse-Response geotechnical slip calibration (>40% slip & 1.8x Wh
     m3Haz.resources.battery < m3Safe.resources.battery,
     `Expected higher drain in Crater Alpha (${m3Haz.resources.battery}) vs Safe Plateau (${m3Safe.resources.battery})`
   );
+
+  // tauOverride propagates cleanly from Cockpit Space tab deep links
+  const customTauRun = createMissionRuntime({ missionId: "M5", planetId: "mars_jezero", tauOverride: 2.35, seed: 2026 });
+  assert.equal(customTauRun.planet.baseTau, 2.35);
+  assert.equal(customTauRun.planetId, "mars_jezero");
 });

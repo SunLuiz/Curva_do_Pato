@@ -24,7 +24,7 @@ const ALIAS_MAP = {
 
 function parseLocation() {
   if (typeof window === "undefined") {
-    return { route: "/", tab: "trend", normalized: null };
+    return { route: "/", tab: "trend", search: "", normalized: null };
   }
   const rawPath = window.location.pathname || "/";
   if (ALIAS_MAP[rawPath]) {
@@ -33,6 +33,7 @@ function parseLocation() {
     return {
       route: url.pathname,
       tab: url.searchParams.get("tab") || "trend",
+      search: url.search || "",
       normalized: target,
     };
   }
@@ -40,13 +41,19 @@ function parseLocation() {
   const params = new URLSearchParams(window.location.search);
   const tabParam = params.get("tab");
   const tab = VALID_TABS.includes(tabParam) ? tabParam : "trend";
-  return { route, tab, normalized: rawPath !== route ? "/" : null };
+  return {
+    route,
+    tab,
+    search: window.location.search || "",
+    normalized: rawPath !== route ? "/" : null,
+  };
 }
 
 export default function App() {
   const initial = parseLocation();
   const [route, setRoute] = useState(initial.route);
   const [cockpitTab, setCockpitTab] = useState(initial.tab);
+  const [routeSearch, setRouteSearch] = useState(initial.search);
   const [region, setRegion] = useState("campinas");
   const [variable, setVariable] = useState("T2M");
   const [fires, setFires] = useState(null);
@@ -67,6 +74,7 @@ export default function App() {
       const parsed = parseLocation();
       setRoute(parsed.route);
       setCockpitTab(parsed.tab);
+      setRouteSearch(parsed.search || "");
       if (parsed.normalized) {
         window.history.replaceState({}, "", parsed.normalized);
       }
@@ -88,6 +96,7 @@ export default function App() {
       const targetUrl = new URL(aliased, window.location.origin);
       window.history.replaceState({}, "", aliased);
       setRoute(targetUrl.pathname);
+      setRouteSearch(targetUrl.search || "");
       if (targetUrl.pathname === "/cockpit") {
         setCockpitTab(targetUrl.searchParams.get("tab") || "trend");
       }
@@ -99,12 +108,17 @@ export default function App() {
     const tabParam = url.searchParams.get("tab");
     const nextTab = VALID_TABS.includes(tabParam) ? tabParam : "trend";
     const fullTarget =
-      nextRoute === "/cockpit" && tabParam ? `/cockpit?tab=${nextTab}` : nextRoute;
+      nextRoute === "/cockpit" && tabParam
+        ? `/cockpit?tab=${nextTab}`
+        : nextRoute === "/game" && url.search
+          ? `/game${url.search}`
+          : nextRoute;
 
     if (fullTarget !== `${window.location.pathname}${window.location.search}`) {
       window.history.pushState({}, "", fullTarget);
     }
     setRoute(nextRoute);
+    setRouteSearch(nextRoute === "/game" ? url.search || "" : "");
     if (nextRoute === "/cockpit") {
       setCockpitTab(nextTab);
     }
@@ -166,6 +180,7 @@ export default function App() {
           spaceWeather={spaceWeather}
           backendStatus={backendStatus}
           onVerifyLive={handleVerifyLive}
+          onNavigate={navigate}
           lang={lang}
         />
       )}
@@ -185,6 +200,7 @@ export default function App() {
             onForgetProfile={handleForgetProfile}
             onOpenCockpit={handleCockpitAction}
             onNavigate={navigate}
+            launchSearch={routeSearch}
             lang={lang}
           />
         </Suspense>

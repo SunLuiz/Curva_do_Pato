@@ -866,3 +866,85 @@
 .start-sonic-list strong {
   color: var(--cockpit-ink);
 }
+
+.hud-cam-btn.active-green {
+  border-color: var(--hud-green);
+  color: var(--hud-green);
+  background: rgba(52, 211, 153, 0.14);
+}
+
+.start-identity-box {
+  margin-top: 1rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 14px;
+  border: 1px solid rgba(56, 189, 248, 0.34);
+  background: rgba(9, 15, 32, 0.86);
+  display: grid;
+  gap: 0.52rem;
+}
+
+.start-identity-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--hud-cyan);
+}
+
+.start-identity-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.start-identity-row input.start-name-input {
+  flex: 1 1 240px;
+  min-width: 190px;
+  padding: 0.58rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid var(--cockpit-border);
+  background: rgba(6, 11, 24, 0.94);
+  color: var(--cockpit-ink);
+  font-size: 0.94rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.start-identity-row input.start-name-input::placeholder {
+  color: var(--cockpit-soft);
+  opacity: 0.72;
+}
+
+.start-identity-row input.start-name-input:focus {
+  border-color: var(--hud-cyan);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.22);
+}
+
+.start-identity-row input.start-name-input.is-valid {
+  border-color: var(--hud-green);
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.16);
+}
+
+.start-identity-row input.start-name-input.is-error {
+  border-color: var(--hud-red);
+  box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.24);
+}
+
+.start-identity-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  font-size: 0.78rem;
+  color: var(--cockpit-soft);
+}
+
+.start-identity-status.is-ok {
+  color: var(--hud-green);
+}
+
+.start-identity-status.is-warn {
+  color: var(--hud-red);
+  font-weight: 600;
+}
+

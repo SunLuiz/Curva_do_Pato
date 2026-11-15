@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Brain, Trash2, UserCheck } from "lucide-react";
 import { AVATARS, DEPTH_TRACKS } from "../academy/xp";
 
 export default function ProfileCard({ profile, onSave, onForget }) {
   const [nameInput, setNameInput] = useState(profile.name || "");
   const [showMemory, setShowMemory] = useState(false);
+
+  useEffect(() => {
+    setNameInput(profile.name || "");
+  }, [profile.name]);
 
   const selectedAvatar = AVATARS.find((a) => a.id === profile.avatar) || AVATARS[0];
 

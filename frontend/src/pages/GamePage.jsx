@@ -23,6 +23,7 @@ import {
   Sliders,
   Sparkles,
   Unlock,
+  UserCheck,
   Volume2,
   VolumeX,
   Wind,
@@ -49,6 +50,7 @@ import {
 } from "../game/store";
 import { soundEngine } from "../game/soundEngine";
 import { MODULES, getModuleById } from "../academy/questions";
+import { validatePilotName } from "../academy/storage";
 import { BADGES, DEPTH_TRACKS, GAME_BADGES } from "../academy/xp";
 import ModuleRunner from "../components/ModuleRunner";
 import ProfileCard from "../components/ProfileCard";
@@ -227,13 +229,19 @@ export default function GamePage({
   const [inGameQuizModuleId, setInGameQuizModuleId] = useState(null);
   const [browserQuizModuleId, setBrowserQuizModuleId] = useState(null);
   const [rewardedIds, setRewardedIds] = useState({});
+  const [nameGateAlert, setNameGateAlert] = useState(false);
 
   const viewportRef = useRef(null);
   const profileSectionRef = useRef(null);
   const browserQuizSectionRef = useRef(null);
+  const pilotNameRef = useRef(profile.name || "");
   const touchInputRef = useRef({ throttle: 0, steer: 0 });
   const scoredRunRef = useRef(-1);
   const snapshot = useGameSnapshot();
+
+  useEffect(() => {
+    pilotNameRef.current = profile.name || "";
+  }, [profile.name]);
 
   const toggleCamMode = useCallback(() => {
     setCamMode((m) => (m === "chase" ? "survey" : "chase"));
@@ -317,8 +325,31 @@ export default function GamePage({
     [setLang]
   );
 
+  const handleSavePilotName = useCallback(
+    (cleanName) => {
+      pilotNameRef.current = cleanName;
+      setNameGateAlert(false);
+      onSaveProfile({ ...profile, name: cleanName });
+    },
+    [profile, onSaveProfile]
+  );
+
   const launchRun = useCallback(
     (cfg) => {
+      const isDeepLinked = Boolean(cfg.allowAnonymous || initialQuery);
+      const hasName = Boolean(
+        cfg.verifiedPilotName ||
+          validatePilotName(pilotNameRef.current).valid ||
+          validatePilotName(profile.name).valid
+      );
+      if (!hasName && !gameState.judgeUnlock && !isDeepLinked) {
+        setSelectedMissionId(cfg.missionId || "M1");
+        setNameGateAlert((n) => (typeof n === "number" ? n + 1 : 1));
+        setViewMode("start");
+        return;
+      }
+      setNameGateAlert(false);
+
       const nextCfg = {
         missionId: cfg.missionId || "M1",
         planetId: cfg.planetId || null,
@@ -342,7 +373,7 @@ export default function GamePage({
       });
       setViewMode("play");
     },
-    [depth, gameState.missions, profile.streak]
+    [depth, gameState.missions, gameState.judgeUnlock, initialQuery, profile.name, profile.streak]
   );
 
   const lastLaunchSearchRef = useRef(launchSearch);
@@ -360,6 +391,7 @@ export default function GamePage({
         severity: "P90",
         dropoutRate: null,
         seed: 2026,
+        allowAnonymous: true,
       });
     }
   }, [launchSearch, depth, launchRun]);
@@ -534,14 +566,21 @@ export default function GamePage({
                 Θ: {snapshot.planet.body} · g={snapshot.planet.g} · τ₀={snapshot.planet.baseTau}
               </span>
             )}
-            {!profile.name?.trim() && (
+            {profile.name?.trim() ? (
+              <span className="badge sig" title={l === "pt" ? "Piloto registrado para certificado e ranking" : "Registered trainee for certificate and ranking"}>
+                <UserCheck size={12} /> {profile.name}
+              </span>
+            ) : (
               <button
                 type="button"
                 className="badge cached"
                 style={{ cursor: "pointer" }}
-                onClick={() => profileSectionRef.current?.scrollIntoView({ behavior: "smooth" })}
+                onClick={() => {
+                  setViewMode("start");
+                  setNameGateAlert((n) => (typeof n === "number" ? n + 1 : 1));
+                }}
               >
-                {l === "pt" ? "Definir nome no Hall da Fama ↓" : "Set codename in Profile ↓"}
+                {l === "pt" ? "Informe seu nome no Menu Start ↑" : "Enter pilot name in Start Menu"}
               </button>
             )}
           </div>
@@ -678,7 +717,7 @@ export default function GamePage({
         })}
       </div>
 
-      {/* View 0: Start Menu with Ocarina Theme, Sound & Language Settings */}
+      {/* View 0: Start Menu with Ocarina Theme, Pilot Verification & Language Settings */}
       {viewMode === "start" && (
         <StartMenuModal
           lang={l}
@@ -690,7 +729,16 @@ export default function GamePage({
           musicEnabled={musicEnabled}
           onToggleMusic={handleToggleMusic}
           selectedMissionId={selectedMissionId}
-          onStartPlay={() => launchRun({ ...runConfig, missionId: selectedMissionId })}
+          pilotName={profile.name || ""}
+          onSavePilotName={handleSavePilotName}
+          nameGateAlert={nameGateAlert}
+          onStartPlay={(verifiedName) =>
+            launchRun({
+              ...runConfig,
+              missionId: selectedMissionId,
+              verifiedPilotName: verifiedName,
+            })
+          }
           onOpenIntro={() => {
             soundEngine.stopMusic();
             setViewMode("intro");

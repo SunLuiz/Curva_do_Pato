@@ -128,11 +128,12 @@ export const UI_TEXT = {
     indicatorsLabel: "Supporting indicators (click any to inspect chart):",
     regionLabel: "Monitoring region",
     variableLabel: "Variable",
-    askTitle: "Ask OMNI — Grounded Assistant",
-    askPlaceholder: "Ask about trends, heatwaves, Manaus rain, WS2M limits, or MPTO...",
+    askTitle: "Ask OMNI — Open Natural Language",
+    askPlaceholder:
+      "Ask anything about the NASA ecosystem — e.g.\n• \"Compare T2M warming across all 3 biomes\"\n• \"Why did Manaus change: clouds or fires?\" · \"-23.55, -46.63\" · \"CMR soil moisture\" · \"MPTO\"",
     askSend: "Ask",
-    askThinking: "Computing grounded answer...",
-    askFallbackBadge: "Deterministic Local Engine",
+    askThinking: "Querying open NASA telemetry...",
+    askFallbackBadge: "100% Open · Zero Keys",
   },
   pt: {
     navStory: "História",
@@ -161,10 +162,11 @@ export const UI_TEXT = {
     indicatorsLabel: "Indicadores de apoio (clique em qualquer cartão para ver o gráfico):",
     regionLabel: "Região monitorada",
     variableLabel: "Variável",
-    askTitle: "Pergunte ao OMNI — IA Ancorada em Dados",
-    askPlaceholder: "Pergunte sobre calor em Campinas, chuva em Manaus, WS2M ou MPTO...",
-    askSend: "Enviar",
-    askThinking: "Consultando série e regras...",
-    askFallbackBadge: "Motor Determinístico Local",
+    askTitle: "Pergunte ao OMNI — Linguagem Natural",
+    askPlaceholder:
+      "Pergunte em linguagem natural sobre o ecossistema NASA — ex.:\n• \"Qual bioma aqueceu mais em T2M?\"\n• \"Por que Manaus mudou: nuvens ou queimadas?\" · \"-23.55, -46.63\" · \"Focos FIRMS\" · \"MPTO\"",
+    askSend: "Perguntar",
+    askThinking: "Consultando telemetria aberta da NASA...",
+    askFallbackBadge: "100% Aberto · Sem Chaves",
   },
 };

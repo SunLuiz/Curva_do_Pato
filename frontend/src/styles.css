@@ -738,8 +738,8 @@ input[type="search"] {
   position: fixed;
   right: 1.35rem;
   bottom: 4.85rem;
-  width: min(440px, calc(100vw - 2rem));
-  max-height: min(74vh, 620px);
+  width: min(460px, calc(100vw - 2rem));
+  max-height: min(76vh, 660px);
   display: flex;
   flex-direction: column;
   background: var(--surface-1);
@@ -748,6 +748,120 @@ input[type="search"] {
   box-shadow: var(--shadow-lift);
   z-index: 50;
   overflow: hidden;
+}
+
+.ask-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.78rem 0.95rem;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--hairline);
+  font-size: 0.92rem;
+}
+
+.ask-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  background: var(--surface-0);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.ask-profile-note {
+  padding: 0.35rem 0.95rem;
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.ask-log {
+  flex: 1;
+  min-height: 180px;
+  overflow-y: auto;
+  padding: 0.85rem 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  background: var(--surface-1);
+}
+
+.ask-welcome {
+  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  background: var(--surface-0);
+  border: 1px solid var(--hairline);
+  font-size: 0.84rem;
+}
+
+.ask-msg {
+  padding: 0.72rem 0.85rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  max-width: 94%;
+}
+
+.ask-msg-user {
+  align-self: flex-end;
+  background: var(--surface-2);
+  border: 1px solid var(--biome-n);
+  color: var(--ink);
+}
+
+.ask-msg-assistant {
+  align-self: flex-start;
+  background: var(--surface-0);
+  border: 1px solid var(--hairline);
+  color: var(--ink);
+}
+
+.ask-msg-source {
+  font-family: var(--font-mono);
+  font-size: 0.69rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+  margin-bottom: 0.3rem;
+}
+
+.ask-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.75rem 0.95rem;
+  background: var(--surface-0);
+  border-top: 1px solid var(--hairline);
+}
+
+.ask-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 68px;
+  max-height: 140px;
+  padding: 0.55rem 0.68rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline-strong);
+  background: var(--surface-1);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.ask-textarea:focus {
+  outline: 2px solid var(--biome-n);
+  outline-offset: 1px;
+}
+
+.ask-composer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 /* Persona decision table */

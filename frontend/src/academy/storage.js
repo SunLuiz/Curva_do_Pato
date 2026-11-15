@@ -8,6 +8,52 @@ import { computeEarnedBadges, computeGameBadges } from "./xp.js";
 export const STORAGE_KEY = "cockpit-omni/detective/v1";
 export const HOF_KEY = "cockpit-omni/hall-of-fame/v1";
 
+/**
+ * Validates and normalizes the pilot/trainee display name required before launching missions
+ * and issuing the final 3D Field & Science certificate.
+ */
+export function validatePilotName(rawName) {
+  const cleanName = String(rawName ?? "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .slice(0, 32);
+
+  if (!cleanName) {
+    return {
+      valid: false,
+      cleanName: "",
+      code: "EMPTY",
+      messageEn: "Enter your name to register your training record and unlock Launch.",
+      messagePt: "Informe seu nome para registrar o treinamento e liberar o início.",
+    };
+  }
+  if (cleanName.length < 2) {
+    return {
+      valid: false,
+      cleanName,
+      code: "TOO_SHORT",
+      messageEn: "Pilot name must be at least 2 characters long.",
+      messagePt: "O nome deve ter pelo menos 2 caracteres.",
+    };
+  }
+  if (!/[A-Za-zÀ-ÖØ-öø-ÿ]/.test(cleanName)) {
+    return {
+      valid: false,
+      cleanName,
+      code: "NO_LETTERS",
+      messageEn: "Include at least one letter so your certificate can be issued cleanly.",
+      messagePt: "Inclua ao menos uma letra para a emissão do certificado.",
+    };
+  }
+  return {
+    valid: true,
+    cleanName,
+    code: "OK",
+    messageEn: `Verified trainee: ${cleanName} (Certificate & Ranking linked)`,
+    messagePt: `Piloto verificado: ${cleanName} (Vinculado ao Certificado e Ranking)`,
+  };
+}
+
 export function createInitialGameState() {
   return {
     introSeen: false,

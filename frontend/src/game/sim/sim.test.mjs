@@ -17,7 +17,7 @@ import { terrainHeight, findZonesAt } from "./terrainField.js";
 import { AUDITED_PARAMS, MISSION_ORDER, generateMissionTelemetry } from "../missions/missionParams.js";
 import { computeOraclePolicy, evaluateMissionOutcome } from "./oracle.js";
 import { createMissionRuntime, stepSimulation, triggerRoverAction } from "./roverSimulation.js";
-import { loadProfile, saveProfile } from "../../academy/storage.js";
+import { loadProfile, saveProfile, validatePilotName } from "../../academy/storage.js";
 import {
   OCARINA_MELODIES,
   OCARINA_N64_PADS,
@@ -372,4 +372,32 @@ test("Ocarina synth, chart sonification, planetary wind & proximity sonar map te
   assert.equal(far.highSlip, false);
   assert.equal(near.highSlip, true);
   assert.ok(near.slipGain > far.slipGain);
+});
+
+test("validatePilotName enforces certificate-ready identity rules and normalizes whitespace", () => {
+  const empty = validatePilotName("");
+  assert.equal(empty.valid, false);
+  assert.equal(empty.code, "EMPTY");
+
+  const spaces = validatePilotName("   \t  ");
+  assert.equal(spaces.valid, false);
+  assert.equal(spaces.code, "EMPTY");
+
+  const short = validatePilotName("A");
+  assert.equal(short.valid, false);
+  assert.equal(short.code, "TOO_SHORT");
+
+  const digitsOnly = validatePilotName("123456");
+  assert.equal(digitsOnly.valid, false);
+  assert.equal(digitsOnly.code, "NO_LETTERS");
+
+  const messy = validatePilotName("  Commander   Ana Silva   ");
+  assert.equal(messy.valid, true);
+  assert.equal(messy.code, "OK");
+  assert.equal(messy.cleanName, "Commander Ana Silva");
+
+  const accented = validatePilotName("João Pedro Santos — Operações Espaciais Longas");
+  assert.equal(accented.valid, true);
+  assert.equal(accented.cleanName.length, 32);
+  assert.equal(accented.cleanName, "João Pedro Santos — Operações Es");
 });

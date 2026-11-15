@@ -210,9 +210,7 @@ export default function App() {
       {route === "/cockpit" && (
         <AskPanel
           profile={profile}
-          backendStatus={backendStatus}
-          apiBase={API_BASE}
-          currentRoute={route}
+          cockpitContext={{ region, variable, tab: cockpitTab }}
           onNavigateAction={handleCockpitAction}
           lang={lang}
         />

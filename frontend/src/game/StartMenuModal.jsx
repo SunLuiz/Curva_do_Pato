@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  AlertCircle,
+  CheckCircle2,
   Eye,
   Globe,
   Music,
@@ -7,9 +9,11 @@ import {
   Sliders,
   Sparkles,
   Square,
+  UserCheck,
   Volume2,
   VolumeX,
 } from "lucide-react";
+import { validatePilotName } from "../academy/storage";
 import { OCARINA_N64_PADS, soundEngine } from "./soundEngine";
 
 export default function StartMenuModal({
@@ -22,14 +26,36 @@ export default function StartMenuModal({
   musicEnabled = true,
   onToggleMusic,
   selectedMissionId = "M1",
+  pilotName = "",
+  onSavePilotName,
+  nameGateAlert = false,
   onStartPlay,
   onOpenIntro,
 }) {
   const l = lang === "pt" ? "pt" : "en";
+  const nameInputRef = useRef(null);
+  const [nameInput, setNameInput] = useState(pilotName || "");
+  const [submittedError, setSubmittedError] = useState(false);
   const [activeSong, setActiveSong] = useState("title");
   const [themePlaying, setThemePlaying] = useState(false);
   const [pressedPad, setPressedPad] = useState(null);
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
+
+  useEffect(() => {
+    setNameInput(pilotName || "");
+  }, [pilotName]);
+
+  useEffect(() => {
+    if (nameGateAlert) {
+      setSubmittedError(true);
+      nameInputRef.current?.focus();
+    }
+  }, [nameGateAlert]);
+
+  const nameCheck = validatePilotName(nameInput);
+  const savedCheck = validatePilotName(pilotName);
+  const isVerifiedSaved =
+    nameCheck.valid && savedCheck.valid && nameCheck.cleanName === savedCheck.cleanName;
 
   // Attempt starting the Ocarina Title Theme on Start Menu entry;
   // if browser autoplay suspends Web Audio, arm one-time gesture unlock.
@@ -96,10 +122,42 @@ export default function StartMenuModal({
     setTimeout(() => setPressedPad((curr) => (curr === pad.id ? null : curr)), 260);
   };
 
+  const ensureVerifiedPilot = () => {
+    const check = validatePilotName(nameInput);
+    if (!check.valid) {
+      setSubmittedError(true);
+      soundEngine.playAlertWarning();
+      nameInputRef.current?.focus();
+      return null;
+    }
+    setSubmittedError(false);
+    if (check.cleanName !== pilotName) {
+      onSavePilotName?.(check.cleanName);
+    }
+    return check.cleanName;
+  };
+
+  const handleVerifySubmit = (e) => {
+    e.preventDefault();
+    if (ensureVerifiedPilot()) {
+      soundEngine.playActionClick("dock");
+    }
+  };
+
   const handleLaunchClick = () => {
+    const cleanName = ensureVerifiedPilot();
+    if (!cleanName) return;
     soundEngine.stopMusic();
     soundEngine.playActionClick("dock");
-    onStartPlay?.();
+    onStartPlay?.(cleanName);
+  };
+
+  const handleIntroClick = () => {
+    const cleanName = ensureVerifiedPilot();
+    if (!cleanName) return;
+    soundEngine.stopMusic();
+    soundEngine.playActionClick("dock");
+    onOpenIntro?.(cleanName);
   };
 
   return (
@@ -126,6 +184,69 @@ export default function StartMenuModal({
             : "Pilot Rover-01 in real time while the Helmholtz-resonator Ocarina score, atmospheric wind (ρ), and proximity sonar turn every telemetry curve rise and fall into live audio cues."}
         </p>
 
+        {/* Step 1: Trainee Name Registration & Verification before Play */}
+        <form className="start-identity-box" onSubmit={handleVerifySubmit} noValidate>
+          <label className="start-identity-label" htmlFor="pilot-start-name">
+            {l === "pt"
+              ? "1. IDENTIFICAÇÃO DO PILOTO (LIBERA O TREINAMENTO & CERTIFICADO)"
+              : "1. PILOT REGISTRATION (UNLOCKS TRAINING & FINAL CERTIFICATE)"}
+          </label>
+          <div className="start-identity-row">
+            <input
+              id="pilot-start-name"
+              ref={nameInputRef}
+              type="text"
+              maxLength={32}
+              value={nameInput}
+              onChange={(e) => {
+                setNameInput(e.target.value);
+                if (submittedError) setSubmittedError(false);
+              }}
+              placeholder={
+                l === "pt"
+                  ? "Digite seu nome completo ou codinome..."
+                  : "Enter your full name or callsign..."
+              }
+              className={`start-name-input ${
+                nameCheck.valid ? "is-valid" : submittedError ? "is-error" : ""
+              }`}
+              aria-invalid={submittedError && !nameCheck.valid}
+            />
+            <button
+              type="submit"
+              className={`hud-cam-btn ${isVerifiedSaved ? "active-green" : "active-cyan"}`}
+            >
+              <UserCheck size={14} />
+              <span>
+                {isVerifiedSaved
+                  ? l === "pt"
+                    ? "Nome Verificado ✓"
+                    : "Name Verified ✓"
+                  : l === "pt"
+                    ? "Verificar Nome"
+                    : "Verify Name"}
+              </span>
+            </button>
+          </div>
+          <div
+            className={`start-identity-status ${
+              nameCheck.valid ? "is-ok" : submittedError ? "is-warn" : ""
+            }`}
+            role={submittedError && !nameCheck.valid ? "alert" : "status"}
+          >
+            {nameCheck.valid ? <CheckCircle2 size={13} /> : <AlertCircle size={13} />}
+            <span>
+              {nameCheck.valid || submittedError || nameInput.trim().length > 0
+                ? l === "pt"
+                  ? nameCheck.messagePt
+                  : nameCheck.messageEn
+                : l === "pt"
+                  ? "Obrigatório antes de iniciar o Play para liberar as missões e o diploma final."
+                  : "Required before Play to unlock training missions and your final certificate."}
+            </span>
+          </div>
+        </form>
+
         {/* Primary Play Action + Inline Settings Right Beside Play */}
         <div className="start-menu-action-bar">
           <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
@@ -136,7 +257,7 @@ export default function StartMenuModal({
               </span>
             </button>
 
-            <button type="button" className="btn-hud-ghost" onClick={onOpenIntro}>
+            <button type="button" className="btn-hud-ghost" onClick={handleIntroClick}>
               <Eye size={15} />
               <span>{l === "pt" ? "História (5 Atos)" : "Story Intro (5 Acts)"}</span>
             </button>
@@ -179,17 +300,17 @@ export default function StartMenuModal({
               <Globe size={13} />
               <button
                 type="button"
-                className={`lang-pill-btn ${l === "pt" ? "active" : ""}`}
-                onClick={() => onChangeLang?.("pt")}
-              >
-                PT-BR
-              </button>
-              <button
-                type="button"
                 className={`lang-pill-btn ${l === "en" ? "active" : ""}`}
                 onClick={() => onChangeLang?.("en")}
               >
                 EN
+              </button>
+              <button
+                type="button"
+                className={`lang-pill-btn ${l === "pt" ? "active" : ""}`}
+                onClick={() => onChangeLang?.("pt")}
+              >
+                PT-BR
               </button>
             </div>
           </div>

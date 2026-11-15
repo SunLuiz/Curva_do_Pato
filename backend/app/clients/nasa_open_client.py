@@ -15,6 +15,7 @@ load_dotenv()
 
 class NasaOpenClient:
     BASE = "https://api.nasa.gov"
+    DONKI_BASE = os.getenv("NASA_DONKI_BASE", "https://api.nasa.gov/DONKI").strip().rstrip("/")
 
     def __init__(self, api_key: Optional[str] = None, timeout: float = 40.0):
         self.api_key = api_key or os.getenv("NASA_API_KEY", "")
@@ -27,7 +28,7 @@ class NasaOpenClient:
 
     def donki_notifications(self, start: str, end: str, typed: str = "all") -> List[Dict]:
         """Space weather notifications in the period (YYYY-MM-DD format)."""
-        url = f"{self.BASE}/DONKI/notifications"
+        url = f"{self.DONKI_BASE}/notifications"
         r = self.client.get(url, params={
             "startDate": start, "endDate": end, "type": typed, "api_key": self.api_key,
         })
@@ -35,14 +36,14 @@ class NasaOpenClient:
         return r.json()
 
     def donki_cmes(self, start: str, end: str) -> List[Dict]:
-        url = f"{self.BASE}/DONKI/CME"
+        url = f"{self.DONKI_BASE}/CME"
         r = self.client.get(url, params={"startDate": start, "endDate": end, "api_key": self.api_key})
         r.raise_for_status()
         return r.json()
 
     def donki_gst(self, start: str, end: str) -> List[Dict]:
         """Geomagnetic storms (relevant to GIC on power transformers)."""
-        url = f"{self.BASE}/DONKI/GST"
+        url = f"{self.DONKI_BASE}/GST"
         r = self.client.get(url, params={"startDate": start, "endDate": end, "api_key": self.api_key})
         r.raise_for_status()
         return r.json()

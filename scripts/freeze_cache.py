@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -48,6 +49,9 @@ def fetch_cmr_evidence() -> dict[str, Any]:
         "Content-Type": "application/json",
         "Accept": "application/json, text/event-stream",
     }
+    earthdata_token = os.getenv("NASA_EARTHDATA_BEARER_TOKEN", "").strip()
+    if earthdata_token:
+        headers["Authorization"] = f"Bearer {earthdata_token}"
     init_body = {
         "jsonrpc": "2.0",
         "id": 1,

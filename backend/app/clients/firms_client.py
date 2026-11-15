@@ -25,7 +25,8 @@ DATASETS = {
 
 
 class FirmsClient:
-    BASE = "https://firms.modaps.eosdis.nasa.gov/api/area/csv"
+    FIRMS_HOST = os.getenv("FIRMS_BASE", "https://firms.modaps.eosdis.nasa.gov").strip().rstrip("/")
+    BASE = f"{FIRMS_HOST}/api/area/csv"
 
     def __init__(self, api_key: Optional[str] = None, timeout: float = 60.0):
         self.api_key = api_key or os.getenv("FIRMS_MAP_KEY", "")

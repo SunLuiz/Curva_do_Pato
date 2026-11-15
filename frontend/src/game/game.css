@@ -1,0 +1,461 @@
+/* Rover Pilot 3D & Narrative Intro styles (harmonized with styles.css design tokens) */
+
+:root {
+  --cockpit-bg: #11161c;
+  --cockpit-panel: #19222b;
+  --cockpit-border: #2c3b4a;
+  --cockpit-ink: #f2f5f7;
+  --cockpit-soft: #aeb9c4;
+  --mars-rust: #c85a32;
+  --mars-dust: #e39854;
+  --mars-sky: #4a2318;
+  --hud-cyan: #4cd4e8;
+  --hud-green: #45c97a;
+  --hud-amber: #f5b942;
+  --hud-red: #f25f52;
+}
+
+.game-shell {
+  display: grid;
+  gap: 1.1rem;
+}
+
+/* Header & Mission Select Bar */
+.game-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1.2rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.game-mission-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  gap: 0.7rem;
+}
+
+.game-mission-btn {
+  text-align: left;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-sm);
+  padding: 0.78rem 0.9rem;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.game-mission-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--biome-n);
+  box-shadow: var(--shadow-soft);
+}
+
+.game-mission-btn.active {
+  border-color: var(--biome-se);
+  background: rgba(42, 112, 71, 0.06);
+  box-shadow: 0 0 0 2px rgba(42, 112, 71, 0.16);
+}
+
+.game-mission-btn:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+
+/* Vector Narrative Intro Stage */
+.intro-stage {
+  background: var(--cockpit-bg);
+  color: var(--cockpit-ink);
+  border: 1px solid var(--cockpit-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lift);
+}
+
+.intro-canvas-wrap {
+  position: relative;
+  background: radial-gradient(circle at 60% 35%, rgba(200, 90, 50, 0.24), transparent 62%),
+    var(--cockpit-bg);
+  border-bottom: 1px solid var(--cockpit-border);
+}
+
+.intro-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 390px;
+}
+
+.intro-copy {
+  padding: 1.35rem 1.6rem 1.45rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.intro-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hud-cyan);
+}
+
+.intro-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.5vw, 1.68rem);
+  line-height: 1.2;
+  color: var(--cockpit-ink);
+}
+
+.intro-body {
+  font-size: 0.96rem;
+  color: var(--cockpit-soft);
+  line-height: 1.6;
+  max-width: 78ch;
+}
+
+.intro-dialogue {
+  display: grid;
+  gap: 0.45rem;
+  background: rgba(25, 34, 43, 0.85);
+  border: 1px solid var(--cockpit-border);
+  border-left: 3px solid var(--hud-cyan);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 0.88rem;
+  color: var(--cockpit-ink);
+}
+
+.intro-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.4rem;
+}
+
+.intro-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.intro-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--cockpit-border);
+  background: var(--cockpit-panel);
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.intro-dot.active {
+  width: 28px;
+  background: var(--hud-cyan);
+  border-color: var(--hud-cyan);
+}
+
+/* SVG semantic fills inside NarrativeIntro */
+.svg-bg-mars { fill: #28140f; }
+.svg-bg-dark { fill: #0d1218; }
+.svg-horizon-mars { fill: #5e2918; }
+.svg-ground-mars { fill: #8b3c21; }
+.svg-iris-ring { fill: none; stroke: var(--mars-dust); stroke-width: 2.5; }
+.svg-iris-glow { fill: rgba(200, 90, 50, 0.35); stroke: var(--mars-rust); stroke-width: 2; }
+.svg-dome { fill: #263646; stroke: var(--hud-cyan); stroke-width: 2; }
+.svg-dome-light { fill: rgba(76, 212, 232, 0.22); }
+.svg-human { fill: #0a0e13; }
+.svg-hud-grid { stroke: rgba(76, 212, 232, 0.16); stroke-width: 1; }
+.svg-route-red { fill: none; stroke: var(--hud-red); stroke-width: 3; stroke-dasharray: 6 5; }
+.svg-route-green { fill: none; stroke: var(--hud-green); stroke-width: 3.5; }
+.svg-morph-curve { fill: none; stroke: var(--hud-cyan); stroke-width: 3; }
+.svg-morph-sub { fill: none; stroke: var(--mars-dust); stroke-width: 2; opacity: 0.75; }
+.svg-text-hud { fill: var(--cockpit-ink); font-family: var(--font-mono); font-size: 13px; }
+.svg-text-cyan { fill: var(--hud-cyan); font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
+.svg-text-red { fill: var(--hud-red); font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
+.svg-text-green { fill: var(--hud-green); font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
+
+/* 3D Cockpit Viewport + Overlays */
+.viewport-frame {
+  position: relative;
+  width: 100%;
+  height: clamp(340px, 50vh, 510px);
+  background: var(--cockpit-bg);
+  border: 1px solid var(--cockpit-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lift);
+}
+
+.viewport-canvas-host {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hud-overlay-top {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.55rem;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.hud-pill-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  background: rgba(17, 22, 28, 0.84);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.7rem;
+  color: var(--cockpit-ink);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  pointer-events: auto;
+}
+
+.hud-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding-right: 0.45rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.14);
+}
+.hud-stat:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
+.hud-stat-warn { color: var(--hud-amber); }
+.hud-stat-danger { color: var(--hud-red); font-weight: 700; }
+.hud-stat-ok { color: var(--hud-green); }
+
+.hud-alert-banner {
+  position: absolute;
+  left: 50%;
+  bottom: 0.8rem;
+  transform: translateX(-50%);
+  max-width: min(94%, 680px);
+  padding: 0.55rem 0.95rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 5;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.hud-alert-info {
+  background: rgba(17, 22, 28, 0.88);
+  color: var(--cockpit-ink);
+  border: 1px solid var(--hud-cyan);
+}
+.hud-alert-warn {
+  background: rgba(58, 41, 10, 0.92);
+  color: var(--hud-amber);
+  border: 1px solid var(--hud-amber);
+}
+.hud-alert-danger {
+  background: rgba(68, 16, 14, 0.94);
+  color: var(--cockpit-ink);
+  border: 2px solid var(--hud-red);
+}
+.hud-alert-success {
+  background: rgba(14, 48, 28, 0.92);
+  color: var(--hud-green);
+  border: 1px solid var(--hud-green);
+}
+
+/* NavCam corner overlay */
+.navcam-mini {
+  background: rgba(17, 22, 28, 0.86);
+  border: 1px solid rgba(76, 212, 232, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.65rem;
+  color: var(--cockpit-ink);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  min-width: 176px;
+  pointer-events: auto;
+}
+
+.navcam-meter-track {
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  margin: 0.25rem 0;
+}
+
+.navcam-meter-fill {
+  height: 100%;
+  background: var(--hud-cyan);
+  transition: width 0.12s linear;
+}
+.navcam-meter-fill.hot {
+  background: var(--hud-red);
+}
+
+/* Action Bar (5 physical rover controls + Touch D-pad) */
+.rover-controls-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.rover-action-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+.rover-act-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.48rem 0.78rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--hairline-strong);
+  background: var(--surface-0);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.81rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+
+.rover-act-btn:hover {
+  border-color: var(--biome-n);
+  background: var(--surface-2);
+}
+
+.rover-act-btn.on {
+  background: rgba(42, 112, 71, 0.12);
+  border-color: var(--sig);
+  color: var(--sig);
+}
+
+.rover-act-btn.urgent {
+  border-color: var(--danger);
+  background: rgba(178, 58, 42, 0.1);
+  color: var(--danger);
+}
+
+.dpad-cluster {
+  display: inline-grid;
+  grid-template-columns: repeat(3, 36px);
+  grid-template-rows: repeat(2, 32px);
+  gap: 4px;
+}
+
+.dpad-key {
+  border: 1px solid var(--hairline-strong);
+  background: var(--surface-2);
+  color: var(--ink);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  user-select: none;
+  touch-action: none;
+}
+
+.dpad-key:active {
+  background: var(--biome-se);
+  color: var(--surface-1);
+}
+
+/* Bottom split: Live Telemetry Chart + Mission Briefing Card */
+.game-bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 920px) {
+  .game-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.live-chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.chart-axis { stroke: var(--hairline-strong); stroke-width: 1; }
+.chart-grid { stroke: var(--hairline); stroke-width: 1; stroke-dasharray: 3 3; }
+.chart-thresh { stroke: var(--danger); stroke-width: 1.8; stroke-dasharray: 6 4; }
+.chart-unc-band { fill: rgba(31, 111, 139, 0.16); stroke: none; }
+.chart-primary { fill: none; stroke: var(--biome-n); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.chart-secondary { fill: none; stroke: var(--biome-ne); stroke-width: 2.1; stroke-dasharray: 5 3; }
+.chart-oracle-pin { stroke: var(--sig); stroke-width: 1.8; stroke-dasharray: 4 3; }
+.chart-player-pin { stroke: var(--biome-ne); stroke-width: 2; }
+.chart-label { fill: var(--ink-soft); font-family: var(--font-mono); font-size: 11px; }
+.chart-label-danger { fill: var(--danger); font-family: var(--font-mono); font-size: 11px; font-weight: 700; }
+
+/* Intro button palette */
+.btn-hud {
+  background: var(--hud-cyan);
+  color: var(--cockpit-bg);
+  border: 1px solid var(--hud-cyan);
+  padding: 0.62rem 1.2rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.btn-hud-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--cockpit-ink);
+  border: 1px solid var(--cockpit-border);
+  padding: 0.56rem 1rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}

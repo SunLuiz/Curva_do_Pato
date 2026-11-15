@@ -3,10 +3,20 @@
  * device-only Hall of Fame storage (zero server login, zero tracking).
  */
 
-import { computeEarnedBadges } from "./xp.js";
+import { computeEarnedBadges, computeGameBadges } from "./xp.js";
 
 export const STORAGE_KEY = "cockpit-omni/detective/v1";
 export const HOF_KEY = "cockpit-omni/hall-of-fame/v1";
+
+export function createInitialGameState() {
+  return {
+    introSeen: false,
+    judgeUnlock: false,
+    missions: {},
+    labRuns: [],
+    badges: [],
+  };
+}
 
 export function createInitialProfile() {
   return {
@@ -19,6 +29,7 @@ export function createInitialProfile() {
     mastery: {},
     badges: [],
     events: [],
+    game: createInitialGameState(),
     summary: "New detective profile. Complete questions in Academy to build your statistical dossier.",
     updatedAt: null,
   };
@@ -44,12 +55,19 @@ export function buildMemorySummary(profile) {
     .slice(-3)
     .map((e) => `${e.moduleId}/${e.questionId}`);
 
+  const gameMissions = Object.entries(profile.game?.missions || {})
+    .filter(([, m]) => m?.won)
+    .map(([id, m]) => `${id} (${m.stars || 0}*)`);
+
   const totalAnswered = (profile.events || []).length;
   const parts = [
     `Track: ${profile.depth}`,
     `Answered events: ${totalAnswered}`,
     mastered.length ? `Mastered: ${mastered.join(", ")}` : "Mastered: none yet",
   ];
+  if (gameMissions.length) {
+    parts.push(`3D Rover Missions: ${gameMissions.join(", ")}`);
+  }
   if (recentMistakes.length) {
     parts.push(`Recent misses to reinforce: ${recentMistakes.join(", ")}`);
   }
@@ -63,11 +81,23 @@ export function loadProfile(customStorage) {
     const raw = store.getItem(STORAGE_KEY);
     if (!raw) return createInitialProfile();
     const parsed = JSON.parse(raw);
+    const mergedGame = {
+      ...createInitialGameState(),
+      ...(parsed.game && typeof parsed.game === "object" ? parsed.game : {}),
+      missions:
+        parsed.game?.missions && typeof parsed.game.missions === "object"
+          ? parsed.game.missions
+          : {},
+      labRuns: Array.isArray(parsed.game?.labRuns) ? parsed.game.labRuns.slice(-15) : [],
+    };
+    mergedGame.badges = computeGameBadges(mergedGame);
+
     const merged = {
       ...createInitialProfile(),
       ...parsed,
       mastery: parsed.mastery && typeof parsed.mastery === "object" ? parsed.mastery : {},
       events: Array.isArray(parsed.events) ? parsed.events.slice(-20) : [],
+      game: mergedGame,
     };
     merged.badges = computeEarnedBadges(merged.mastery);
     merged.summary = buildMemorySummary(merged);
@@ -79,8 +109,16 @@ export function loadProfile(customStorage) {
 
 export function saveProfile(profile, customStorage) {
   const store = resolveStorage(customStorage);
+  const nextGame = {
+    ...createInitialGameState(),
+    ...(profile.game || {}),
+    labRuns: Array.isArray(profile.game?.labRuns) ? profile.game.labRuns.slice(-15) : [],
+  };
+  nextGame.badges = computeGameBadges(nextGame);
+
   const next = {
     ...profile,
+    game: nextGame,
     events: Array.isArray(profile.events) ? profile.events.slice(-20) : [],
     badges: computeEarnedBadges(profile.mastery || {}),
     updatedAt: new Date().toISOString(),

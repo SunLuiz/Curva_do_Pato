@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Suspense, lazy, useCallback, useEffect, useState } from "react";
 import AppShell from "./components/AppShell";
 import AskPanel from "./components/AskPanel";
 import StoryPage from "./pages/StoryPage";
@@ -13,7 +13,9 @@ import {
   saveProfile,
 } from "./academy/storage";
 
-const VALID_ROUTES = ["/", "/academy", "/cockpit"];
+const GamePage = lazy(() => import("./pages/GamePage"));
+
+const VALID_ROUTES = ["/", "/academy", "/cockpit", "/game"];
 const VALID_TABS = ["trend", "attribution", "sources", "live", "space"];
 const ALIAS_MAP = {
   "/trend": "/cockpit?tab=trend",
@@ -175,6 +177,23 @@ export default function App() {
           onVerifyLive={handleVerifyLive}
           lang={lang}
         />
+      )}
+
+      {route === "/game" && (
+        <Suspense
+          fallback={
+            <div className="card">
+              {lang === "pt" ? "Carregando motor 3D do Rover..." : "Loading 3D Rover engine..."}
+            </div>
+          }
+        >
+          <GamePage
+            profile={profile}
+            onSaveProfile={handleSaveProfile}
+            onNavigate={navigate}
+            lang={lang}
+          />
+        </Suspense>
       )}
 
       {(route === "/cockpit" || route === "/academy") && (

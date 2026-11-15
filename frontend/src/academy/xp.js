@@ -94,6 +94,44 @@ export const BADGES = [
   },
 ];
 
+export const GAME_BADGES = [
+  {
+    id: "field-duck-tamer",
+    title: "Duck Curve Tamer",
+    missionId: "M1",
+    description: "Handled midday solar surplus and T4 radiator ceiling without burnout.",
+    tone: "--biome-ne",
+  },
+  {
+    id: "martian-wind-shelter",
+    title: "Martian Wind Shelter",
+    missionId: "M2",
+    description: "Wind-cleaned solar panels and sheltered on the P90 uncertainty band before peak Sol 40 gust.",
+    tone: "--biome-n",
+  },
+  {
+    id: "optic-sanitizer",
+    title: "Vision t-1 -> t Pilot",
+    missionId: "M3",
+    description: "Purged 999999999.0 sensor sentinels, stabilized in dust, and locked the EDL Beacon.",
+    tone: "--roadmap",
+  },
+  {
+    id: "causal-detective-3d",
+    title: "42-Year Field Detective",
+    missionId: "M4",
+    description: "Sampled decades for Seasonal Mann-Kendall and isolated Campinas Clear-Sky aerosols.",
+    tone: "--biome-se",
+  },
+  {
+    id: "mpto-commander",
+    title: "MPTO Space Commander",
+    missionId: "M5",
+    description: "Orchestrated crater IR albedo, OSD-615 SoC_bio, and lava-tube DONKI storm shelter.",
+    tone: "--sig",
+  },
+];
+
 export function computeEarnedBadges(mastery = {}) {
   const passedIds = BADGES.filter((b) => b.moduleId !== "ALL" && mastery[b.moduleId]?.passed).map(
     (b) => b.id
@@ -104,4 +142,9 @@ export function computeEarnedBadges(mastery = {}) {
     passedIds.push("case-closed");
   }
   return passedIds;
+}
+
+export function computeGameBadges(gameState = {}) {
+  const missions = gameState?.missions || {};
+  return GAME_BADGES.filter((b) => Boolean(missions[b.missionId]?.won)).map((b) => b.id);
 }

@@ -4,7 +4,7 @@
 **Participant / Lead:** Luiz Antonio Gois Junior  
 **Location:** Campinas, SP, Brazil  
 **Challenge:** #2 — Be An Earth System Trend Detective! (Earth · Advanced)  
-**Language:** 100% English (app, documentation, repository, pitch deck)
+**Language:** Bilingual `EN | PT-BR` toggle (100% English default UI, documentation, repository, and 7-slide pitch deck)
 
 ---
 
@@ -41,7 +41,7 @@ Cockpit-OMNI turns 42 years of NASA telemetry (1984–2025) into an audited Stor
 | **Public source code** | https://github.com/SunLuiz/Curva_do_Pato | Public — HTTP 200 |
 | **Backend (optional)** | not deployed; frontend serves frozen NASA cache | Declared in the UI badge |
 
-The frontend serves every preset region, chart, raw CSV/JSON table (`504` rows), attribution card, FIRMS count (`1,500 of 3,313 detections plotted`), DONKI alert list, CMR MCP evidence, 5-module Detective Academy (`localStorage` only + PNG diploma), and offline `AskPanel` FAQs from `frontend/public/cache/*.json`, so the demo runs with the backend offline, with zero login and no install step. An explicit `"Verify against NASA now"` control probes `/healthz` and compares live backend metrics whenever an upstream API instance is connected.
+The frontend serves every preset region, 5 layperson Action Presets with GREEN/AMBER/RED Traffic-Light insights and interactive Glossary Tooltips, raw CSV/JSON table (`504` rows), attribution card, FIRMS count (`1,500 of 3,313 detections plotted`), DONKI alert list, CMR MCP evidence, **Space Analog (MPTO)** tab (open NASA DSN Now, OSDR `OSD-615`, CelesTrak GP + 7-Frontier parametric simulator), 5-module Detective Academy (`localStorage` only + PNG diploma), and offline `AskPanel` FAQs from `frontend/public/cache/*.json`, so the demo runs with the backend offline, with zero login and no install step. An explicit `"Verify against NASA now"` control probes `/healthz`, while optional Vercel `/api/ask` serverless functions proxy GonkaRouter / Groq / OpenRouter server-side without ever exposing keys in the browser.
 
 ### Optional backend → Hugging Face Space (Docker, CPU Basic 16 GB)
 1. Create a Docker Space using the **repository root** (`Curva_do_Pato/`) as root — it ships `Dockerfile` on port `7860`.
@@ -53,12 +53,13 @@ The frontend serves every preset region, chart, raw CSV/JSON table (`504` rows),
 
 ## 4. Pre-Submission Checklist
 
-- [x] Public repo hygiene verified (`.env` excluded by `.gitignore`)
-- [x] 100% English UI, README, references, AI disclosure, and 7-slide deck
+- [x] Public repo hygiene verified (`.env` excluded by `.gitignore`, server-only LLM keys in `/api/ask`)
+- [x] 100% English default UI (`EN | PT-BR` toggle), README, references, AI disclosure, and 7-slide deck
 - [x] No NASA logo used; NASA Space Apps 2026 Campinas badge & explicit data citations included
 - [x] MIT `LICENSE` present (with TeleGeography CC BY-NC-SA carve-out disclosed)
 - [x] Public demo URL verified — HTTP 200, renders without login
 - [x] Declared limitation documented (monthly `WS2M` null ⇒ no ramp-risk claim in UI or docs)
+- [x] Space Analog (MPTO) integrates real open zero-key NASA DSN Now, OSDR `OSD-615`, and CelesTrak GP feeds cleanly separated from parametric frontier simulation
 - [ ] Re-test the live URL in an incognito window on mobile/4G after the final deploy
 - [ ] Click **Submit for Judging** before Sunday 23:00 BRT and tag `submission-final`
 

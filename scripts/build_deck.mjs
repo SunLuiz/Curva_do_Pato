@@ -38,12 +38,12 @@ function slideBodyHtml(slide) {
 
 function slideFooter(idx, total, slide) {
   let left = "Team Curva do Pato (Luiz Antonio Gois Junior) · NASA Space Apps Challenge 2026 — Campinas, SP";
-  if (slide.id === "legacy") {
+  if (slide.id === "future_space" || slide.id === "legacy") {
     left = "Built at Espaço Plasma, Unicamp — Campinas, SP, Brazil · MIT License · No NASA logo used";
-  } else if (slide.id === "evidence-campinas") {
+  } else if (slide.id === "trends_human" || slide.id === "evidence-campinas") {
     left = "Deterministic stats: pymannkendall (period=12) + scipy.stats.theilslopes (95% CI)";
-  } else if (slide.id === "evidence-verdicts") {
-    left = "Scientific honesty: every vector declares live, frozen snapshot, or roadmap status";
+  } else if (slide.id === "attribution" || slide.id === "evidence-verdicts") {
+    left = "Scientific honesty: every vector declares live, frozen snapshot, or parametric model status";
   }
   return `
     <div class="footer">
@@ -57,11 +57,11 @@ const slidesHtml = DECK_SLIDES.map((slide, idx) => {
   const toneVar = `var(${slide.tone})`;
   const titleTag = idx === 0 ? "h1" : "h2";
   const extraLinks =
-    slide.id === "legacy"
+    slide.id === "future_space" || slide.id === "legacy"
       ? `<div class="links-bar mono">
           <span>Live Demo: <a href="https://frontend-rho-seven-69.vercel.app">frontend-rho-seven-69.vercel.app</a></span>
           <span>Source: <a href="https://github.com/SunLuiz/Curva_do_Pato">github.com/SunLuiz/Curva_do_Pato</a></span>
-          <span>Sources: NASA POWER · FIRMS · DONKI · Earthdata CMR MCP</span>
+          <span>Sources: NASA POWER · FIRMS · DONKI · CMR MCP · DSN · OSDR · CelesTrak</span>
         </div>`
       : "";
 

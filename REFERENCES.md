@@ -29,6 +29,15 @@ All external datasets, APIs, and open-source components used or referenced in **
 - **NASA JPL Horizons System [Analog Client]**  
   - Solar/observer ephemeris API (`https://ssd.jpl.nasa.gov/api/horizons.api`).
 
+- **NASA Deep Space Network Now (DSN) [Open Feed]**  
+  - Active deep-space dish antenna targets, downlink bands, and elevation/azimuth XML (`https://eyes.nasa.gov/dsn/data/dsn.xml`).
+
+- **NASA Open Science Data Repository — OSDR (`OSD-615`) [Open Feed]**  
+  - *Arabidopsis thaliana* ISS APEX 03-1 root cell-wall glycome study (`https://osdr.nasa.gov/osdr/data/osd/meta/615`), informing biological photoperiod circularity (`SoC_bio`) in the MPTO layer.
+
+- **CelesTrak NORAD GP Stations Feed [Open Feed]**  
+  - Active LEO station orbital elements & mean motion (`https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=json`) for orbital solar/eclipse periodicity.
+
 ## 2. Brazilian Grid & Open Visual Components
 
 - **ONS Open Data (Brazilian National Electric System Operator)**  

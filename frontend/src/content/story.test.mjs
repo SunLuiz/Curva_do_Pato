@@ -1,18 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { STORY, interpolatePoints, smoothCurvePath } from "./story.js";
+import { STORY, localizeSlide, interpolatePoints, smoothCurvePath } from "./story.js";
 
-test("story has 12 public slides and 2 evidence slides", () => {
+test("story has exactly 7 public deck slides in EN and PT", () => {
   const pub = STORY.filter((s) => !s.evidence);
-  const ev = STORY.filter((s) => s.evidence);
-  assert.equal(pub.length, 12);
-  assert.equal(ev.length, 2);
-});
-
-test("pitch deck filter selects exactly 7 slides including all evidence slides", () => {
   const deck = STORY.filter((s) => s.deck);
+  assert.equal(STORY.length, 7);
+  assert.equal(pub.length, 7);
   assert.equal(deck.length, 7);
-  assert.equal(STORY.filter((s) => s.evidence && !s.deck).length, 0);
+
+  for (const slide of STORY) {
+    assert.ok(slide.en?.title && slide.en?.kicker && slide.en?.highlights?.length >= 3);
+    assert.ok(slide.pt?.title && slide.pt?.kicker && slide.pt?.highlights?.length >= 3);
+    const localizedPt = localizeSlide(slide, "pt");
+    assert.equal(localizedPt.title, slide.pt.title);
+  }
 });
 
 test("every slide has exactly 8 finite curvePoints and interpolates cleanly", () => {

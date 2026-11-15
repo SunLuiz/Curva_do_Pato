@@ -4,6 +4,7 @@ import TrendChart from "./TrendChart";
 import RawTable from "./RawTable";
 import SourcePanel from "./SourcePanel";
 import { humanVerdict } from "../engine/trend";
+import { tVar } from "../content/i18n";
 
 export default function ChartCard({
   data,
@@ -14,9 +15,12 @@ export default function ChartCard({
   setShowMovingAvg,
   compareSeries,
   compareLabel,
+  lang = "en",
 }) {
   const [view, setView] = useState("chart");
+  const l = lang === "pt" ? "pt" : "en";
   const verdict = humanVerdict(stats, data.region.name, data.label, data.unit);
+  const humanVar = tVar(data.variable, l);
 
   return (
     <div className="card">
@@ -45,7 +49,7 @@ export default function ChartCard({
       <div className="section-header" style={{ marginBottom: "0.85rem" }}>
         <div>
           <h3 style={{ fontSize: "1.12rem", fontFamily: "var(--font-display)" }}>
-            {data.region.name} — {data.label} ({data.unit})
+            {data.region.name} — {humanVar.name} ({data.label}, {data.unit})
           </h3>
           <div style={{ fontSize: "0.82rem", color: "var(--ink-soft)" }}>
             {data.region.biome} · Lat {data.region.lat}, Lon {data.region.lon} ·{" "}

@@ -1,13 +1,17 @@
 import React from "react";
-import { Activity, Compass, GraduationCap } from "lucide-react";
+import { Activity, Compass, Globe, GraduationCap } from "lucide-react";
+import { UI_TEXT } from "../content/i18n";
 
 const NAV_ITEMS = [
-  { path: "/", label: "Story", Icon: Compass },
-  { path: "/academy", label: "Academy", Icon: GraduationCap },
-  { path: "/cockpit", label: "Cockpit", Icon: Activity },
+  { path: "/", key: "navStory", Icon: Compass },
+  { path: "/academy", key: "navAcademy", Icon: GraduationCap },
+  { path: "/cockpit", key: "navCockpit", Icon: Activity },
 ];
 
-export default function AppShell({ route, onNavigate, fullBleed = false, children }) {
+export default function AppShell({ route, onNavigate, lang = "en", setLang, fullBleed = false, children }) {
+  const l = lang === "pt" ? "pt" : "en";
+  const ui = UI_TEXT[l];
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -21,23 +25,43 @@ export default function AppShell({ route, onNavigate, fullBleed = false, childre
             </div>
             <div>
               <span className="brand-title">Cockpit-OMNI · Curva do Pato</span>
-              <span className="brand-sub">Be An Earth System Trend Detective! · Space Apps 2026</span>
+              <span className="brand-sub">{ui.brandSub}</span>
             </div>
           </button>
 
-          <nav className="nav-links" aria-label="Primary Navigation">
-            {NAV_ITEMS.map(({ path, label, Icon }) => (
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+            <nav className="nav-links" aria-label="Primary Navigation">
+              {NAV_ITEMS.map(({ path, key, Icon }) => (
+                <button
+                  key={path}
+                  type="button"
+                  className={`nav-btn ${route === path ? "active" : ""}`}
+                  aria-current={route === path ? "page" : undefined}
+                  onClick={() => onNavigate(path)}
+                >
+                  <Icon size={16} /> {ui[key]}
+                </button>
+              ))}
+            </nav>
+
+            {setLang && (
               <button
-                key={path}
                 type="button"
-                className={`nav-btn ${route === path ? "active" : ""}`}
-                aria-current={route === path ? "page" : undefined}
-                onClick={() => onNavigate(path)}
+                className="pill"
+                aria-label={l === "en" ? "Switch interface language to Portuguese" : "Mudar idioma para inglês"}
+                onClick={() => setLang(l === "en" ? "pt" : "en")}
+                style={{
+                  fontWeight: 700,
+                  fontSize: "0.8rem",
+                  background: "var(--surface-1)",
+                  borderColor: "var(--hairline-strong)",
+                }}
               >
-                <Icon size={16} /> {label}
+                <Globe size={14} aria-hidden="true" />
+                <span>{l === "en" ? "EN | PT-BR" : "PT-BR | EN"}</span>
               </button>
-            ))}
-          </nav>
+            )}
+          </div>
         </div>
       </header>
 

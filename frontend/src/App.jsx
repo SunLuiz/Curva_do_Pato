@@ -14,7 +14,7 @@ import {
 } from "./academy/storage";
 
 const VALID_ROUTES = ["/", "/academy", "/cockpit"];
-const VALID_TABS = ["trend", "attribution", "sources", "live"];
+const VALID_TABS = ["trend", "attribution", "sources", "live", "space"];
 const ALIAS_MAP = {
   "/trend": "/cockpit?tab=trend",
   "/attribution": "/cockpit?tab=attribution",
@@ -52,6 +52,7 @@ export default function App() {
   const [backendStatus, setBackendStatus] = useState({ live: false, reason: "checking" });
   const [profile, setProfile] = useState(() => loadProfile());
   const [hallOfFame, setHallOfFame] = useState(() => loadHallOfFame());
+  const [lang, setLang] = useState("en");
 
   useEffect(() => {
     if (initial.normalized) {
@@ -146,8 +147,8 @@ export default function App() {
   }, [profile.name]);
 
   return (
-    <AppShell route={route} onNavigate={navigate} fullBleed={route === "/"}>
-      {route === "/" && <StoryPage onNavigate={navigate} />}
+    <AppShell route={route} onNavigate={navigate} lang={lang} setLang={setLang} fullBleed={route === "/"}>
+      {route === "/" && <StoryPage onNavigate={navigate} lang={lang} />}
 
       {route === "/academy" && (
         <AcademyPage
@@ -156,6 +157,7 @@ export default function App() {
           onSaveProfile={handleSaveProfile}
           onForgetProfile={handleForgetProfile}
           onOpenCockpit={handleCockpitAction}
+          lang={lang}
         />
       )}
 
@@ -171,6 +173,7 @@ export default function App() {
           spaceWeather={spaceWeather}
           backendStatus={backendStatus}
           onVerifyLive={handleVerifyLive}
+          lang={lang}
         />
       )}
 
@@ -181,6 +184,7 @@ export default function App() {
           apiBase={API_BASE}
           currentRoute={route}
           onNavigateAction={handleCockpitAction}
+          lang={lang}
         />
       )}
     </AppShell>

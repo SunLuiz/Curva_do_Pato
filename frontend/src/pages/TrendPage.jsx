@@ -1,7 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ArrowRight, CheckCircle2, AlertTriangle, Loader2, RotateCcw } from "lucide-react";
 import ChartCard from "../components/ChartCard";
+import PresetBar from "../components/PresetBar";
+import InsightPanel from "../components/InsightPanel";
+import GlossaryTooltip from "../components/GlossaryTooltip";
 import { computeTrend, fmtP } from "../engine/trend";
+import { evaluateClientInsight, listClientPresets, PRESET_DEFINITIONS } from "../engine/presets";
+import { tVar } from "../content/i18n";
 import { getTrend } from "../api";
 
 const REGION_ACCENTS = {
@@ -40,10 +45,18 @@ export default function TrendPage({
   variable = "T2M",
   setVariable,
   onSwitchTab,
+  fires = null,
+  spaceWeather = null,
+  lang = "en",
 }) {
+  const l = lang === "pt" ? "pt" : "en";
   const [localVar, setLocalVar] = useState(variable);
   const activeVar = setVariable ? variable : localVar;
   const updateVar = setVariable || setLocalVar;
+
+  const [activePresetId, setActivePresetId] = useState("calor");
+  const [simpleMode, setSimpleMode] = useState(true);
+  const [presetPayloads, setPresetPayloads] = useState({});
 
   const [customLat, setCustomLat] = useState("-22.90");
   const [customLon, setCustomLon] = useState("-47.06");
@@ -59,6 +72,29 @@ export default function TrendPage({
   const [compareData, setCompareData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (customActive) return undefined;
+    const def = PRESET_DEFINITIONS.find((p) => p.id === activePresetId) || PRESET_DEFINITIONS[0];
+    let cancelled = false;
+    Promise.all(
+      def.variables.map((v) =>
+        getTrend({ region, variable: v })
+          .then((res) => [v, res])
+          .catch(() => [v, null])
+      )
+    ).then((pairs) => {
+      if (cancelled) return;
+      const next = {};
+      for (const [k, val] of pairs) {
+        if (val) next[k] = val;
+      }
+      setPresetPayloads(next);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [region, activePresetId, customActive]);
 
   useEffect(() => {
     let cancelled = false;
@@ -131,11 +167,54 @@ export default function TrendPage({
   const stats = viewStats;
   const sig = stats?.significant_5pct;
 
+  const presets = useMemo(() => listClientPresets(l), [l]);
+  const insight = useMemo(() => {
+    if (customActive || !Object.keys(presetPayloads).length) return null;
+    const merged = { ...presetPayloads, ...(data ? { [activeVar]: data } : {}) };
+    const regionInfo =
+      merged[Object.keys(merged)[0]]?.region ||
+      PRESET_LIST.find((r) => r.id === region) || { name: region };
+    return evaluateClientInsight({
+      presetId: activePresetId,
+      regionInfo,
+      trendPayloads: merged,
+      fires,
+      spaceWeather,
+      lang: l,
+    });
+  }, [customActive, presetPayloads, data, activeVar, region, activePresetId, fires, spaceWeather, l]);
+
+  const handleSelectPreset = (preset) => {
+    setCustomActive(false);
+    setActivePresetId(preset.id);
+    if (preset.primaryVariable) {
+      updateVar(preset.primaryVariable);
+    }
+  };
+
   return (
     <div>
+      <PresetBar
+        presets={presets}
+        activePresetId={activePresetId}
+        onSelectPreset={handleSelectPreset}
+        lang={l}
+      />
+
+      {insight && (
+        <InsightPanel
+          insight={insight}
+          activeVariable={activeVar}
+          onSelectVariable={updateVar}
+          simpleMode={simpleMode}
+          onToggleSimpleMode={() => setSimpleMode((s) => !s)}
+          lang={l}
+        />
+      )}
+
       <div className="controls-bar">
         <div className="control-group">
-          <label>Preset Biome Region</label>
+          <label>{l === "pt" ? "Região Bioma" : "Preset Biome Region"}</label>
           <div className="pill-tabs">
             {PRESET_LIST.map((r) => (
               <button
@@ -154,11 +233,13 @@ export default function TrendPage({
         </div>
 
         <div className="control-group" style={{ flex: 1, minWidth: 210 }}>
-          <label htmlFor="var-select">Earth System Variable</label>
+          <label htmlFor="var-select">
+            {l === "pt" ? "Indicador Climático" : "Earth System Variable"}
+          </label>
           <select id="var-select" value={activeVar} onChange={(e) => updateVar(e.target.value)}>
             {VARIABLES.map((v) => (
               <option key={v.id} value={v.id}>
-                {v.label}
+                {tVar(v.id, l).name} ({v.id})
               </option>
             ))}
           </select>
@@ -276,11 +357,20 @@ export default function TrendPage({
           {stats.status === "ok" && (
             <div className="grid-4" style={{ marginBottom: "1.15rem" }}>
               <div className="card">
-                <div className="stat-label">Significance Verdict (alpha = 0.05)</div>
+                <div className="stat-label">
+                  {l === "pt" ? "Veredito" : "Significance Verdict"} ·{" "}
+                  <GlossaryTooltip termKey="p-value" lang={l}>p-value</GlossaryTooltip>
+                </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", marginTop: "0.4rem" }}>
                   {sig ? <CheckCircle2 size={20} color="var(--sig)" /> : <AlertTriangle size={20} color="var(--null-ink)" />}
                   <strong style={{ fontSize: "1.02rem", color: sig ? "var(--sig)" : "var(--null-ink)" }}>
-                    {sig ? `Significant (${stats.trend})` : "No Significant Trend"}
+                    {sig
+                      ? l === "pt"
+                        ? `Significativo (${stats.trend})`
+                        : `Significant (${stats.trend})`
+                      : l === "pt"
+                        ? "Sem Tendência Comprovada"
+                        : "No Significant Trend"}
                   </strong>
                 </div>
                 <div className="mono" style={{ fontSize: "0.78rem", color: "var(--ink-soft)", marginTop: "0.45rem" }}>
@@ -289,7 +379,10 @@ export default function TrendPage({
               </div>
 
               <div className="card">
-                <div className="stat-label">Rate of Change (Theil-Sen)</div>
+                <div className="stat-label">
+                  {l === "pt" ? "Taxa" : "Rate of Change"} ·{" "}
+                  <GlossaryTooltip termKey="theil-sen" lang={l}>Theil-Sen</GlossaryTooltip>
+                </div>
                 <div className="stat-value" style={{ color: accent }}>
                   {stats.slope_per_decade > 0 ? `+${stats.slope_per_decade}` : stats.slope_per_decade}
                   <span style={{ fontSize: "0.82rem", color: "var(--ink-soft)", marginLeft: 5 }}>{data.unit}/dec</span>
@@ -311,7 +404,9 @@ export default function TrendPage({
               </div>
 
               <div className="card">
-                <div className="stat-label">Original vs Seasonal MK</div>
+                <div className="stat-label">
+                  <GlossaryTooltip termKey="mann-kendall" lang={l}>Original vs Seasonal MK</GlossaryTooltip>
+                </div>
                 <div className="mono" style={{ fontSize: "0.95rem", fontWeight: 600, marginTop: "0.35rem" }}>
                   Orig tau = {stats.original_tau > 0 ? `+${stats.original_tau}` : stats.original_tau}
                 </div>
@@ -334,6 +429,7 @@ export default function TrendPage({
             setShowMovingAvg={setShowMovingAvg}
             compareSeries={filteredCompareSeries}
             compareLabel={compareData?.region?.name}
+            lang={l}
           />
 
           <div style={{ marginTop: "1rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>

@@ -1,8 +1,8 @@
 """
 Cockpit-OMNI — PDS Atmospheres / MEDA (Perseverance) client.
-Dados REAIS de Marte via arquivos <sol> (CSV plano, header na 1a linha).
-Produtos: wind (DER/WS), rad (CAL/RDS), temp (CAL/ATS), pres (CAL/PS).
-Aberto, sem chave.
+Real Mars telemetry via per-sol CSV files (header on line 1).
+Products: wind (DER/WS), rad (CAL/RDS), temp (CAL/ATS), pres (CAL/PS).
+Open public archive, no API key required.
 """
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from typing import Optional, List
 
 BASE = "https://atmos.nmsu.edu/PDS/data/PDS4/Mars2020/mars2020_meda"
 
-# produto -> (colecao, marca no nome do arquivo)
+# product -> (collection, file marker)
 PRODUCTS = {
     "wind": ("data_derived_env", "DER_WS"),
     "rad":  ("data_calibrated_env", "CAL_RDS"),
@@ -53,9 +53,9 @@ class MedaClient:
         return None
 
     def sol_csv(self, sol: int, product: str = "rad") -> Optional[pd.DataFrame]:
-        """Baixa o CSV de um sol e devolve DataFrame com colunas numericas."""
+        """Download per-sol CSV and return numeric DataFrame."""
         if product not in PRODUCTS:
-            raise ValueError(f"produto desconhecido: {product} (use {list(PRODUCTS)})")
+            raise ValueError(f"unknown product: {product} (use {list(PRODUCTS)})")
         col, marker = PRODUCTS[product]
         bucket = self._sol_bucket(sol, col)
         if not bucket:
@@ -72,7 +72,7 @@ class MedaClient:
 
     @staticmethod
     def _parse_csv(text: str) -> pd.DataFrame:
-        """CSV plano PDS: header na 1a linha, depois linhas de dados numericos."""
+        """Flat PDS CSV: header on line 1 followed by numeric data rows."""
         lines = [l for l in text.splitlines() if l.strip()]
         header = [h.strip().strip('"') for h in lines[0].split(",")]
         rows = []
@@ -98,11 +98,11 @@ class MedaClient:
 if __name__ == "__main__":
     c = MedaClient()
     dfw = c.sol_csv(40, "wind")
-    print("wind sol 40:", "OK" if dfw is not None and len(dfw) else "sem dados", end=" | ")
+    print("wind sol 40:", "OK" if dfw is not None and len(dfw) else "no data", end=" | ")
     if dfw is not None:
-        print(len(dfw), "linhas | colunas:", list(dfw.columns)[:6])
+        print(len(dfw), "rows | cols:", list(dfw.columns)[:6])
     dfr = c.sol_csv(1100, "rad")
-    print("rad sol 1100:", "OK" if dfr is not None and len(dfr) else "sem dados", end=" | ")
+    print("rad sol 1100:", "OK" if dfr is not None and len(dfr) else "no data", end=" | ")
     if dfr is not None:
-        print(len(dfr), "linhas | colunas:", list(dfr.columns)[:6])
+        print(len(dfr), "rows | cols:", list(dfr.columns)[:6])
     c.close()

@@ -173,6 +173,7 @@ def test_api_fires_spaceweather_and_attribution() -> None:
 
 def test_api_ask_grounded_and_rate_limit(monkeypatch: pytest.MonkeyPatch) -> None:
     app_main._ASK_RATE_LIMIT.clear()
+    monkeypatch.delenv("GONKA_API_KEY", raising=False)
     monkeypatch.setenv("GROQ_API_KEY", "test-groq-key")
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
 
@@ -208,8 +209,37 @@ def test_api_ask_grounded_and_rate_limit(monkeypatch: pytest.MonkeyPatch) -> Non
         assert limited.status_code == 429
 
 
+def test_api_ask_gonka_reasoning_fallback_and_pt_lang(monkeypatch: pytest.MonkeyPatch) -> None:
+    app_main._ASK_RATE_LIMIT.clear()
+    monkeypatch.setenv("GONKA_API_KEY", "test-gonka-key")
+    monkeypatch.setenv("GONKA_BASE_URL", "https://api.gonkarouter.io/v1")
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+
+    mock_resp = MagicMock()
+    mock_resp.raise_for_status.return_value = None
+    mock_resp.json.return_value = {
+        "choices": [{"message": {"content": "", "reasoning": "Campinas subiu +0.4091 C/decada com seguranca."}}]
+    }
+
+    client = TestClient(app_main.app)
+    with patch("app.main.httpx.post", return_value=mock_resp) as post_mock:
+        res = client.post(
+            "/api/ask",
+            json={"question": "Campinas esta esquentando?", "lang": "pt"},
+        )
+        assert res.status_code == 200
+        body = res.json()
+        assert body["provider"] == "gonka"
+        assert body["lang"] == "pt"
+        assert "+0.4091" in body["answer"]
+        sent_sys = post_mock.call_args.kwargs["json"]["messages"][0]["content"]
+        assert "Portuguese" in sent_sys
+
+
 def test_api_ask_validation_and_no_keys(monkeypatch: pytest.MonkeyPatch) -> None:
     app_main._ASK_RATE_LIMIT.clear()
+    monkeypatch.delenv("GONKA_API_KEY", raising=False)
     monkeypatch.delenv("GROQ_API_KEY", raising=False)
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
 

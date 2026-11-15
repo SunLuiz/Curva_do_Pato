@@ -27,13 +27,13 @@ class HorizonsClient:
         step: str = "6h",
     ) -> Dict:
         """
-        Ephemeris OBSERVER para o Sol (1) visto do astro alvo.
+        OBSERVER ephemeris for the Sun (1) seen from target body.
         QUANTITIES=1 (az/el), 20 (range) -> solar geometry.
         """
         url = self.BASE
         params = {
             "format": "text",
-            "COMMAND": "'1'",  # Sun observado
+            "COMMAND": "'1'",  # Target: Sun
             "OBJ_DATA": "'NO'",
             "MAKE_EPHEM": "'YES'",
             "EPHEM_TYPE": "'OBSERVER'",

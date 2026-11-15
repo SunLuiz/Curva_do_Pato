@@ -111,3 +111,7 @@ export async function verifyTrendLive({ region = "campinas", variable = "T2M" } 
     };
   }
 }
+
+export function getSpaceAnalog() {
+  return fetchWithFallback("/api/space-analog", "/cache/space_analog.json", 7000);
+}

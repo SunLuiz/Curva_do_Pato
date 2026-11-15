@@ -1,0 +1,178 @@
+{
+  "fetched_at_utc": "2026-11-15T01:07:35.036719+00:00",
+  "feed_statuses": {
+    "dsn": "live",
+    "osdr": "live",
+    "celestrak": "live"
+  },
+  "dsn": {
+    "source": "NASA Deep Space Network Now",
+    "url": "https://eyes.nasa.gov/dsn/data/dsn.xml",
+    "stations_count": 3,
+    "stations": [
+      "Goldstone",
+      "Madrid",
+      "Canberra"
+    ],
+    "total_dishes": 14,
+    "active_dishes_count": 14,
+    "sample_active": [
+      {
+        "name": "DSS24",
+        "az_deg": "180",
+        "el_deg": "90",
+        "wind_kmh": "7",
+        "targets": [
+          "KPLO"
+        ],
+        "down_band": "S",
+        "data_rate_bps": "0"
+      },
+      {
+        "name": "DSS25",
+        "az_deg": "207",
+        "el_deg": "30",
+        "wind_kmh": "6",
+        "targets": [
+          "NHPC"
+        ],
+        "down_band": "X",
+        "data_rate_bps": "50"
+      },
+      {
+        "name": "DSS23",
+        "az_deg": "0",
+        "el_deg": "90",
+        "wind_kmh": "",
+        "targets": [
+          "SPP"
+        ],
+        "down_band": null,
+        "data_rate_bps": null
+      },
+      {
+        "name": "DSS26",
+        "az_deg": "82",
+        "el_deg": "9",
+        "wind_kmh": "6",
+        "targets": [
+          "DSN"
+        ],
+        "down_band": null,
+        "data_rate_bps": null
+      },
+      {
+        "name": "DSS14",
+        "az_deg": "0",
+        "el_deg": "90",
+        "wind_kmh": "",
+        "targets": [
+          "DSN"
+        ],
+        "down_band": null,
+        "data_rate_bps": null
+      },
+      {
+        "name": "DSS54",
+        "az_deg": "161",
+        "el_deg": "63",
+        "wind_kmh": "3",
+        "targets": [
+          "JWST"
+        ],
+        "down_band": "K",
+        "data_rate_bps": "28000000"
+      }
+    ]
+  },
+  "osdr": {
+    "source": "NASA Open Science Data Repository (OSDR)",
+    "url": "https://osdr.nasa.gov/osdr/data/osd/meta/615",
+    "study_id": "OSD-615",
+    "title": "Glycome profiling and immunohistochemistry uncover changes in cell walls of Arabidopsis thaliana roots during spaceflight: Advanced Plant EXperiment (APEX) 03-1 Raw Dataset",
+    "description": "This study was conducted to uncover the underlying molecular mechanisms by which microgravity impacts cell wall architecture in the model plant Arabidopsis thaliana using the Vegetable Production System (Veggie) housed on the International Space Station (ISS). Based on our previous space flight studies using the Biological Research in Canisters (BRIC) hardwa",
+    "biological_role": "Photoperiod & LED scheduling baseline for regenerative O2/CO2 and dry cellulose biomass reserve (SoC_bio)."
+  },
+  "celestrak": {
+    "source": "CelesTrak GP JSON (NORAD)",
+    "url": "https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=json",
+    "objects_count": 17,
+    "object_name": "ISS (ZARYA)",
+    "epoch": "2026-11-14T07:16:30.203040",
+    "mean_motion_rev_day": 15.4937,
+    "inclination_deg": 51.6324,
+    "orbital_period_min": 92.94,
+    "approx_eclipse_min": 32.5,
+    "approx_eclipse_pct": 35
+  },
+  "existing_clients": [
+    {
+      "id": "jpl_horizons",
+      "label": "JPL Horizons Ephemeris (Mars=499, Moon=301)",
+      "status": "configured_client"
+    },
+    {
+      "id": "mars_meda",
+      "label": "PDS Mars 2020 Perseverance MEDA (DER_WS, CAL_RDS, CAL_ATS)",
+      "status": "configured_client"
+    }
+  ],
+  "mpto_frontiers": [
+    {
+      "id": 1,
+      "layer": "Thermal",
+      "title_en": "Heat Sink Saturation (T^4 Radiator Ceiling)",
+      "title_pt": "Saturacao do Radiador Termico (Limite T^4)",
+      "detail_en": "Schedule AI/compute curtailment before radiative T^4 heat rejection saturates under low optical depth.",
+      "detail_pt": "Acionar curtailment termico da IA antes que o radiador sature sob sol forte (tau baixo)."
+    },
+    {
+      "id": 2,
+      "layer": "Thermal / Regolith",
+      "title_en": "Regolith Abrasion & Thermal Cycling Fatigue",
+      "title_pt": "Abrasao do Regolito e Fadiga de Ciclos Termicos",
+      "detail_en": "Track remaining thermal cycle budget per second-life battery pack before switching electrical contacts.",
+      "detail_pt": "Orçar ciclos termicos restantes de cada pack de bateria antes de chavear contatos eletricos."
+    },
+    {
+      "id": 3,
+      "layer": "Thermal / Radiative",
+      "title_en": "Lunar Crater IR Albedo & Re-Radiation Gain (10-15%)",
+      "title_pt": "Ganho de Albedo IR Lunar e Re-irradiacao (10-15%)",
+      "detail_en": "Include diffuse crater wall IR heating to reduce nighttime BESS heating draw by 10-15%.",
+      "detail_pt": "Incluir calor IR difuso de encostas iluminadas para cortar 10-15% do gasto termico da bateria."
+    },
+    {
+      "id": 4,
+      "layer": "Biological",
+      "title_en": "Biological Circularity Reserve (SoC_bio)",
+      "title_pt": "Circularidade Biologica como Reserva (SoC_bio)",
+      "detail_en": "Protect minimum dry plant biomass (cellulose -> CH4/H2 ISRU gasifier) below the chemical battery floor.",
+      "detail_pt": "Manter biomassa seca minima (celulose -> gaseificador ISRU CH4/H2) como piso de sobrevivencia."
+    },
+    {
+      "id": 5,
+      "layer": "Logistics",
+      "title_en": "Rovers as Mobile Energy Arbitrage (Spatial Dispatch)",
+      "title_pt": "Rede de Rovers como Massa Movente de Energia",
+      "detail_en": "Optimize driving to sunlit rims vs. staying tethered via 5 km cable using Wh/km travel cost.",
+      "detail_pt": "Arbitrar entre carregar via cabo de 5 km ou dirigir ate crista iluminada descontando custo Wh/km."
+    },
+    {
+      "id": 6,
+      "layer": "Logistics",
+      "title_en": "Actuator Lead-Time Dispatch (30-60 min Ahead)",
+      "title_pt": "Despacho Antecipado por Latencia de Atuadores",
+      "detail_en": "Start Stirling engines, ISRU gasifiers, and rovers hours before a predicted ramp rather than reacting late.",
+      "detail_pt": "Partir motores Stirling, gaseificador ISRU e rovers com 30-60+ min de antecedencia antes da rampa."
+    },
+    {
+      "id": 7,
+      "layer": "Parametric Uncertainty",
+      "title_en": "Physical Model Uncertainty (Dust Cp & Sintered Regolith k)",
+      "title_pt": "Incerteza Parametrica (Cp da Poeira e Condutividade k)",
+      "detail_en": "Recompute P10-P95 risk margins live as dust heat capacity Cp and sintered regolith conductivity k vary.",
+      "detail_pt": "Recalcular margens P10-P95 conforme variam o Cp da poeira carregada e a condutividade k do regolito."
+    }
+  ]
+}

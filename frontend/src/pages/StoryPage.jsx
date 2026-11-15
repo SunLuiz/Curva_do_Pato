@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Maximize2, Minimize2, Pause, Play, Sparkles } from "lucide-react";
-import { STORY, interpolatePoints, smoothCurvePath } from "../content/story";
+import { STORY, interpolatePoints, localizeSlide, smoothCurvePath } from "../content/story";
 
-function ConceptualNoiseToggle() {
+function ConceptualNoiseToggle({ lang = "en" }) {
+  const l = lang === "pt" ? "pt" : "en";
   const [deseasonalized, setDeseasonalized] = useState(false);
 
   const seasonalPts = [
@@ -20,13 +21,21 @@ function ConceptualNoiseToggle() {
   return (
     <div className="card" style={{ marginTop: "1.15rem", maxWidth: 460 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.75rem", marginBottom: "0.65rem" }}>
-        <span className="stat-label">Conceptual Lens · Eyes vs. Math</span>
+        <span className="stat-label">
+          {l === "pt" ? "Lente Conceitual · Olhos vs. Matemática" : "Conceptual Lens · Eyes vs. Math"}
+        </span>
         <button
           type="button"
           className={`pill ${deseasonalized ? "active" : ""}`}
           onClick={() => setDeseasonalized((v) => !v)}
         >
-          {deseasonalized ? "Showing: Deseasonalized Signal" : "Strip Seasonal Cycle"}
+          {deseasonalized
+            ? l === "pt"
+              ? "Mostrando: Sinal Dessazonalizado"
+              : "Showing: Deseasonalized Signal"
+            : l === "pt"
+              ? "Remover Ciclo Sazonal"
+              : "Strip Seasonal Cycle"}
         </button>
       </div>
       <svg viewBox="0 0 350 115" style={{ width: "100%", height: "auto", display: "block" }}>
@@ -43,14 +52,19 @@ function ConceptualNoiseToggle() {
       </svg>
       <div style={{ fontSize: "0.82rem", color: "var(--ink-soft)", marginTop: "0.45rem" }}>
         {deseasonalized
-          ? "Once winter-to-summer swings are removed, the underlying multi-decade shift stands out clearly."
-          : "Raw monthly data bounces up and down every year, disguising whether the baseline is moving."}
+          ? l === "pt"
+            ? "Quando os altos e baixos de inverno/verão saem, a tendência de longo prazo fica evidente."
+            : "Once winter-to-summer swings are removed, the underlying multi-decade shift stands out clearly."
+          : l === "pt"
+            ? "Dados mensais brutos oscilam todo ano, escondendo se a base está realmente mudando."
+            : "Raw monthly data bounces up and down every year, disguising whether the baseline is moving."}
       </div>
     </div>
   );
 }
 
-export default function StoryPage({ onNavigate }) {
+export default function StoryPage({ onNavigate, lang = "en" }) {
+  const l = lang === "pt" ? "pt" : "en";
   const [index, setIndex] = useState(0);
   const [present, setPresent] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -65,8 +79,8 @@ export default function StoryPage({ onNavigate }) {
   );
 
   const slides = useMemo(
-    () => STORY.filter((s) => present || !s.evidence),
-    [present]
+    () => STORY.map((s) => localizeSlide(s, l)),
+    [l]
   );
 
   const safeIdx = Math.min(index, Math.max(0, slides.length - 1));
@@ -208,9 +222,15 @@ export default function StoryPage({ onNavigate }) {
         <div className="story-topbar">
           <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
             <span className="badge" style={{ color: strokeVar, borderColor: strokeVar }}>
-              {safeIdx + 1} / {slides.length} · {present ? "Pitch Presentation (Evidence On)" : "Concept Story"}
+              {safeIdx + 1} / {slides.length} ·{" "}
+              {present
+                ? l === "pt"
+                  ? "Modo Pitch"
+                  : "Pitch Presentation"
+                : l === "pt"
+                  ? "História em 7 Slides"
+                  : "7-Slide Story"}
             </span>
-            {current.evidence && <span className="badge sig">Pitch Evidence Slide</span>}
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -223,7 +243,13 @@ export default function StoryPage({ onNavigate }) {
               title={reduceMotion ? "Autoplay disabled by reduced-motion preference" : "Toggle 8-second slide advance"}
             >
               {playing ? <Pause size={15} /> : <Play size={15} />}
-              {playing ? "Pause story" : "Start the story"}
+              {playing
+                ? l === "pt"
+                  ? "Pausar"
+                  : "Pause story"
+                : l === "pt"
+                  ? "Iniciar"
+                  : "Start the story"}
             </button>
 
             <button
@@ -233,7 +259,13 @@ export default function StoryPage({ onNavigate }) {
               title="Toggle full-screen pitch mode (hotkey: F)"
             >
               {present ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-              {present ? "Exit Present (Esc)" : "Present (F)"}
+              {present
+                ? l === "pt"
+                  ? "Sair (Esc)"
+                  : "Exit Present (Esc)"
+                : l === "pt"
+                  ? "Apresentar (F)"
+                  : "Present (F)"}
             </button>
           </div>
         </div>
@@ -251,11 +283,11 @@ export default function StoryPage({ onNavigate }) {
             {current.body && <p className="story-lead">{current.body}</p>}
           </div>
 
-          {current.id === "why" && <ConceptualNoiseToggle />}
+          {current.id === "system" && <ConceptualNoiseToggle lang={l} />}
 
           {current.highlights && current.highlights.length > 0 && (
             <div
-              className={current.highlights.length === 4 ? "grid-4" : current.highlights.length >= 5 ? "grid-3" : "grid-3"}
+              className={current.highlights.length === 4 ? "grid-4" : "grid-3"}
               style={{ marginTop: "1.6rem" }}
             >
               {current.highlights.map((h) => (
@@ -291,20 +323,20 @@ export default function StoryPage({ onNavigate }) {
                     className="btn-primary"
                     onClick={() => {
                       setPresent(false);
-                      onNavigate("/academy");
+                      onNavigate("/cockpit");
                     }}
                   >
-                    Start Learning in Academy <ArrowRight size={15} />
+                    {l === "pt" ? "Abrir Cockpit & Presets" : "Explore Presets & Cockpit"} <ArrowRight size={15} />
                   </button>
                   <button
                     type="button"
                     className="btn-secondary"
                     onClick={() => {
                       setPresent(false);
-                      onNavigate("/cockpit");
+                      onNavigate("/academy");
                     }}
                   >
-                    Open Cockpit
+                    {l === "pt" ? "Treinar na Academy" : "Start in Academy"}
                   </button>
                 </>
               )}
@@ -323,7 +355,7 @@ export default function StoryPage({ onNavigate }) {
             }}
             aria-label="Previous slide"
           >
-            <ArrowLeft size={16} /> Previous
+            <ArrowLeft size={16} /> {l === "pt" ? "Anterior" : "Previous"}
           </button>
 
           <div className="story-dots" role="tablist" aria-label="Story slide selector">
@@ -352,7 +384,7 @@ export default function StoryPage({ onNavigate }) {
             }}
             aria-label="Next slide"
           >
-            Next <ArrowRight size={16} />
+            {l === "pt" ? "Próximo" : "Next"} <ArrowRight size={16} />
           </button>
         </div>
       </div>

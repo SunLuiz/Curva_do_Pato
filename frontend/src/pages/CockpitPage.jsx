@@ -1,15 +1,10 @@
 import React, { useState } from "react";
-import { Activity, CheckCircle2, Database, Layers, Radio, RefreshCw, ShieldCheck } from "lucide-react";
+import { Activity, CheckCircle2, Database, Layers, Orbit, Radio, RefreshCw, ShieldCheck } from "lucide-react";
 import TrendPage from "./TrendPage";
 import AttributionPage from "./AttributionPage";
 import FiresMapSvg from "../components/FiresMapSvg";
-
-const TABS = [
-  { id: "trend", label: "Trend engine", Icon: Activity },
-  { id: "attribution", label: "Attribution", Icon: Layers },
-  { id: "sources", label: "Sources", Icon: Database },
-  { id: "live", label: "Live", Icon: Radio },
-];
+import SpaceAnalogTab from "../components/SpaceAnalogTab";
+import { UI_TEXT } from "../content/i18n";
 
 export default function CockpitPage({
   region,
@@ -22,7 +17,18 @@ export default function CockpitPage({
   spaceWeather,
   backendStatus,
   onVerifyLive,
+  lang = "en",
 }) {
+  const l = lang === "pt" ? "pt" : "en";
+  const ui = UI_TEXT[l];
+  const tabs = [
+    { id: "trend", label: ui.tabTrend, Icon: Activity },
+    { id: "attribution", label: ui.tabAttribution, Icon: Layers },
+    { id: "sources", label: ui.tabSources, Icon: Database },
+    { id: "live", label: ui.tabLive, Icon: Radio },
+    { id: "space", label: ui.tabSpace, Icon: Orbit },
+  ];
+
   const [verifying, setVerifying] = useState(false);
   const [verifyDelta, setVerifyDelta] = useState(null);
 
@@ -43,8 +49,10 @@ export default function CockpitPage({
     <div>
       <div className="section-header">
         <div>
-          <span className="badge sig">1984–2025 Earth System Workbench</span>
-          <h2 style={{ marginTop: "0.45rem" }}>Earth System Trend Cockpit</h2>
+          <span className="badge sig">1984–2025 Earth System &amp; Space Analog Workbench</span>
+          <h2 style={{ marginTop: "0.45rem" }}>
+            {l === "pt" ? "Cockpit de Tendências e Ação Climática" : "Earth System Trend Cockpit"}
+          </h2>
         </div>
       </div>
 
@@ -53,13 +61,21 @@ export default function CockpitPage({
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
           <span style={{ fontWeight: 700, color: isLive ? "var(--sig)" : "var(--biome-ne)" }}>
             {isLive
-              ? `Live backend connected (${backendStatus.service || "FastAPI"})`
-              : "Showing frozen snapshot — 2026-11-14 15:04 UTC"}
+              ? `${ui.bannerLive} (${backendStatus.service || "FastAPI"})`
+              : l === "pt"
+                ? "Exibindo snapshot congelado — 2026-11-14 15:04 UTC"
+                : "Showing frozen snapshot — 2026-11-14 15:04 UTC"}
           </span>
           <span style={{ fontSize: "0.84rem", color: "var(--ink-soft)" }}>
             {isLive
-              ? "Queries can fetch upstream NASA APIs directly."
-              : `Reason: ${backendStatus?.reason || "offline"} · Preset biomes & 504-month series run instantaneously offline.`}
+              ? l === "pt"
+                ? "Consultas podem acessar as APIs da NASA diretamente."
+                : "Queries can fetch upstream NASA APIs directly."
+              : `${l === "pt" ? "Motivo:" : "Reason:"} ${backendStatus?.reason || "offline"} · ${
+                  l === "pt"
+                    ? "Séries de 504 meses, presets e análogo espacial funcionam instantaneamente no navegador."
+                    : "Preset biomes, 504-month series, and space feeds run instantaneously offline."
+                }`}
           </span>
         </div>
 
@@ -71,7 +87,13 @@ export default function CockpitPage({
           disabled={verifying}
         >
           <RefreshCw size={14} className={verifying ? "spin" : undefined} />
-          {verifying ? "Checking NASA backend..." : "Verify against NASA now"}
+          {verifying
+            ? l === "pt"
+              ? "Verificando backend NASA..."
+              : "Checking NASA backend..."
+            : l === "pt"
+              ? "Verificar na NASA agora"
+              : "Verify against NASA now"}
         </button>
       </div>
 
@@ -95,7 +117,7 @@ export default function CockpitPage({
 
       {/* Internal Cockpit tabs */}
       <div className="cockpit-tabs" role="tablist" aria-label="Cockpit Views">
-        {TABS.map(({ id, label, Icon }) => (
+        {tabs.map(({ id, label, Icon }) => (
           <button
             key={id}
             type="button"
@@ -116,6 +138,9 @@ export default function CockpitPage({
           variable={variable}
           setVariable={setVariable}
           onSwitchTab={setTab}
+          fires={fires}
+          spaceWeather={spaceWeather}
+          lang={l}
         />
       )}
 
@@ -258,17 +283,22 @@ export default function CockpitPage({
           <div className="card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontWeight: 700 }}>
-                <ShieldCheck size={18} color="var(--roadmap)" /> Off-World Analog Telemetry <span className="badge roadmap">roadmap</span>
+                <ShieldCheck size={18} color="var(--biome-n)" /> Space Analog Telemetry &amp; MPTO <span className="badge sig">live in Space tab</span>
               </div>
               <p style={{ fontSize: "0.85rem", color: "var(--ink-soft)", marginTop: "0.3rem", maxWidth: "74ch" }}>
-                Mars 2020 Perseverance MEDA &amp; JPL Horizons clients exist in the backend as read-only
-                analog stubs, but no off-world series is computed or displayed in this product. We
-                declare it as a one-line horizon, not as a delivered feature.
+                Open zero-key feeds from NASA Deep Space Network Now, NASA OSDR (OSD-615 plant cell-walls), and CelesTrak GP
+                are live/cached in the Space Analog (MPTO) tab alongside our parametric 7-Frontier physics simulator, while
+                Mars 2020 MEDA &amp; JPL Horizons API clients remain wired as configurable backend adapters.
               </p>
             </div>
+            <button type="button" className="btn-secondary" onClick={() => setTab("space")}>
+              Open Space Analog (MPTO)
+            </button>
           </div>
         </div>
       )}
+
+      {tab === "space" && <SpaceAnalogTab lang={l} />}
 
       {tab === "live" && (
         <div className="grid-2">

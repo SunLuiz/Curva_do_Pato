@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Compass, MessageSquare, Send, Sparkles, X } from "lucide-react";
 import { FAQ_ITEMS, formatPersonalNote } from "../content/faq";
+import { UI_TEXT } from "../content/i18n";
 
 export default function AskPanel({
   profile,
@@ -8,7 +9,10 @@ export default function AskPanel({
   apiBase = "",
   currentRoute,
   onNavigateAction,
+  lang = "en",
 }) {
+  const l = lang === "pt" ? "pt" : "en";
+  const ui = UI_TEXT[l];
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState(FAQ_ITEMS[0].id);
   const [filterText, setFilterText] = useState("");
@@ -50,6 +54,7 @@ export default function AskPanel({
           depth: profile?.depth || "explorer",
           summary: profile?.summary || "",
           route: currentRoute,
+          lang: l,
         }),
       });
       if (!res.ok) {
@@ -77,7 +82,7 @@ export default function AskPanel({
           style={{ boxShadow: "var(--shadow-lift)" }}
         >
           {open ? <X size={16} /> : <MessageSquare size={16} />}
-          {open ? "Close Guide" : "Ask Data Detective"}
+          {open ? (l === "pt" ? "Fechar Guia" : "Close Guide") : ui.askFloating}
         </button>
       </div>
 
@@ -100,10 +105,13 @@ export default function AskPanel({
           >
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontWeight: 700, fontSize: "0.95rem" }}>
-                <Sparkles size={15} color="var(--biome-se)" /> Data Detective Guide
+                <Sparkles size={15} color="var(--biome-se)" /> {ui.askTitle}
               </div>
               <div style={{ fontSize: "0.76rem", color: "var(--ink-soft)", marginTop: "0.15rem" }}>
-                {personalNote || "10 cache-verified questions (works 100% offline)"}
+                {personalNote ||
+                  (l === "pt"
+                    ? "10 perguntas verificadas nos dados (100% offline)"
+                    : "10 cache-verified questions (works 100% offline)")}
               </div>
             </div>
             <button
@@ -184,7 +192,7 @@ export default function AskPanel({
                     type="text"
                     value={freeQuestion}
                     onChange={(e) => setFreeQuestion(e.target.value)}
-                    placeholder="Ask anything about the 1984-2025 datasets..."
+                    placeholder={ui.askPlaceholder}
                     maxLength={280}
                     style={{
                       flex: 1,
@@ -217,7 +225,9 @@ export default function AskPanel({
               </div>
             ) : (
               <div style={{ fontSize: "0.76rem", color: "var(--ink-soft)", borderTop: "1px solid var(--hairline)", paddingTop: "0.55rem" }}>
-                Running offline/static snapshot mode: free-form AI chat is hidden because no live backend is attached, while all 10 telemetry-backed Q&amp;As run locally in browser memory.
+                {l === "pt"
+                  ? "Modo snapshot estático/offline: chat aberto desativado sem servidor ativo, mas todas as 10 perguntas ancoradas nos dados rodam no navegador."
+                  : "Running offline/static snapshot mode: free-form AI chat is hidden because no live backend is attached, while all 10 telemetry-backed Q&As run locally in browser memory."}
               </div>
             )}
           </div>

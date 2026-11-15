@@ -22,6 +22,8 @@ load_dotenv(ROOT_DIR / ".env")
 
 from app.clients.firms_client import BR_BBOX, FirmsClient
 from app.clients.nasa_open_client import NasaOpenClient
+from app.presets import build_insight, list_presets
+from app.space_analog import fetch_space_analog
 from app.trend import (
     PRESET_REGIONS,
     VARIABLE_META,
@@ -401,6 +403,7 @@ class AskRequest(BaseModel):
     depth: str = Field(default="explorer")
     summary: str = Field(default="", max_length=400)
     route: str = Field(default="/cockpit", max_length=60)
+    lang: str = Field(default="en", max_length=10)
 
 
 def _check_ask_rate_limit(client_ip: str, now: Optional[float] = None) -> None:
@@ -445,18 +448,31 @@ def _build_grounded_context() -> str:
 
 
 def _call_llm_provider(system_prompt: str, user_prompt: str) -> tuple[str, str, str]:
+    gonka_base = os.getenv("GONKA_BASE_URL", "https://api.gonkarouter.io/v1").strip().rstrip("/")
     providers = [
+        (
+            "gonka",
+            os.getenv("GONKA_API_KEY", "").strip(),
+            f"{gonka_base}/chat/completions",
+            os.getenv("GONKA_MODEL", "deepseek-ai/DeepSeek-V4-Flash-0731"),
+            8.0,
+            700,
+        ),
         (
             "groq",
             os.getenv("GROQ_API_KEY", "").strip(),
             "https://api.groq.com/openai/v1/chat/completions",
             os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+            10.0,
+            350,
         ),
         (
             "openrouter",
             os.getenv("OPENROUTER_API_KEY", "").strip(),
             "https://openrouter.ai/api/v1/chat/completions",
             os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free"),
+            12.0,
+            350,
         ),
     ]
     configured = [p for p in providers if p[1]]
@@ -467,7 +483,7 @@ def _call_llm_provider(system_prompt: str, user_prompt: str) -> tuple[str, str, 
         )
 
     last_err = "provider unreachable"
-    for name, api_key, endpoint, model in configured:
+    for name, api_key, endpoint, model, timeout_s, max_toks in configured:
         try:
             resp = httpx.post(
                 endpoint,
@@ -475,23 +491,60 @@ def _call_llm_provider(system_prompt: str, user_prompt: str) -> tuple[str, str, 
                 json={
                     "model": model,
                     "temperature": 0.2,
-                    "max_tokens": 350,
+                    "max_tokens": max_toks,
                     "messages": [
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_prompt},
                     ],
                 },
-                timeout=12.0,
+                timeout=timeout_s,
             )
             resp.raise_for_status()
             payload = resp.json()
-            text = payload["choices"][0]["message"]["content"].strip()
+            msg = payload["choices"][0]["message"]
+            text = (msg.get("content") or msg.get("reasoning") or "").strip()
             if text:
                 return text, name, model
         except Exception as exc:
             last_err = str(exc)
 
     raise HTTPException(status_code=502, detail=f"Upstream tutor providers failed: {last_err}")
+
+
+@app.get("/api/presets")
+def get_presets(lang: str = Query(default="en")) -> dict[str, Any]:
+    return {"lang": lang, "presets": list_presets(lang=lang)}
+
+
+@app.get("/api/insight")
+def get_insight(
+    preset: str = Query(default="calor"),
+    region: str = Query(default="campinas"),
+    lang: str = Query(default="en"),
+) -> dict[str, Any]:
+    try:
+        return build_insight(preset_id=preset, region=region, lang=lang, cache_dir=CACHE_DIR)
+    except KeyError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/api/space-analog")
+def get_space_analog() -> dict[str, Any]:
+    try:
+        data = fetch_space_analog(timeout=6.0)
+        if all(v == "fallback" for v in data.get("feed_statuses", {}).values()):
+            cached = _read_cached_json("space_analog.json")
+            if cached:
+                cached["status"] = "cached"
+                return cached
+        data["status"] = "live"
+        return data
+    except Exception as exc:
+        cached = _read_cached_json("space_analog.json")
+        if cached:
+            cached["status"] = "cached"
+            return cached
+        raise HTTPException(status_code=502, detail=f"Space analog feed failed: {exc}") from exc
 
 
 @app.post("/api/ask")
@@ -507,16 +560,22 @@ def ask_detective(body: AskRequest, request: Request) -> dict[str, Any]:
 
     safe_name = " ".join(body.name.strip().split()) or "Visitor"
     grounded = _build_grounded_context()
+    lang_instruction = (
+        "Respond strictly in clear Brazilian Portuguese (PT-BR)."
+        if str(body.lang or "").lower().startswith("pt")
+        else "Respond strictly in clear plain English."
+    )
     system_prompt = (
         "You are the Cockpit-OMNI Data Detective Tutor (NASA Space Apps 2026). "
         "Obey scientific honesty: cite ONLY numbers from the verified telemetry block below, "
         "state p-values and null findings clearly, never invent data for roadmap instruments (NISAR/ECOSTRESS), "
-        "and keep answers concise (<= 5 sentences) tailored to the visitor's track.\n\n"
+        f"keep answers concise (<= 5 sentences) tailored to the visitor's track, and {lang_instruction}\n\n"
         f"{grounded}"
     )
     user_prompt = (
         f"Detective: {safe_name}\n"
         f"Reasoning depth: {body.depth}\n"
+        f"Language: {body.lang}\n"
         f"Current page: {body.route}\n"
         f"Learning memory summary: {body.summary or 'none'}\n\n"
         f"Question: {clean_question}"
@@ -527,4 +586,5 @@ def ask_detective(body: AskRequest, request: Request) -> dict[str, Any]:
         "provider": provider,
         "model": model,
         "depth": body.depth,
+        "lang": body.lang,
     }

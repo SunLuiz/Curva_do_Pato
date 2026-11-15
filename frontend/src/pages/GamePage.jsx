@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Award,
+  Camera,
   CheckCircle2,
   Compass,
   Eye,
@@ -48,7 +49,11 @@ export default function GamePage({ profile, onSaveProfile, onNavigate, lang = "e
   const [usedHint, setUsedHint] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [camMode, setCamMode] = useState("chase"); // chase | survey
   const [runCounter, setRunCounter] = useState(0);
+  const toggleCamMode = useCallback(() => {
+    setCamMode((m) => (m === "chase" ? "survey" : "chase"));
+  }, []);
   const [runConfig, setRunConfig] = useState({
     missionId: "M1",
     planetId: null,
@@ -359,6 +364,9 @@ export default function GamePage({ profile, onSaveProfile, onNavigate, lang = "e
               key={`${snapshot.missionId}-${snapshot.planetId}-${runCounter}`}
               missionId={snapshot.missionId}
               planetId={snapshot.planetId}
+              lang={l}
+              camMode={camMode}
+              onToggleCamMode={toggleCamMode}
               touchInputRef={touchInputRef}
               reducedMotion={reducedMotion}
             />
@@ -404,6 +412,15 @@ export default function GamePage({ profile, onSaveProfile, onNavigate, lang = "e
               <div style={{ display: "flex", gap: "0.45rem", alignItems: "flex-start" }}>
                 <NavCamMini snapshot={snapshot} lang={l} />
                 <div className="hud-pill-bar" style={{ gap: "0.35rem" }}>
+                  <button
+                    type="button"
+                    className="hud-cam-btn"
+                    onClick={toggleCamMode}
+                    title={l === "pt" ? "Alternar câmera [C]" : "Toggle camera [C]"}
+                  >
+                    <Camera size={13} />
+                    <span>[C] {camMode === "chase" ? "Chase" : "Survey"}</span>
+                  </button>
                   <button
                     type="button"
                     className="btn-hud-ghost"
@@ -606,7 +623,7 @@ export default function GamePage({ profile, onSaveProfile, onNavigate, lang = "e
                   <Compass size={12} /> {activeDef[l].badge}
                 </span>
                 <span className="mono" style={{ fontSize: "0.74rem", color: "var(--ink-soft)" }}>
-                  WASD / Arrows · Mouse drag orbit
+                  WASD / Arrows · [C] Cam · Drag orbit
                 </span>
               </div>
 
@@ -618,22 +635,32 @@ export default function GamePage({ profile, onSaveProfile, onNavigate, lang = "e
                 {activeDef[l].briefing}
               </p>
 
-              {/* Zone Proximity Pill */}
-              <div className="card-inset" style={{ fontSize: "0.81rem", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.4rem" }}>
-                <span>
-                  <strong>{l === "pt" ? "Zona atual:" : "Current zone:"}</strong>{" "}
-                  {rv.inZones.length
-                    ? snapshot.zones
-                        .filter((z) => rv.inZones.includes(z.id))
-                        .map((z) => (l === "pt" ? z.labelPt : z.labelEn))
-                        .join(", ")
-                    : l === "pt"
-                    ? "Terreno aberto"
-                    : "Open terrain"}
-                </span>
-                <span className="mono" style={{ color: "var(--biome-n)" }}>
-                  {l === "pt" ? "Asas:" : "Wings:"} {rv.wingsMode} · {rv.mastRaised ? "Mast UP" : "Hunkered"}
-                </span>
+              {/* Zone Proximity & Geotechnical Impulse Calibration Pill */}
+              <div className="card-inset" style={{ fontSize: "0.81rem", display: "grid", gap: "0.35rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.4rem" }}>
+                  <span>
+                    <strong>{l === "pt" ? "Zona atual:" : "Current zone:"}</strong>{" "}
+                    {rv.inZones.length
+                      ? snapshot.zones
+                          .filter((z) => rv.inZones.includes(z.id))
+                          .map((z) => (l === "pt" ? z.labelPt : z.labelEn))
+                          .join(", ")
+                      : l === "pt"
+                      ? "Terreno aberto"
+                      : "Open terrain"}
+                  </span>
+                  <span className="mono" style={{ color: "var(--biome-n)" }}>
+                    {l === "pt" ? "Asas:" : "Wings:"} {rv.wingsMode} · {rv.mastRaised ? "Mast UP" : "Hunkered"}
+                  </span>
+                </div>
+                <div className="mono" style={{ fontSize: "0.74rem", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.4rem", color: (rv.energyCostMult || 1) > 1.1 ? "var(--danger)" : "var(--ink-soft)" }}>
+                  <span>
+                    {l === "pt" ? "Patinagem:" : "Slip:"} {Math.round(rv.wheelSlipPct ?? 6)}% · {(rv.energyCostMult || 1).toFixed(1)}× Wh/km
+                  </span>
+                  <span>
+                    τc={rv.tauC_Pa ?? 85} Pa · dp={rv.grainSizeUm ?? 40} μm
+                  </span>
+                </div>
               </div>
 
               {/* Depth-specific guidance */}

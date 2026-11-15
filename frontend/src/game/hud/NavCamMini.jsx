@@ -33,8 +33,15 @@ export default function NavCamMini({ snapshot, lang = "en" }) {
         <span>g={planet.g}</span>
       </div>
 
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.65rem", opacity: 0.92, marginTop: "0.18rem" }}>
+        <span>SLIP {Math.round(rover.wheelSlipPct ?? 6)}%</span>
+        <span style={{ color: (rover.energyCostMult || 1) > 1.1 ? "var(--hud-red)" : "var(--hud-green)", fontWeight: 700 }}>
+          {(rover.energyCostMult || 1).toFixed(1)}× Wh/km
+        </span>
+      </div>
+
       {/* Tactical 2D Radar showing zones vs rover position */}
-      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.38rem" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.35rem" }}>
         <svg width="74" height="74" viewBox="0 0 96 96" aria-label="Tactical radar">
           <rect x="2" y="2" width="92" height="92" rx="10" fill="none" stroke="rgba(255,255,255,0.2)" />
           <line x1="48" y1="4" x2="48" y2="92" stroke="rgba(255,255,255,0.1)" />
@@ -59,8 +66,9 @@ export default function NavCamMini({ snapshot, lang = "en" }) {
           })}
           <circle cx={mapCoord(rover.x)} cy={mapCoord(rover.z)} r="4" fill="var(--hud-amber)" />
         </svg>
-        <div style={{ fontSize: "0.65rem", lineHeight: 1.35, opacity: 0.9 }}>
+        <div style={{ fontSize: "0.64rem", lineHeight: 1.32, opacity: 0.9 }}>
           <div>ρ={planet.rho} kg/m³</div>
+          <div>τc={rover.tauC_Pa ?? 85} Pa · {rover.grainSizeUm ?? 40} μm</div>
           <div>{l === "pt" ? "Poeira:" : "Dust:"} {Math.round(resources.soiling)}%</div>
           <div>{l === "pt" ? "Alvo:" : "Goal:"} {alert.targetZoneId || "—"}</div>
         </div>

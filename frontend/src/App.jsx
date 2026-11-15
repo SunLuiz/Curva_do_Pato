@@ -159,6 +159,7 @@ export default function App() {
           onSaveProfile={handleSaveProfile}
           onForgetProfile={handleForgetProfile}
           onOpenCockpit={handleCockpitAction}
+          onOpenGame={() => navigate("/game")}
           lang={lang}
         />
       )}

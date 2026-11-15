@@ -68,3 +68,12 @@ export const HUD_3D_COLORS = {
   cyan: 0x4cd4e8,
   purple: 0x9b6dff,
 };
+
+export const SPRITE_PALETTE = {
+  bg: "rgba(11, 21, 34, 0.88)",
+  text: "#f4f6f8",
+  danger: "#f25244",
+  warn: "#f5b942",
+  safe: "#3cd070",
+  cyan: "#4cd4e8",
+};

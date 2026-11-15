@@ -177,6 +177,75 @@ export function computeFrameDelta({
 }
 
 /**
+ * Active Impulse-Response & Orbital Thermal-Inertia ground calibration profiles.
+ * Derived from EDL retro-propulsive plume threshold tau_jet >= tau_c at ~64 m.
+ */
+export const IMPULSE_CALIBRATION_PROFILES = {
+  eolian_sand: {
+    id: "eolian_sand",
+    tauC_Pa: 24,
+    grainSizeUm: 120,
+    baseSlipPct: 44,
+    energyDistanceMult: 1.8,
+  },
+  compact_basalt: {
+    id: "compact_basalt",
+    tauC_Pa: 85,
+    grainSizeUm: 40,
+    baseSlipPct: 6,
+    energyDistanceMult: 1.0,
+  },
+  lunar_regolith: {
+    id: "lunar_regolith",
+    tauC_Pa: 38,
+    grainSizeUm: 75,
+    baseSlipPct: 18,
+    energyDistanceMult: 1.15,
+  },
+  terrestrial_loam: {
+    id: "terrestrial_loam",
+    tauC_Pa: 62,
+    grainSizeUm: 65,
+    baseSlipPct: 8,
+    energyDistanceMult: 1.0,
+  },
+};
+
+/**
+ * Compute geotechnical wheel slip, traction factor, and Wh/km energy multiplier
+ * from active terrain cohesion (tau_c) and slope under orbital thermal-inertia calibration.
+ */
+export function computeGeotechnicalSlip({
+  missionId = "M1",
+  planet = PLANETS.mars_jezero,
+  inHazard = false,
+  onRidge = false,
+  slope = 0,
+}) {
+  let profile = IMPULSE_CALIBRATION_PROFILES.compact_basalt;
+  if (missionId === "M3" && inHazard && !onRidge) {
+    profile = IMPULSE_CALIBRATION_PROFILES.eolian_sand;
+  } else if (planet?.id === "moon_south_pole") {
+    profile = onRidge ? IMPULSE_CALIBRATION_PROFILES.compact_basalt : IMPULSE_CALIBRATION_PROFILES.lunar_regolith;
+  } else if (planet?.id === "earth_semi_arid") {
+    profile = IMPULSE_CALIBRATION_PROFILES.terrestrial_loam;
+  }
+
+  const slopeSlip = Math.max(0, slope) * (profile.id === "eolian_sand" ? 20 : 12);
+  const wheelSlipPct = Number(Math.min(72, profile.baseSlipPct + slopeSlip).toFixed(1));
+  const tractionFactor = Number(Math.max(0.28, 1 - wheelSlipPct / 100).toFixed(3));
+
+  return {
+    profileId: profile.id,
+    wheelSlipPct,
+    tractionFactor,
+    energyDistanceMult: profile.energyDistanceMult,
+    tauC_Pa: profile.tauC_Pa,
+    grainSizeUm: profile.grainSizeUm,
+  };
+}
+
+/**
  * Locomotion power cost in battery %/sec scaled by planetary gravity and terrain slope.
  */
 export function computeMoveDrainPerSec({ speedNorm = 0, slope = 0, planet = PLANETS.mars_jezero }) {

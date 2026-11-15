@@ -1,12 +1,36 @@
 import React, { useState } from "react";
-import { Award, CheckCircle2, GraduationCap, Play } from "lucide-react";
+import { Award, CheckCircle2, Gamepad2, GraduationCap, Play } from "lucide-react";
 import { MODULES, getModuleById } from "../academy/questions";
-import { BADGES } from "../academy/xp";
+import { BADGES, GAME_BADGES } from "../academy/xp";
 import StarBar from "../components/StarBar";
 import ProfileCard from "../components/ProfileCard";
 import ModuleRunner from "../components/ModuleRunner";
 import HallOfFame from "../components/HallOfFame";
 import DiplomaCanvas from "../components/DiplomaCanvas";
+
+function BadgeCardItem({ badge, unlocked, lockedLabel }) {
+  return (
+    <div
+      className="card-inset"
+      style={{
+        opacity: unlocked ? 1 : 0.62,
+        borderColor: unlocked ? `var(${badge.tone})` : "var(--hairline)",
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.4rem" }}>
+        <strong style={{ fontSize: "0.9rem", color: unlocked ? `var(${badge.tone})` : "var(--ink)" }}>
+          {badge.title}
+        </strong>
+        <span className={`badge ${unlocked ? "sig" : "ns"}`}>
+          {unlocked ? "Earned" : lockedLabel}
+        </span>
+      </div>
+      <div style={{ fontSize: "0.79rem", color: "var(--ink-soft)", marginTop: "0.25rem", lineHeight: 1.4 }}>
+        {badge.description}
+      </div>
+    </div>
+  );
+}
 
 export default function AcademyPage({
   profile,
@@ -14,6 +38,7 @@ export default function AcademyPage({
   onSaveProfile,
   onForgetProfile,
   onOpenCockpit,
+  onOpenGame,
 }) {
   const [activeModuleId, setActiveModuleId] = useState(null);
   const [rewardedIds, setRewardedIds] = useState({});
@@ -179,31 +204,54 @@ export default function AcademyPage({
         </div>
 
         <div className="grid grid-3" style={{ gap: "0.7rem" }}>
-          {BADGES.map((b) => {
-            const unlocked = (profile.badges || []).includes(b.id);
-            return (
-              <div
-                key={b.id}
-                className="card-inset"
-                style={{
-                  opacity: unlocked ? 1 : 0.62,
-                  borderColor: unlocked ? `var(${b.tone})` : "var(--hairline)",
-                }}
+          {BADGES.map((b) => (
+            <BadgeCardItem
+              key={b.id}
+              badge={b}
+              unlocked={(profile.badges || []).includes(b.id)}
+              lockedLabel={b.moduleId}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* 3D Field Badges synced from Rover Pilot 3D (/game) */}
+      <div className="card">
+        <div className="row-between" style={{ marginBottom: "0.85rem", flexWrap: "wrap", gap: "0.6rem" }}>
+          <div>
+            <h3 style={{ display: "inline-flex", alignItems: "center", gap: "0.45rem", fontFamily: "var(--font-display)" }}>
+              <Gamepad2 size={18} color="var(--biome-n)" /> 3D Field Badges (Rover Pilot 3D)
+            </h3>
+            <div style={{ fontSize: "0.82rem", color: "var(--ink-soft)" }}>
+              Completed live in 3D simulations across Earth, Mars Jezero &amp; Artemis Moon (shared XP &amp; Stars).
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span className="badge info">
+              {(profile.game?.badges || []).length}/{GAME_BADGES.length} unlocked
+            </span>
+            {onOpenGame && (
+              <button
+                type="button"
+                className="btn-secondary"
+                style={{ padding: "0.4rem 0.85rem", fontSize: "0.82rem" }}
+                onClick={onOpenGame}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.4rem" }}>
-                  <strong style={{ fontSize: "0.9rem", color: unlocked ? `var(${b.tone})` : "var(--ink)" }}>
-                    {b.title}
-                  </strong>
-                  <span className={`badge ${unlocked ? "sig" : "ns"}`}>
-                    {unlocked ? "Earned" : b.moduleId}
-                  </span>
-                </div>
-                <div style={{ fontSize: "0.79rem", color: "var(--ink-soft)", marginTop: "0.25rem", lineHeight: 1.4 }}>
-                  {b.description}
-                </div>
-              </div>
-            );
-          })}
+                <Play size={14} /> Open 3D Rover Game
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-3" style={{ gap: "0.7rem" }}>
+          {GAME_BADGES.map((b) => (
+            <BadgeCardItem
+              key={b.id}
+              badge={b}
+              unlocked={(profile.game?.badges || []).includes(b.id)}
+              lockedLabel={b.missionId}
+            />
+          ))}
         </div>
       </div>
 

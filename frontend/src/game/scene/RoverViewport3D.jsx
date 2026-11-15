@@ -1,11 +1,46 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { BIOME_PALETTES, HUD_3D_COLORS } from "./themePalette";
+import { BIOME_PALETTES, HUD_3D_COLORS, SPRITE_PALETTE } from "./themePalette";
 import { terrainHeight, getMissionZones } from "../sim/terrainField";
 import { dispatchAction, getRuntime, tickRuntime, togglePauseRuntime } from "../store";
 import { soundEngine } from "../soundEngine";
 
-function createZoneMesh(zone, palette, missionId) {
+function createZoneLabelSprite(text, borderCss) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 112;
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = SPRITE_PALETTE.bg;
+    ctx.strokeStyle = borderCss;
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.roundRect(10, 12, canvas.width - 20, canvas.height - 24, 18);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = SPRITE_PALETTE.text;
+    ctx.font = "700 28px system-ui, -apple-system, Segoe UI, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text.slice(0, 34), canvas.width / 2, canvas.height / 2 + 1);
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.needsUpdate = true;
+  const mat = new THREE.SpriteMaterial({
+    map: tex,
+    transparent: true,
+    depthTest: false,
+    opacity: 0.94,
+  });
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(9.2, 2.05, 1);
+  sprite.renderOrder = 10;
+  return sprite;
+}
+
+function createZoneMesh(zone, palette, missionId, lang = "en") {
   const group = new THREE.Group();
   const y = terrainHeight(missionId, zone.x, zone.z);
   group.position.set(zone.x, y, zone.z);
@@ -18,6 +53,15 @@ function createZoneMesh(zone, palette, missionId) {
       : zone.kind === "bess" || zone.kind === "beacon"
       ? HUD_3D_COLORS.cyan
       : HUD_3D_COLORS.safeGreen;
+
+  const borderCss =
+    zone.kind === "hazard"
+      ? SPRITE_PALETTE.danger
+      : zone.kind === "hazard_choice"
+      ? SPRITE_PALETTE.warn
+      : zone.kind === "bess" || zone.kind === "beacon"
+      ? SPRITE_PALETTE.cyan
+      : SPRITE_PALETTE.safe;
 
   // Ground beacon ring
   const ringGeo = new THREE.RingGeometry(zone.radius * 0.82, zone.radius, 36);
@@ -101,6 +145,24 @@ function createZoneMesh(zone, palette, missionId) {
     orb.position.y = 5.6;
     orb.userData.pulse = true;
     group.add(tower, orb);
+
+    // 64m EDL Lander silhouette + retro-plume blast ring on M3 landing beacon
+    if (missionId === "M3" && zone.id === "landing_beacon") {
+      const landerDeck = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.45, 1.75, 0.7, 8),
+        new THREE.MeshStandardMaterial({ color: HUD_3D_COLORS.roverBody, metalness: 0.45, roughness: 0.4 })
+      );
+      landerDeck.position.set(3.1, 1.45, 1.2);
+      landerDeck.castShadow = true;
+      const blastRingGeo = new THREE.RingGeometry(2.3, 3.3, 24);
+      blastRingGeo.rotateX(-Math.PI / 2);
+      const blastRing = new THREE.Mesh(
+        blastRingGeo,
+        new THREE.MeshBasicMaterial({ color: HUD_3D_COLORS.warnAmber, transparent: true, opacity: 0.45, side: THREE.DoubleSide })
+      );
+      blastRing.position.set(3.1, 0.14, 1.2);
+      group.add(landerDeck, blastRing);
+    }
   } else if (zone.kind === "ridge") {
     const marker = new THREE.Mesh(
       new THREE.ConeGeometry(0.7, 2.4, 8),
@@ -122,6 +184,15 @@ function createZoneMesh(zone, palette, missionId) {
       group.add(pylon);
     }
   }
+
+  const labelText = lang === "pt" ? zone.labelPt || zone.id : zone.labelEn || zone.id;
+  const suffix =
+    missionId === "M3" && zone.id === "crater_alpha"
+      ? " (>40% SLIP · 1.8× Wh/km)"
+      : "";
+  const sprite = createZoneLabelSprite(`${labelText}${suffix}`, borderCss);
+  sprite.position.set(0, zone.kind === "beacon" || zone.kind === "sample" ? 7.3 : 4.4, 0);
+  group.add(sprite);
 
   group.userData.zoneId = zone.id;
   group.userData.ringMat = ringMat;
@@ -249,8 +320,20 @@ function createRoverModel() {
   };
 }
 
-export default function RoverViewport3D({ missionId, planetId, touchInputRef, reducedMotion = false }) {
+export default function RoverViewport3D({
+  missionId,
+  planetId,
+  lang = "en",
+  camMode = "chase",
+  onToggleCamMode,
+  touchInputRef,
+  reducedMotion = false,
+}) {
   const hostRef = useRef(null);
+  const camModeRef = useRef(camMode);
+  const onToggleCamRef = useRef(onToggleCamMode);
+  camModeRef.current = camMode;
+  onToggleCamRef.current = onToggleCamMode;
   const [webglError, setWebglError] = useState(false);
 
   useEffect(() => {
@@ -347,10 +430,92 @@ export default function RoverViewport3D({ missionId, planetId, touchInputRef, re
     // Mission Zone Landmarks
     const zones = getMissionZones(missionId);
     const zoneGroups = zones.map((z) => {
-      const g = createZoneMesh(z, palette, missionId);
+      const g = createZoneMesh(z, palette, missionId, lang);
       scene.add(g);
       return g;
     });
+
+    // M3 Green Basalt Safe Corridor markers (northward bypass around Crater Alpha)
+    if (missionId === "M3") {
+      const waypointCoords = [
+        [-14, -10],
+        [-8, -14],
+        [0, -17],
+        [10, -18],
+        [20, -20],
+      ];
+      const padGeo = new THREE.RingGeometry(0.7, 1.15, 16);
+      padGeo.rotateX(-Math.PI / 2);
+      const padMat = new THREE.MeshBasicMaterial({
+        color: HUD_3D_COLORS.safeGreen,
+        transparent: true,
+        opacity: 0.65,
+        side: THREE.DoubleSide,
+      });
+      for (const [wx, wz] of waypointCoords) {
+        const pad = new THREE.Mesh(padGeo, padMat);
+        pad.position.set(wx, terrainHeight(missionId, wx, wz) + 0.18, wz);
+        scene.add(pad);
+      }
+    }
+
+    // M4 Subtle vegetation scrub props across Campinas biome terrain
+    if (missionId === "M4") {
+      const shrubCount = 28;
+      const shrubGeo = new THREE.ConeGeometry(0.55, 1.5, 6);
+      const shrubMat = new THREE.MeshStandardMaterial({ color: palette.accent, roughness: 0.88, flatShading: true });
+      const shrubs = new THREE.InstancedMesh(shrubGeo, shrubMat, shrubCount);
+      const sDummy = new THREE.Object3D();
+      for (let i = 0; i < shrubCount; i += 1) {
+        const sx = Math.sin(i * 12.7) * 34;
+        const sz = Math.cos(i * 7.3) * 34;
+        sDummy.position.set(sx, terrainHeight(missionId, sx, sz) + 0.72, sz);
+        sDummy.scale.setScalar(0.8 + (i % 4) * 0.25);
+        sDummy.updateMatrix();
+        shrubs.setMatrixAt(i, sDummy.matrix);
+      }
+      scene.add(shrubs);
+    }
+
+    // M5 / Moon airless starfield dome
+    if (planetId === "moon_artemis") {
+      const starCount = 320;
+      const starPositions = new Float32Array(starCount * 3);
+      for (let i = 0; i < starCount; i += 1) {
+        const theta = ((i * 137.5) % 360) * (Math.PI / 180);
+        const phi = Math.acos(0.15 + ((i * 0.618) % 0.85));
+        const r = 135;
+        starPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+        starPositions[i * 3 + 1] = r * Math.cos(phi);
+        starPositions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+      }
+      const starGeo = new THREE.BufferGeometry();
+      starGeo.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
+      const stars = new THREE.Points(
+        starGeo,
+        new THREE.PointsMaterial({ color: 0xf4f7ff, size: 1.15, sizeAttenuation: false })
+      );
+      scene.add(stars);
+    }
+
+    const baseTerrainColors = new Float32Array(colors);
+
+    // Wheel-slip regolith plume behind rear wheels
+    const slipCount = 18;
+    const slipGeo = new THREE.DodecahedronGeometry(0.28, 0);
+    const slipMat = new THREE.MeshBasicMaterial({
+      color: HUD_3D_COLORS.solarDusty,
+      transparent: true,
+      opacity: 0.55,
+    });
+    const slipMesh = new THREE.InstancedMesh(slipGeo, slipMat, slipCount);
+    const slipPuffs = Array.from({ length: slipCount }, (_, idx) => ({
+      phase: idx / slipCount,
+      side: idx % 2 === 0 ? -0.95 : 0.95,
+    }));
+    const slipDummy = new THREE.Object3D();
+    slipMesh.visible = false;
+    scene.add(slipMesh);
 
     // Rover Model
     const roverRig = createRoverModel();
@@ -418,6 +583,8 @@ export default function RoverViewport3D({ missionId, planetId, touchInputRef, re
       } else if (k === "5" || k === "e") {
         dispatchAction("COUPLE_DISPATCH");
         soundEngine.playActionClick("dock");
+      } else if (k === "c") {
+        onToggleCamRef.current?.();
       } else if (k === "p") {
         togglePauseRuntime();
       }
@@ -613,15 +780,53 @@ export default function RoverViewport3D({ missionId, planetId, touchInputRef, re
       particles.instanceMatrix.needsUpdate = true;
       partMat.opacity = rt.planet.rho > 0.001 ? Math.min(0.75, 0.16 + tau * 0.22) : 0.08;
 
-      // Smooth 3rd-person chase camera behind rover heading
-      const camYaw = rv.heading + camYawOffset;
-      const desiredX = rv.x - Math.sin(camYaw) * camDist;
-      const desiredZ = rv.z - Math.cos(camYaw) * camDist;
+      // Active wheel-slip eolian regolith plume behind rear wheels
+      if (Math.abs(rv.speed) > 0.3 && (rv.wheelSlipPct || 0) >= 30) {
+        slipMesh.visible = true;
+        for (let i = 0; i < slipCount; i += 1) {
+          const sp = slipPuffs[i];
+          sp.phase = (sp.phase + dt * 1.45) % 1;
+          const backDist = 1.25 + sp.phase * 2.4;
+          const worldX = rv.x - Math.sin(rv.heading) * backDist + Math.cos(rv.heading) * sp.side;
+          const worldZ = rv.z - Math.cos(rv.heading) * backDist - Math.sin(rv.heading) * sp.side;
+          slipDummy.position.set(worldX, rv.y + 0.25 + sp.phase * 0.9, worldZ);
+          slipDummy.scale.setScalar((1 - sp.phase * 0.6) * 0.95);
+          slipDummy.updateMatrix();
+          slipMesh.setMatrixAt(i, slipDummy.matrix);
+        }
+        slipMesh.instanceMatrix.needsUpdate = true;
+      } else {
+        slipMesh.visible = false;
+      }
+
+      // M4 dynamic decade biome color warming across sampled poles
+      if (missionId === "M4") {
+        const decFrac = Math.min(1, (rt.progress.sampledDecades?.length || 0) / 3);
+        const colAttr = terrainGeo.attributes.color;
+        if (decFrac > 0 && colAttr) {
+          const warmShift = decFrac * 0.14;
+          for (let i = 0; i < posAttr.count; i += 1) {
+            colAttr.array[i * 3] = Math.min(1, baseTerrainColors[i * 3] + warmShift);
+            colAttr.array[i * 3 + 1] = Math.max(0, baseTerrainColors[i * 3 + 1] - warmShift * 0.25);
+            colAttr.array[i * 3 + 2] = baseTerrainColors[i * 3 + 2];
+          }
+          colAttr.needsUpdate = true;
+        }
+      }
+
+      // Smooth 3rd-person chase vs. overhead tactical survey camera
+      const camYaw = camModeRef.current === "survey" ? 0 : rv.heading + camYawOffset;
+      const distHoriz = camModeRef.current === "survey" ? 15 : camDist;
+      const desiredX = rv.x - Math.sin(camYaw) * distHoriz;
+      const desiredZ = rv.z - Math.cos(camYaw) * distHoriz;
       const groundUnderCam = terrainHeight(missionId, desiredX, desiredZ);
-      const desiredY = Math.max(rv.y + 5.2, groundUnderCam + 3.2);
+      const desiredY =
+        camModeRef.current === "survey"
+          ? Math.max(rv.y + 24, groundUnderCam + 22)
+          : Math.max(rv.y + 5.2, groundUnderCam + 3.2);
       camPos.lerp(new THREE.Vector3(desiredX, desiredY, desiredZ), Math.min(1, dt * 6.5));
       camera.position.copy(camPos);
-      camTarget.set(rv.x, rv.y + 1.35, rv.z);
+      camTarget.set(rv.x, rv.y + (camModeRef.current === "survey" ? 0.4 : 1.35), rv.z);
       camera.lookAt(camTarget);
 
       renderer.render(scene, camera);
@@ -641,13 +846,16 @@ export default function RoverViewport3D({ missionId, planetId, touchInputRef, re
       scene.traverse((obj) => {
         if (obj.geometry) obj.geometry.dispose();
         if (obj.material) {
-          if (Array.isArray(obj.material)) obj.material.forEach((m) => m.dispose());
-          else obj.material.dispose();
+          const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+          mats.forEach((m) => {
+            if (m.map) m.map.dispose();
+            m.dispose();
+          });
         }
       });
       renderer.dispose();
     };
-  }, [missionId, planetId, reducedMotion, touchInputRef]);
+  }, [missionId, planetId, lang, reducedMotion, touchInputRef]);
 
   if (webglError) {
     return (

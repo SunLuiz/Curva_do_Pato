@@ -2,6 +2,6 @@
   "rewrites": [
     { "source": "/healthz", "destination": "/api/healthz" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/((?!api/|healthz).*)", "destination": "/index.html" }
+    { "source": "/((?!api/|healthz|cache/|game/data/|assets/|favicon).*)", "destination": "/index.html" }
   ]
 }

@@ -6,6 +6,7 @@
 import {
   PLANETS,
   computeFrameDelta,
+  computeGeotechnicalSlip,
   computeMoveDrainPerSec,
   computeSolarYieldPct,
   computeThermalLoadPct,
@@ -42,6 +43,14 @@ export function createMissionRuntime({
   const zones = getMissionZones(missionId);
   const start = def.startPos || { x: 0, z: 0, heading: 0 };
   const startY = terrainHeight(missionId, start.x, start.z);
+  const startZones = findZonesAt(missionId, start.x, start.z);
+  const startGeo = computeGeotechnicalSlip({
+    missionId,
+    planet,
+    inHazard: startZones.some((z) => z.kind === "hazard"),
+    onRidge: startZones.some((z) => z.kind === "ridge"),
+    slope: terrainSlopeRatio(missionId, start.x, start.z),
+  });
 
   return {
     missionId,
@@ -70,6 +79,7 @@ export function createMissionRuntime({
       z: start.z,
       heading: start.heading,
       speed: 0,
+      effectiveSpeed: 0,
       pitch: 0,
       roll: 0,
       wingsMode: "open", // open | stowed | tilted
@@ -77,8 +87,12 @@ export function createMissionRuntime({
       tethered: false,
       tetherZoneId: null,
       sanitizePulseSec: 0,
-      inZones: [],
+      inZones: startZones.map((z) => z.id),
       roverStillSec: 0,
+      wheelSlipPct: startGeo.wheelSlipPct,
+      energyCostMult: startGeo.energyDistanceMult,
+      tauC_Pa: startGeo.tauC_Pa,
+      grainSizeUm: startGeo.grainSizeUm,
     },
     resources: {
       battery: 68,
@@ -438,18 +452,29 @@ export function stepSimulation(state, input = {}, rawDt = 1 / 60) {
     rover.heading += steer * turnRate * dt;
   }
 
+  const preZones = findZonesAt(missionId, rover.x, rover.z);
+  const preGeo = computeGeotechnicalSlip({
+    missionId,
+    planet,
+    inHazard: preZones.some((z) => z.kind === "hazard"),
+    onRidge: preZones.some((z) => z.kind === "ridge"),
+    slope: terrainSlopeRatio(missionId, rover.x, rover.z),
+  });
+  rover.effectiveSpeed = Number((rover.speed * preGeo.tractionFactor).toFixed(3));
+
   if (Math.abs(rover.speed) > 0.08) {
     rover.tethered = false;
     rover.tetherZoneId = null;
     const nextPos = clampToArena(
-      rover.x + Math.sin(rover.heading) * rover.speed * dt,
-      rover.z + Math.cos(rover.heading) * rover.speed * dt
+      rover.x + Math.sin(rover.heading) * rover.effectiveSpeed * dt,
+      rover.z + Math.cos(rover.heading) * rover.effectiveSpeed * dt
     );
     rover.x = nextPos.x;
     rover.z = nextPos.z;
     rover.roverStillSec = 0;
   } else {
     rover.speed = 0;
+    rover.effectiveSpeed = 0;
     rover.roverStillSec += dt;
   }
 
@@ -484,8 +509,19 @@ export function stepSimulation(state, input = {}, rawDt = 1 / 60) {
   const pt = telemetry.currentPoint || state.timeline[state.tickIndex];
 
   // 3. Coupled Planetary Physics (Battery, T^4 Thermal, Wind Drag, NavCam t-1 -> t)
-  const speedNorm = Math.min(1, Math.abs(rover.speed) / 12.5);
+  const speedNorm = Math.min(1, Math.abs(rover.effectiveSpeed) / 12.5);
   const slope = terrainSlopeRatio(missionId, rover.x, rover.z);
+  const postGeo = computeGeotechnicalSlip({
+    missionId,
+    planet,
+    inHazard,
+    onRidge,
+    slope,
+  });
+  rover.wheelSlipPct = postGeo.wheelSlipPct;
+  rover.energyCostMult = postGeo.energyDistanceMult;
+  rover.tauC_Pa = postGeo.tauC_Pa;
+  rover.grainSizeUm = postGeo.grainSizeUm;
   const irrNorm =
     missionId === "M1"
       ? pt.primaryVal / 1000
@@ -527,7 +563,11 @@ export function stepSimulation(state, input = {}, rawDt = 1 / 60) {
     sanitized: rover.sanitizePulseSec > 0,
   });
 
-  const moveDrain = computeMoveDrainPerSec({ speedNorm, slope, planet });
+  const wheelEffortNorm = Math.min(1, Math.abs(rover.speed) / 12.5);
+  const baseMoveDrain = computeMoveDrainPerSec({ speedNorm: wheelEffortNorm, slope, planet });
+  // Active Impulse-Response / Orbital Thermal-Inertia calibration:
+  // Unconsolidated eolian sand (tau_c = 24 Pa) induces >=42% wheel slip and 1.8x Wh/km energy drain
+  const moveDrain = baseMoveDrain * postGeo.energyDistanceMult;
   const solarCharge = (resources.solarYieldPct / 100) * (missionId === "M1" ? 2.6 : 1.7);
   resources.battery = Math.max(0, Math.min(100, resources.battery + (solarCharge - moveDrain) * dt));
 
@@ -741,8 +781,8 @@ function evaluateMissionTick(state, ctx) {
       state.alert = {
         level: "danger",
         code: "ALPHA_CRATER",
-        textEn: "ALPHA CRATER ANOMALY! Steep slope — steer out toward Green Plateau!",
-        textPt: "ANOMALIA CRATERA ALPHA! Declive perigoso — desvie pelo Platô Verde!",
+        textEn: "GROK CRATERA AUDIT: Low τ_c sand at Alpha (>40% wheel slip, 1.8x Wh/km)! Steer to Green Basalt Plateau!",
+        textPt: "AUDITORIA GROK CRATERA: Areia fofa em Alpha (>40% patinagem, 1,8x Wh/km)! Desvie pelo Basalto Verde!",
         countdownSec: null,
         targetZoneId: "safe_plateau",
       };

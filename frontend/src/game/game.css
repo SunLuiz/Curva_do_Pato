@@ -424,10 +424,33 @@
 .chart-unc-band { fill: rgba(31, 111, 139, 0.16); stroke: none; }
 .chart-primary { fill: none; stroke: var(--biome-n); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
 .chart-secondary { fill: none; stroke: var(--biome-ne); stroke-width: 2.1; stroke-dasharray: 5 3; }
-.chart-oracle-pin { stroke: var(--sig); stroke-width: 1.8; stroke-dasharray: 4 3; }
+.chart-oracle-pin { fill: none; stroke: var(--sig); stroke-width: 1.8; stroke-dasharray: 4 3; }
+.chart-null-baseline { fill: none; stroke: var(--ink-soft); stroke-width: 1.5; stroke-dasharray: 2 4; opacity: 0.78; }
+.chart-sentinel-spike { stroke: var(--danger); stroke-width: 2; stroke-dasharray: 2 2; }
 .chart-player-pin { stroke: var(--biome-ne); stroke-width: 2; }
 .chart-label { fill: var(--ink-soft); font-family: var(--font-mono); font-size: 11px; }
 .chart-label-danger { fill: var(--danger); font-family: var(--font-mono); font-size: 11px; font-weight: 700; }
+
+.hud-cam-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(11, 21, 34, 0.84);
+  color: var(--cockpit-ink);
+  border: 1px solid var(--cockpit-border);
+  border-radius: 8px;
+  padding: 0.34rem 0.62rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.hud-cam-btn:hover {
+  border-color: var(--hud-cyan);
+  color: var(--hud-cyan);
+}
 
 /* Intro button palette */
 .btn-hud {

@@ -5,8 +5,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
+  IMPULSE_CALIBRATION_PROFILES,
   PLANETS,
   computeFrameDelta,
+  computeGeotechnicalSlip,
   computeSolarYieldPct,
   computeThermalLoadPct,
   computeWindStress,
@@ -257,4 +259,60 @@ test("Storage safely upgrades legacy profile without game field and computes gam
   loaded.game.missions.M2 = { won: true, stars: 3 };
   const saved = saveProfile(loaded, fakeStorage);
   assert.ok(saved.game.badges.includes("martian-wind-shelter"));
+});
+
+test("Active Impulse-Response geotechnical slip calibration (>40% slip & 1.8x Wh/km) avoids exponential speed decay", () => {
+  const sandGeo = computeGeotechnicalSlip({
+    missionId: "M3",
+    planet: PLANETS.mars_jezero,
+    inHazard: true,
+    onRidge: false,
+    slope: 0.05,
+  });
+  assert.ok(sandGeo.wheelSlipPct >= 42);
+  assert.ok(sandGeo.tractionFactor <= 0.58);
+  assert.equal(sandGeo.energyDistanceMult, 1.8);
+  assert.equal(sandGeo.tauC_Pa, IMPULSE_CALIBRATION_PROFILES.eolian_sand.tauC_Pa);
+  assert.equal(sandGeo.grainSizeUm, IMPULSE_CALIBRATION_PROFILES.eolian_sand.grainSizeUm);
+
+  const basaltGeo = computeGeotechnicalSlip({
+    missionId: "M3",
+    planet: PLANETS.mars_jezero,
+    inHazard: false,
+    onRidge: true,
+    slope: 0,
+  });
+  assert.equal(basaltGeo.energyDistanceMult, 1.0);
+  assert.equal(basaltGeo.tauC_Pa, 85);
+  assert.equal(basaltGeo.grainSizeUm, 40);
+
+  // Runtime starts with populated tauC_Pa and grainSizeUm
+  const m3Haz = createMissionRuntime({ missionId: "M3", seed: 2026 });
+  assert.equal(m3Haz.rover.tauC_Pa, 85);
+  assert.equal(m3Haz.rover.grainSizeUm, 40);
+
+  // Place one rover inside Crater Alpha hazard (8, -4) and one on Safe Plateau (-14, -10)
+  const m3Safe = createMissionRuntime({ missionId: "M3", seed: 2026 });
+  m3Haz.rover.x = 8;
+  m3Haz.rover.z = -4;
+  m3Haz.rover.heading = Math.PI / 2;
+  m3Safe.rover.x = -14;
+  m3Safe.rover.z = -10;
+  m3Safe.rover.heading = -Math.PI / 2;
+
+  for (let i = 0; i < 16; i += 1) {
+    stepSimulation(m3Haz, { throttle: 1, steer: 0 }, 0.05);
+    stepSimulation(m3Safe, { throttle: 1, steer: 0 }, 0.05);
+  }
+
+  // Motor wheel speed stays responsive (not exponentially crushed toward 0), while effective ground speed slips >= 42%
+  assert.ok(m3Haz.rover.speed > 7.5, `Expected non-stalled wheel speed, got ${m3Haz.rover.speed}`);
+  assert.ok(m3Haz.rover.effectiveSpeed <= m3Haz.rover.speed * 0.58);
+  assert.ok(m3Haz.rover.wheelSlipPct >= 42);
+  assert.equal(m3Haz.rover.energyCostMult, 1.8);
+  assert.equal(m3Haz.rover.tauC_Pa, 24);
+  assert.ok(
+    m3Haz.resources.battery < m3Safe.resources.battery,
+    `Expected higher drain in Crater Alpha (${m3Haz.resources.battery}) vs Safe Plateau (${m3Safe.resources.battery})`
+  );
 });

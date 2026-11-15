@@ -38,6 +38,9 @@ All external datasets, APIs, and open-source components used or referenced in **
 - **CelesTrak NORAD GP Stations Feed [Open Feed]**  
   - Active LEO station orbital elements & mean motion (`https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=json`) for orbital solar/eclipse periodicity.
 
+- **MSL / Mars 2020 Plume-Regolith Interaction & High-Altitude Surface Erosion [Scientific Reference]**  
+  - Vizcaino, J. et al., *"Observed High-Altitude Surface Erosion During MSL Landing"*, Journal of Spacecraft and Rockets / AIAA (`https://arc.aiaa.org/doi/10.2514/1.A35748`). Grounds the 64–70 m retro-rocket impulse-response inversion ($\tau_{\text{jet}} = \frac{1}{2}\rho_{\text{gas}}v_{\text{jet}}^2 \ge \tau_c$) and orbital-to-surface geotechnical calibration in `Curve of Duck: Rover Pilot 3D` (`/game`).
+
 ## 2. Brazilian Grid & Open Visual Components
 
 - **ONS Open Data (Brazilian National Electric System Operator)**  

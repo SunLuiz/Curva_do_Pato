@@ -67,7 +67,7 @@ Instead of treating trends as isolated numbers, Cockpit-OMNI evaluates four phys
 
 ---
 
-## Three-Intent Interface: `Story · Academy · Cockpit` (Bilingual `EN | PT-BR`, Default `EN`)
+## Four-Intent Interface: `Story · Academy · Cockpit · 3D Game` (Bilingual `EN | PT-BR`, Default `EN`)
 
 1. **Story (`/`):** 7-slide full-screen presentation notebook (`frontend/src/content/story.js`, single source also generating the 7-slide `docs/pitch_deck.html`) covering Cover & Pain, System in 1 Screen, Trends in Human Language, Attribution + CMR MCP, Layperson Action Presets, Real Proof & Academy, and Off-World Space Frontiers (MPTO), with continuous interpolated SVG curve, opt-in autoplay, swipe/keyboard controls, and Present mode (`F`).
 2. **Academy (`/academy`):** Zero-login, browser-local (`localStorage`) Detective training across 5 real-data modules (`M1–M5`), reasoning depth tracks (`Explorer | Analyst | Specialist`), DeepTutor-inspired (`Apache-2.0`) unassisted mastery gate (`>= 0.80` recency-weighted accuracy + zero-hint critical falsification/limit checks), 3-layer auditable memory, merit badges, 1200x800 PNG `<canvas>` diploma, `"Forget me"` privacy wipe, and an explicit `"This device only — no account, no tracking"` Hall of Fame.
@@ -76,6 +76,10 @@ Instead of treating trends as isolated numbers, Cockpit-OMNI evaluates four phys
    - **Time-Series & Provenance:** Client-side Seasonal Mann-Kendall & Deseasonalized Theil-Sen (~50 ms per 504-month series) with decade sliders & month filters, `Chart | Raw data | Source` tabs per chart (100-row paginated table + CSV/JSON download), and honest `Live backend connected` vs. `Showing frozen snapshot — 2026-11-14 15:04 UTC` banner.
    - **Space Analog (MPTO) (`/cockpit?tab=space`):** Connects real zero-key feeds (**NASA DSN Now**, **NASA OSDR `OSD-615`**, **CelesTrak GP**) alongside JPL Horizons / Mars 2020 MEDA clients and an interactive parametric 7-Frontier MPTO simulator ($\tau$, $C_p$, sintered regolith $k_{\text{reg}}$, and crater IR albedo gain `10–15%`).
    - **Grounded Assistant (`Ask OMNI`):** Shared `<AskPanel />` (10 cache-verified answers offline + server-side `POST /api/ask` proxy in both FastAPI `backend/app/main.py` and Vercel `frontend/api/ask.js` routing GonkaRouter / Groq / OpenRouter without exposing keys to the browser). Legacy `/trend` and `/attribution` routes resolve cleanly to `/cockpit?tab=...`.
+4. **3D Game · *Curve of Duck: Rover Pilot 3D* (`/game`):** Lazy-loaded (`React.lazy` + Three.js) 3rd-person educational rover simulation grounded in the **"O Planeta Respira"** planetary vector $\vec{\Theta} = [g, \rho, c_p, k_{\text{reg}}, \tau_0]$ and **Active Impulse-Response Inversion & Orbital-to-Surface Calibration** ([Documentos/arquitetura_game3d_rover_pilot.md](./Documentos/arquitetura_game3d_rover_pilot.md)):
+   - **5-Act Interactive SVG Prologue (`NarrativeIntro.jsx`):** Clickable vector narrative with Web Audio synthesizer covering (1) 64 m EDL retro-rocket impulse calibration ($\tau_{\text{jet}} \ge \tau_c$ + $\lvert I_t - I_{t-1}\rvert$), (2) Jezero settlement & `OSD-615` domes, (3) Sector 4 multi-sensor fusion (*Gemini Vision* optical $\tau$ vs. *Grok Cratera* orbital thermal inertia & `>40%` wheel-slip / `1.8x Wh/km` energy-distance routing), (4) Mars $\to$ Moon $\to$ Earth curve morphing, and (5) 3D Rover command handover.
+   - **5 Sequential Real-Data Missions (`M1–M5`) + 3 Literacy Levels (`Explorer | Analyst | Specialist`):** Covers hourly solar Duck Curve + $T^4$ thermal saturation (`M1`), MEDA Sol 40 `2 Hz` gusts vs. monthly `WS2M` null $p = 0.489$ (`M2`), `999999999.0` sentinel filtering + $\lvert I_t - I_{t-1}\rvert$ + Alpha Crater wheel-slip avoidance (`M3`), 42-year Campinas vs. Manaus Seasonal Mann-Kendall falsification (`M4`), and conjugated DONKI + `OSD-615` `SoC_bio` + Lunar Lava Tube survival (`M5`).
+   - **5 Physical Rover Controls (`[1]`–`[5]`), Mission Lab & Audited Debrief:** Articulates solar wings, mast/suspension, $35^\circ$ wind-cleaning tilt, optical sanitizer, and BESS/Beacon/Greenhouse cable coupling; compares player timing against `computeOraclePolicy()` and awards unified Academy stars (`starsFor`) & XP (`xpFor`).
 
 ---
 
@@ -101,8 +105,9 @@ Curva_do_Pato/                     # repository root (this is what you clone)
 │   │   └── main.py                # FastAPI endpoints (/healthz, /api/trend, /api/presets, /api/insight, /api/space-analog, /api/ask)
 │   └── tests/                     # API, statistical engine & presets/MPTO tests
 ├── data/                          # Sample & frozen fallback JSON/CSV snapshots (incl. space_analog.json)
-├── frontend/                      # Vite + React app + Vercel serverless /api proxy (Story · Academy · Cockpit)
-├── scripts/                       # build_deck.mjs, check_contrast.mjs (WCAG AA), verify_answers.mjs
+├── Documentos/                    # Architecture & Game Design specs (incl. arquitetura_game3d_rover_pilot.md)
+├── frontend/                      # Vite + React app + Vercel serverless /api proxy (Story · Academy · Cockpit · 3D Game)
+├── scripts/                       # bake_game_data.py, build_deck.mjs, check_contrast.mjs (WCAG AA), verify_answers.mjs
 ├── docs/pitch_deck.html           # 7-slide demo deck (generated from frontend/src/content/story.js)
 ├── Dockerfile                     # Hugging Face Space (Docker, port 7860)
 ├── requirements.txt
@@ -127,7 +132,7 @@ Run tests & verification checks:
 
 ```bash
 .venv/Scripts/python.exe -m pytest backend/tests -q
-node --test frontend/src/content/story.test.mjs frontend/src/engine/trend.test.mjs frontend/src/academy/mastery.test.mjs frontend/src/engine/presets.test.mjs
+node --test frontend/src/content/story.test.mjs frontend/src/engine/trend.test.mjs frontend/src/academy/mastery.test.mjs frontend/src/engine/presets.test.mjs frontend/src/game/sim/sim.test.mjs
 node scripts/check_contrast.mjs --css frontend/src/styles.css
 node scripts/verify_answers.mjs
 ```

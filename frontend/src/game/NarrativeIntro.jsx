@@ -40,47 +40,47 @@ const ACTS = [
   {
     id: "arrival",
     en: {
-      kicker: "Act 1 / 5 · Arrival · EDL Vision (64 m)",
-      title: "Everything in the universe breathes.",
-      body: "Before landing on Mars, computer vision compares frame t-1 to frame t. At 64 meters altitude, retro-rockets kick up regolith plumes that try to blind optical navigation — locking external landmarks saves the lander.",
+      kicker: "Act 1 / 5 · Arrival · Impulse-Response Inversion (64 m)",
+      title: "Everything in the universe breathes — and landing is our first physical test.",
+      body: "At 64 m altitude (as in Curiosity MARDI & Perseverance RDC telemetry), retro-rocket thrust hits the regolith (~80 kg/(m·s²)). By measuring frame delta (t-1 -> t) when erosion begins (τ_jet = ½ρv² >= τ_c), computer vision solves the inverse equation: extracting soil cohesion τ_c, grain size d_p, and calibrating orbital satellite thermal inertia.",
     },
     pt: {
-      kicker: "Ato 1 / 5 · A Chegada · Visão EDL (64 m)",
-      title: "Tudo no universo respira.",
-      body: "Para pousar vivos em Marte, a visão computacional lê o ambiente frame a frame (t-1 -> t). A 64 metros do solo, o jato dos propulsores levanta poeira que tenta cegar os sensores — travar nos marcos externos garante o pouso.",
+      kicker: "Ato 1 / 5 · A Chegada · Inversão por Resposta ao Impulso (64 m)",
+      title: "Tudo no universo respira — e o pouso é o nosso primeiro ensaio físico.",
+      body: "A 64 metros do solo (como nas câmeras MARDI do Curiosity e RDC do Perseverance), o jato dos propulsores varre o regolito (~80 kg/(m·s²)). Ao medir em t-1 -> t o milissegundo em que a poeira sobe (τ_jato = ½ρv² >= τ_c), resolvemos a equação inversa: descobrindo a coesão do solo τ_c, a granulometria d_p e calibrando o mapa orbital de satélite.",
     },
   },
   {
     id: "settlement",
     en: {
       kicker: "Act 2 / 5 · The Settlement · 6 Months Later",
-      title: "From survival landing to permanent life.",
-      body: "A crew and their family walk down the lander ramp toward pressurized domes and OSD-615 biological greenhouses. Six months later, time-series curves are no longer theory — they govern heat, oxygen, and survival.",
+      title: "From impulse-calibrated bedrock to permanent life.",
+      body: "A crew and their family walk down the lander ramp toward pressurized domes and OSD-615 biological greenhouses anchored on the high-bearing-capacity bedrock validated during the Act 1 landing test. Six months later, time-series curves govern heat, oxygen, and survival.",
     },
     pt: {
       kicker: "Ato 2 / 5 · O Assentamento · 6 Meses Depois",
-      title: "Do pouso de emergência à infraestrutura permanente.",
-      body: "A tripulação e uma família descem pela rampa rumo aos domos habitacionais e estufas biológicas OSD-615. Seis meses depois, gráficos deixam de ser teoria — passam a proteger calor, oxigênio e vida.",
+      title: "Da fundação calibrada no pouso à infraestrutura permanente.",
+      body: "A tripulação e uma família descem pela rampa rumo aos domos habitacionais e estufas biológicas OSD-615 erguidos sobre a rocha firme validada pelo ensaio geotécnico do Ato 1. Seis meses depois, gráficos governam calor, oxigênio e vida.",
     },
   },
   {
     id: "command",
     en: {
-      kicker: "Act 3 / 5 · Command Center · Multi-Sensor Fusion",
-      title: "One sensor alone can drive a rover into a crater.",
-      body: "A dust front sweeps Sector 4 while solar power sags. Optical telemetry warns of rising opacity and flags Position Alpha — until terrain geometry spots a steep crater fault blocking that route.",
+      kicker: "Act 3 / 5 · Command Center · Orbital-to-Surface Fusion",
+      title: "Why geometric distance is not energy distance (Wh/km).",
+      body: "A dust front sweeps Sector 4 while solar power sags. Optical vision spots rising opacity and suggests Position Alpha — until orbital thermal-inertia calibration reveals unconsolidated eolian sand.",
       dialogue: [
-        'Optical Operator: "Gemini Vision detects rising dust delta (|I_t - I_t-1|) in Sector 4. Recall Rover-01 to Position Alpha!"',
-        'Terrain Operator: "Negative! Crater geometry audit flags a steep fault at Alpha — recalculating the green safe corridor!"',
+        'Gemini Vision (Optical): "Beer-Lambert opacity τ > 1.6 and |I_t - I_t-1| surging in Sector 4! Recall Rover-01 to Position Alpha!"',
+        'Grok Cratera (Geotechnical + Orbital): "Negative! Satellite nighttime thermal inertia calibrated by our Act 1 impulse test shows unconsolidated sand at Alpha (low τ_c). At 18° slope, wheel slip exceeds 40% (1 km = 1.8x Wh/km)! Rerouting via compact basalt (Green Vector)!"',
       ],
     },
     pt: {
-      kicker: "Ato 3 / 5 · Central de Comando · Fusão Sensorial",
-      title: "Um único sensor pode jogar o rover dentro de uma cratera.",
-      body: "Uma frente de poeira avança pelo Setor 4 enquanto a geração solar cai. O canal óptico pede abrigo imediato na Posição Alpha — até o auditor topográfico detectar uma falha de cratera naquela coordenada.",
+      kicker: "Ato 3 / 5 · Central de Comando · Fusão Orbital-Superfície",
+      title: "Por que distância em metros não é distância energética (Wh/km).",
+      body: "Uma frente de poeira avança pelo Setor 4 enquanto a geração solar cai. O canal óptico sugere abrigo na Posição Alpha — até a calibração orbital de inércia térmica revelar areia eólica sem coesão.",
       dialogue: [
-        'Operador Óptico: "Visão computacional detectando salto de poeira (|I_t - I_t-1|) no Setor 4! Recolher rover para Posição Alpha!"',
-        'Operador Topográfico: "Negativo! Auditoria geométrica detectou anomalia na Cratera Alpha — traçando rota verde segura!"',
+        'Gemini Vision (Óptico): "Opacidade Beer-Lambert τ > 1,6 e salto |I_t - I_t-1| no Setor 4! Recolher Rover-01 para Posição Alpha!"',
+        'Grok Cratera (Geotecnia + Satélite): "Negativo! A inércia térmica noturna orbital calibrada no pouso indica areia fofa em Alpha (baixo τ_c). Com 18° de inclinação, a patinagem (wheel slip) passa de 40% (1 km = 1,8x Wh/km)! Redirecionando pelo basalto compacto (Vetor Verde)!"',
       ],
     },
   },
@@ -199,8 +199,8 @@ export default function NarrativeIntro({ lang = "en", onFinish }) {
                 <polygon points="-14,36 14,36 32,115 -32,115" className="svg-iris-glow" />
                 <ellipse cx="0" cy="155" rx="95" ry="20" className="svg-iris-glow" />
               </g>
-              <text x="58" y="48" className="svg-text-cyan">EDL TELEMETRY · ALTITUDE 64 m · PLUME ONSET</text>
-              <text x="520" y="340" className="svg-text-red">|I_t - I_(t-1)| SPIKE DETECTED -&gt; TRN LOCKED TO EXTERNAL LANDMARKS</text>
+              <text x="58" y="48" className="svg-text-cyan">EDL IMPULSE INVERSION · 64 m · τ_jet = ½ρv² &gt;= τ_c</text>
+              <text x="455" y="340" className="svg-text-red">|I_t - I_(t-1)| EROSION ONSET -&gt; SOIL COHESION τ_c &amp; ORBITAL CALIBRATION</text>
             </g>
           )}
 
@@ -233,16 +233,16 @@ export default function NarrativeIntro({ lang = "en", onFinish }) {
               <ellipse cx="470" cy="195" rx="120" ry="68" className="svg-hud-grid" fill="none" />
               {/* Hazard Crater Alpha */}
               <circle cx="520" cy="150" r="56" className="svg-iris-glow" />
-              <text x="458" y="155" className="svg-text-red">ALPHA CRATER FAULT</text>
+              <text x="415" y="150" className="svg-text-red">ALPHA CRATER · SLIP &gt;40% (1.8x Wh/km)</text>
               {/* Dust storm front */}
               <path d="M120,70 C240,120 210,270 340,330" className="svg-route-red" />
-              <text x="95" y="55" className="svg-text-red">SECTOR 4 DUST FRONT (|I_t - I_t-1|)</text>
+              <text x="95" y="55" className="svg-text-red">SECTOR 4 DUST FRONT (|I_t - I_t-1| · τ &gt; 1.6)</text>
               {/* Red rejected route vs Green fused safe route */}
               <path d="M220,275 L515,155" className="svg-route-red" />
               <path d="M220,275 Q370,320 695,245" className="svg-route-green" />
               <circle cx="220" cy="275" r="10" className="svg-dome" />
               <circle cx="695" cy="245" r="14" className="svg-dome-light" />
-              <text x="615" y="278" className="svg-text-green">GREEN SAFE VECTOR</text>
+              <text x="565" y="278" className="svg-text-green">GREEN BASALT VECTOR (1.0x Wh/km)</text>
               <text x="165" y="306" className="svg-text-cyan">ROVER-01</text>
             </g>
           )}

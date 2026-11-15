@@ -177,32 +177,32 @@ export const MISSION_DEFS = {
     sourceCite: "MEDA Sol 1100 RDS (58,517 rows, ROVER_STILL) + Sol 40 Sentinels (867 flags 999999999.0)",
     en: {
       title: "M3 · Blind Vision (t-1 -> t) & 999999999.0",
-      subtitle: "Separate real dust plumes from sensor dropouts & Crater Alpha",
-      badge: "Level 3 · Data Quality & Frame Delta",
+      subtitle: "Impulse-calibrated Crater Alpha (>40% slip · 1.8x Wh/km) & sensor dropouts",
+      badge: "Level 3 · Data Quality & Geotechnical Fusion",
       briefing:
-        "Guide Rover-01 to the EDL Landing Beacon [5] across Sector 4. Fake sensor spikes (999999999.0) will flash red — purge them with [4] without panicking! When real dust opacity tau surges (>1.6) and |I_t - I_t-1| climbs, HALT briefly (ROVER_STILL=1) to lock landmarks, bypass dangerous Alpha Crater, and dock at the Beacon.",
-      objectiveShort: "Sanitize 999999999.0 spikes [4], avoid Crater Alpha, stop briefly in dust, dock Beacon [5].",
+        "Guide Rover-01 to the EDL Landing Beacon [5] across Sector 4. Fake sensor spikes (999999999.0) will flash red — purge them with [4] without panicking! When real Beer-Lambert opacity tau surges (>1.6) and |I_t - I_t-1| climbs, HALT briefly (ROVER_STILL=1) to lock landmarks, bypass unconsolidated Alpha Crater sand (>40% wheel slip, 1.8x Wh/km energy drain) via the Green Basalt Plateau, and dock at the Beacon.",
+      objectiveShort: "Sanitize 999999999.0 [4], bypass Alpha Crater (1.8x Wh/km), halt in dust, dock Beacon [5].",
       takeaway:
-        "Missing-data sentinel flags (999999999.0) are not physical storms, while fast driving blurs t-1 -> t vision. Stopping (ROVER_STILL=1) locks external landmarks just like Mars 2020 TRN.",
+        "Sentinel flags (999999999.0) are not physical storms, while orbital thermal inertia calibrated by Act 1's 64 m impulse test proves Position Alpha has >40% wheel slip (1 km geometric = 1.8 km energy distance).",
       depthHint: {
-        explorer: "Press [4] whenever the red 999999999.0 glitch appears. Avoid the red crater pit!",
-        analyst: "Watch |I_t - I_t-1| vs tau: motion increases frame delta, so halt briefly when dust spikes.",
-        specialist: "Distinguish 4.5% sentinel dropouts from genuine Beer-Lambert tau surges while maintaining safe geometry.",
+        explorer: "Press [4] whenever the red 999999999.0 glitch appears. Avoid the red Alpha Crater sand trap!",
+        analyst: "Watch |I_t - I_t-1| vs tau: motion increases frame delta, and Alpha Crater drains 1.8x Wh/km.",
+        specialist: "Fuse Beer-Lambert tau, 4.5% sentinel rejection, and Grok Cratera thermal-inertia routing.",
       },
     },
     pt: {
       title: "M3 · Visão Cega (t-1 -> t) & Sentinelas 999999999.0",
-      subtitle: "Separe plumas reais de poeira de falhas do sensor e da Cratera Alpha",
-      badge: "Nível 3 · Qualidade de Dados & ΔI",
+      subtitle: "Cratera Alpha calibrada por impulso (>40% slip · 1,8x Wh/km) e falhas do sensor",
+      badge: "Nível 3 · Qualidade de Dados & Fusão Geotécnica",
       briefing:
-        "Guie o Rover-01 até o Farol EDL [5] no Setor 4. Picos falsos (999999999.0) vão piscar — filtre com [4] sem abortar! Quando a opacidade real tau subir (>1,6) e |I_t - I_t-1| disparar, PARE brevemente (ROVER_STILL=1) para travar os marcos externos, desvie da Cratera Alpha e acople no Farol.",
-      objectiveShort: "Filtre erros 999999999.0 [4], desvie da Cratera Alpha, pare na poeira e acople [5].",
+        "Guie o Rover-01 até o Farol EDL [5] no Setor 4. Picos falsos (999999999.0) vão piscar — filtre com [4] sem abortar! Quando a opacidade real Beer-Lambert tau subir (>1,6) e |I_t - I_t-1| disparar, PARE brevemente (ROVER_STILL=1) para travar os marcos externos, contorne a areia não consolidada da Cratera Alpha (>40% patinagem, 1,8x Wh/km) pelo Platô de Basalto Verde e acople no Farol.",
+      objectiveShort: "Filtre erros 999999999.0 [4], contorne Cratera Alpha (1,8x Wh/km), pare na poeira e acople [5].",
       takeaway:
-        "Sentinelas (999999999.0) são falhas de telemetria, não tempestades; já correr rápido borra a derivada t-1 -> t. Parar (ROVER_STILL=1) estabiliza os marcos topográficos contra a Cratera Alpha.",
+        "Sentinelas (999999999.0) são falhas de telemetria; já a inércia térmica orbital calibrada pelo empuxo a 64 m prova que a Cratera Alpha gera >40% de patinagem (1 km geométrico = 1,8 km em Wh/km).",
       depthHint: {
-        explorer: "Aperte [4] quando aparecer o erro 999999999.0. Não caia na cratera vermelha!",
-        analyst: "Compare |I_t - I_t-1| com tau: velocidade gera blur, então pare um instante quando tau subir.",
-        specialist: "Separe os 4,5% de sentinelas nulos de saltos reais em tau evitando a anomalia geométrica.",
+        explorer: "Aperte [4] quando aparecer o erro 999999999.0. Não entre na areia fofa da Cratera Alpha!",
+        analyst: "Compare |I_t - I_t-1| com tau e evite o dreno energético de 1,8x Wh/km na Cratera Alpha.",
+        specialist: "Una rejeição de 4,5% de sentinelas, derivada t-1 -> t e auditoria geotécnica Grok Cratera.",
       },
     },
   },

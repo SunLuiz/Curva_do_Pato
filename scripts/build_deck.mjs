@@ -37,7 +37,7 @@ function slideBodyHtml(slide) {
 }
 
 function slideFooter(idx, total, slide) {
-  let left = "Team Curva do Pato (Luiz Antonio Gois Junior) · NASA Space Apps Challenge 2026 — Campinas, SP";
+  let left = "Team Curve of Duck (Luiz Antonio Gois Junior) · NASA Space Apps Challenge 2026 — Campinas, SP";
   if (slide.id === "future_space" || slide.id === "legacy") {
     left = "Built at Espaço Plasma, Unicamp — Campinas, SP, Brazil · MIT License · No NASA logo used";
   } else if (slide.id === "trends_human" || slide.id === "evidence-campinas") {

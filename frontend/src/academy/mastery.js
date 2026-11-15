@@ -1,5 +1,5 @@
 /**
- * Pure mastery gate engine for Curva do Pato Academy.
+ * Pure mastery gate engine for Curve of Duck Academy.
  *
  * Adapted from DeepTutor's formative mastery loop (Apache-2.0):
  * - Credit comes only from unassisted attempts (hints count as valid

@@ -90,7 +90,7 @@ export default function AskPanel({
         <aside
           id="ask-detective-drawer"
           className="ask-drawer"
-          aria-label="Curva do Pato Data Detective Assistant"
+          aria-label="Curve of Duck Data Detective Assistant"
         >
           <div
             style={{

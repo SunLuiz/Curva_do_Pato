@@ -24,7 +24,7 @@ export default function AppShell({ route, onNavigate, lang = "en", setLang, full
               </svg>
             </div>
             <div>
-              <span className="brand-title">Cockpit-OMNI · Curva do Pato</span>
+              <span className="brand-title">Cockpit-OMNI · Curve of Duck</span>
               <span className="brand-sub">{ui.brandSub}</span>
             </div>
           </button>
@@ -70,7 +70,7 @@ export default function AppShell({ route, onNavigate, lang = "en", setLang, full
       <footer className="footer">
         <div className="footer-inner">
           <div>
-            <strong>Team Curva do Pato (Luiz Antonio Gois Junior) · Built at NASA Space Apps Challenge 2026 — Campinas, SP, Brazil</strong>{" "}
+            <strong>Team Curve of Duck (Luiz Antonio Gois Junior) · Built at NASA Space Apps Challenge 2026 — Campinas, SP, Brazil</strong>{" "}
             · No NASA logo or insignia is used; all NASA datasets are cited directly below.
           </div>
           <div>

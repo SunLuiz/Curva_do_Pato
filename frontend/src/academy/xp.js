@@ -1,5 +1,5 @@
 /**
- * Stars, XP, badges, and biome companions for Curva do Pato Academy.
+ * Stars, XP, badges, and biome companions for Curve of Duck Academy.
  * Stars reward effort and learning persistence (even when guided by a hint);
  * XP tracks active progression with a capped consecutive-unassisted streak bonus.
  */

@@ -1,0 +1,19 @@
+{
+  "packages": [
+    {
+      "id": "84eeb735-0615-4793-a68e-ee6a19f291df",
+      "name": "fator-capacidade-2",
+      "title": "Fator de Capacidade de Geração Eólica e Solar"
+    },
+    {
+      "id": "9ecf2d19-322f-47ca-a7e3-7f334e188d62",
+      "name": "programacao_x_previsao",
+      "title": "Dados dos Valores da Previsão Versus Programado - Eólicas e Solares"
+    },
+    {
+      "id": "838fdfdf-a9e9-4fae-8469-e2148dfe1183",
+      "name": "balanco-energia-subsistema",
+      "title": "Balanço de Energia nos Subsistemas"
+    }
+  ]
+}

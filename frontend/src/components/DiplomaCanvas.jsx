@@ -62,7 +62,7 @@ export default function DiplomaCanvas({ profile }) {
     // Header
     ctx.fillStyle = accent;
     ctx.font = "700 18px 'JetBrains Mono', monospace";
-    ctx.fillText("COCKPIT-OMNI · CURVA DO PATO · NASA SPACE APPS CHALLENGE 2026", 96, 128);
+    ctx.fillText("COCKPIT-OMNI · CURVE OF DUCK · NASA SPACE APPS CHALLENGE 2026", 96, 128);
 
     ctx.fillStyle = ink;
     ctx.font = "700 54px 'Fraunces', Georgia, serif";
@@ -161,7 +161,7 @@ export default function DiplomaCanvas({ profile }) {
     const a = document.createElement("a");
     const safeName = (profile.name || "detective").toLowerCase().replace(/[^a-z0-9_-]+/g, "-");
     a.href = url;
-    a.download = `curva-do-pato-diploma-${safeName}.png`;
+    a.download = `curve-of-duck-diploma-${safeName}.png`;
     a.click();
   };
 

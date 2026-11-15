@@ -2,13 +2,15 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   evaluateClientInsight,
   listClientPresets,
   scoreVariableSeverity,
 } from "./presets.js";
 
-const CACHE_DIR = path.resolve(process.cwd(), "frontend/public/cache");
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const CACHE_DIR = path.resolve(__dirname, "../../public/cache");
 
 function loadTrend(region, variable) {
   return JSON.parse(

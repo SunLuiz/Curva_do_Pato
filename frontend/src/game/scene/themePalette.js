@@ -59,7 +59,11 @@ export const BIOME_PALETTES = {
 export const HUD_3D_COLORS = {
   roverBody: 0xe8edf2,
   roverGold: 0xd9a13b,
-  roverWheel: 0x23272e,
+  roverWheel: 0x1e2228,
+  roverWheelRim: 0xb6c2cf,
+  roverGrouser: 0x4b5563,
+  roverStrut: 0x9aa6b4,
+  headlightBeam: 0xfff4d6,
   solarBlue: 0x1a4c8a,
   solarDusty: 0x6b5342,
   safeGreen: 0x3cd070,
@@ -67,6 +71,25 @@ export const HUD_3D_COLORS = {
   dangerRed: 0xf25244,
   cyan: 0x4cd4e8,
   purple: 0x9b6dff,
+  sandHazard: 0xd9924c,
+  basaltSafe: 0x3f4c46,
+  trackFirm: 0x2a2420,
+  trackSlip: 0x171210,
+};
+
+export const CELESTIAL_COLORS = {
+  starWhite: 0xf4f7ff,
+  starBlue: 0xb8dcff,
+  starAmber: 0xffd59e,
+  nebulaMars: 0xd99b7e,
+  nebulaMoon: 0x6e9eff,
+  earthOcean: 0x1c69c9,
+  earthLand: 0x3f8f56,
+  earthAtmo: 0x64b5ff,
+  saturnBody: 0xe3c38a,
+  saturnRing: 0xcbb07a,
+  phobosRock: 0x6e5a52,
+  deimosRock: 0x877b74,
 };
 
 export const SPRITE_PALETTE = {

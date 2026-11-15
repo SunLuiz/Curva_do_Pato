@@ -94,6 +94,8 @@ export function createMissionRuntime({
       heading: start.heading,
       speed: 0,
       effectiveSpeed: 0,
+      steerAngle: 0,
+      windDirRad: Math.PI * 0.25, // Northwest -> Southeast prevailing gust vector
       pitch: 0,
       roll: 0,
       wingsMode: "open", // open | stowed | tilted
@@ -167,10 +169,10 @@ function logAction(state, action, labelEn, labelPt) {
 }
 
 function resolveTargetZone(state) {
-  const { missionId, progress, tickIndex } = state;
+  const { missionId, progress, tickIndex, rover } = state;
   if (missionId === "M1") {
     if (!progress.peakHandled && tickIndex >= 14) return "bess_station";
-    if (tickIndex >= 36 && !progress.eveningRecovered) return "sun_ridge";
+    if (!progress.eveningRecovered && (progress.peakHandled || tickIndex >= 36)) return "sun_ridge";
     return "bess_station";
   }
   if (missionId === "M2") {
@@ -179,7 +181,13 @@ function resolveTargetZone(state) {
     return "crater_shelter";
   }
   if (missionId === "M3") {
-    if (!progress.beaconDocked) return "landing_beacon";
+    if (!progress.beaconDocked) {
+      // Guide around Crater Alpha sand trap via North Green Basalt Plateau first
+      if (rover && rover.z > -8 && rover.x < -3) {
+        return "safe_plateau";
+      }
+      return "landing_beacon";
+    }
     return "safe_plateau";
   }
   if (missionId === "M4") {
@@ -465,6 +473,8 @@ export function stepSimulation(state, input = {}, rawDt = 1 / 60) {
     const turnRate = 2.15 * (throttle < -0.1 ? -1 : 1);
     rover.heading += steer * turnRate * dt;
   }
+  const targetSteerAngle = Math.max(-1, Math.min(1, steer)) * 0.38;
+  rover.steerAngle = Number((rover.steerAngle + (targetSteerAngle - rover.steerAngle) * Math.min(1, dt * 10)).toFixed(3));
 
   const preZones = findZonesAt(missionId, rover.x, rover.z);
   const preGeo = computeGeotechnicalSlip({

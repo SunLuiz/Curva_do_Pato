@@ -4,6 +4,11 @@
 //   node scripts/check_contrast.mjs --css frontend/src/styles.css
 
 import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DEFAULT_CSS_PATH = path.resolve(__dirname, "../frontend/src/styles.css");
 
 const lum = (hex) => {
   const clean = hex.trim();
@@ -44,11 +49,11 @@ function parseTokensFromCss(cssPath) {
 let tokens;
 const arg = process.argv[2];
 if (arg === "--css") {
-  tokens = parseTokensFromCss(process.argv[3] || "frontend/src/styles.css");
+  tokens = parseTokensFromCss(process.argv[3] || DEFAULT_CSS_PATH);
 } else if (arg) {
   tokens = JSON.parse(arg);
 } else {
-  tokens = parseTokensFromCss("frontend/src/styles.css");
+  tokens = parseTokensFromCss(DEFAULT_CSS_PATH);
 }
 
 const surfaces = [

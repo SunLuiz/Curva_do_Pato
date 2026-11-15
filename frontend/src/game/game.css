@@ -187,16 +187,25 @@
 .svg-text-red { fill: var(--hud-red); font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
 .svg-text-green { fill: var(--hud-green); font-family: var(--font-mono); font-size: 12px; font-weight: 700; }
 
-/* 3D Cockpit Viewport + Overlays */
+/* 3D Cockpit Viewport + Fullscreen Overlays */
 .viewport-frame {
   position: relative;
   width: 100%;
-  height: clamp(340px, 50vh, 510px);
+  height: clamp(560px, 78vh, 840px);
   background: var(--cockpit-bg);
   border: 1px solid var(--cockpit-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-lift);
+}
+
+.viewport-frame:fullscreen,
+.viewport-frame.is-fullscreen {
+  width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  border-radius: 0;
+  border: none;
 }
 
 .viewport-canvas-host {
@@ -254,20 +263,21 @@
 .hud-alert-banner {
   position: absolute;
   left: 50%;
-  bottom: 0.8rem;
+  top: 4.1rem;
   transform: translateX(-50%);
-  max-width: min(94%, 680px);
-  padding: 0.55rem 0.95rem;
+  max-width: min(92%, 660px);
+  padding: 0.48rem 0.92rem;
   border-radius: var(--radius-pill);
   font-family: var(--font-sans);
-  font-size: 0.85rem;
+  font-size: 0.83rem;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  z-index: 5;
+  z-index: 6;
   backdrop-filter: blur(8px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.42);
+  pointer-events: none;
 }
 
 .hud-alert-info {
@@ -450,6 +460,162 @@
 .hud-cam-btn:hover {
   border-color: var(--hud-cyan);
   color: var(--hud-cyan);
+}
+
+/* Step-by-step Objective Checklist inside Top-Left HUD */
+.hud-objectives-box {
+  background: rgba(13, 19, 26, 0.86);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(76, 212, 232, 0.32);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.75rem;
+  color: var(--cockpit-ink);
+  max-width: 350px;
+  pointer-events: auto;
+  display: grid;
+  gap: 0.32rem;
+  font-size: 0.76rem;
+}
+
+.hud-step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  line-height: 1.3;
+  color: var(--cockpit-soft);
+}
+
+.hud-step-row.done {
+  color: var(--hud-green);
+  text-decoration: line-through;
+  opacity: 0.85;
+}
+
+.hud-step-row.active {
+  color: var(--cockpit-ink);
+  font-weight: 700;
+}
+
+/* Unified Bottom Cockpit Dock inside 3D Viewport (Fullscreen ready) */
+.hud-bottom-dock {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  display: grid;
+  grid-template-columns: minmax(290px, 470px) 1fr;
+  align-items: end;
+  gap: 0.75rem;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@media (max-width: 960px) {
+  .hud-bottom-dock {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hud-chart-dock {
+  background: rgba(11, 17, 24, 0.88);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(76, 212, 232, 0.38);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.75rem;
+  color: var(--cockpit-ink);
+  pointer-events: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.hud-chart-dock .chart-axis { stroke: rgba(255, 255, 255, 0.25); }
+.hud-chart-dock .chart-grid { stroke: rgba(255, 255, 255, 0.12); }
+.hud-chart-dock .chart-thresh { stroke: var(--hud-red); stroke-width: 2; }
+.hud-chart-dock .chart-unc-band { fill: rgba(76, 212, 232, 0.2); }
+.hud-chart-dock .chart-primary { stroke: var(--hud-cyan); stroke-width: 2.8; }
+.hud-chart-dock .chart-secondary { stroke: var(--hud-amber); stroke-width: 2.1; }
+.hud-chart-dock .chart-oracle-pin { stroke: var(--hud-green); }
+.hud-chart-dock .chart-null-baseline { stroke: var(--cockpit-soft); }
+.hud-chart-dock .chart-sentinel-spike { stroke: var(--hud-red); }
+.hud-chart-dock .chart-player-pin { stroke: var(--hud-amber); }
+.hud-chart-dock .chart-label { fill: var(--cockpit-soft); }
+.hud-chart-dock .chart-label-danger { fill: var(--hud-red); }
+
+.hud-controls-dock {
+  background: rgba(11, 17, 24, 0.88);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.75rem;
+  pointer-events: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.hud-controls-dock .rover-act-btn {
+  background: rgba(25, 35, 46, 0.92);
+  color: var(--cockpit-ink);
+  border-color: rgba(255, 255, 255, 0.22);
+  padding: 0.42rem 0.68rem;
+  font-size: 0.76rem;
+}
+
+.hud-controls-dock .rover-act-btn:hover {
+  border-color: var(--hud-cyan);
+  background: rgba(38, 54, 70, 0.96);
+}
+
+.hud-controls-dock .rover-act-btn.on {
+  background: rgba(69, 201, 122, 0.2);
+  border-color: var(--hud-green);
+  color: var(--hud-green);
+}
+
+.hud-controls-dock .rover-act-btn.urgent {
+  background: rgba(242, 95, 82, 0.24);
+  border-color: var(--hud-red);
+  color: var(--hud-amber);
+  box-shadow: 0 0 12px rgba(242, 95, 82, 0.4);
+}
+
+.hud-controls-dock .dpad-key {
+  background: rgba(25, 35, 46, 0.92);
+  color: var(--cockpit-ink);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.hud-controls-dock .dpad-key:active {
+  background: var(--hud-cyan);
+  color: var(--cockpit-bg);
+}
+
+/* Centered Modal Pop-up Overlays inside Viewport (Failure, Victory, In-Game Quiz, Lab) */
+.hud-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 12, 18, 0.78);
+  backdrop-filter: blur(6px);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.hud-modal-card {
+  width: min(100%, 760px);
+  max-height: 90%;
+  overflow-y: auto;
+  background: var(--surface-0);
+  color: var(--ink);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--hairline-strong);
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
 }
 
 /* Intro button palette */

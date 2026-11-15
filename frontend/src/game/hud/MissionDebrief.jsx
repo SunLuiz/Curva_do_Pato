@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Award, CheckCircle2, FlaskConical, RotateCcw, Star, XCircle, ArrowRight } from "lucide-react";
+import { Award, CheckCircle2, FlaskConical, GraduationCap, RotateCcw, Star, XCircle, ArrowRight } from "lucide-react";
 import { MISSION_DEFS, MISSION_ORDER } from "../missions/missionParams";
 
 function RealSliceSparkline({ values = [], sentinels = [], unit = "" }) {
@@ -39,6 +39,8 @@ export default function MissionDebrief({
   onRetry,
   onNextMission,
   onOpenLab,
+  onOpenQuiz,
+  quizPassed = false,
   labUnlocked = false,
 }) {
   const l = lang === "pt" ? "pt" : "en";
@@ -59,7 +61,7 @@ export default function MissionDebrief({
 
   // Comparative chart coordinates
   const w = 580;
-  const h = 155;
+  const h = 145;
   const pad = { l: 42, r: 20, t: 18, b: 26 };
   const vals = timeline.map((p) => p.primaryVal);
   const lo = Math.min(...vals);
@@ -72,35 +74,106 @@ export default function MissionDebrief({
     .join(" ");
 
   return (
-    <section className="card" style={{ borderLeft: `4px solid ${won ? "var(--sig)" : "var(--danger)"}` }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem" }}>
-        <div>
-          <span className={`badge ${won ? "live" : "null"}`}>
-            {won ? <CheckCircle2 size={14} /> : <XCircle size={14} />}
-            {won ? `${outcome?.grade} · ${outcome?.stars || 0}/3 Stars` : l === "pt" ? "MISSÃO FALHOU" : "MISSION FAILED"}
-          </span>
-          <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.35rem", marginTop: "0.45rem" }}>
-            {def[l].title} — {l === "pt" ? "Auditoria Pós-Missão" : "Post-Mission Audit"}
-          </h3>
-          {!won && failReason && (
-            <p style={{ color: "var(--danger)", fontWeight: 600, fontSize: "0.9rem", marginTop: "0.25rem" }}>
-              {failReason[l]}
-            </p>
-          )}
+    <div className="hud-modal-backdrop" role="dialog" aria-modal="true" aria-label={won ? "Mission Accomplished" : "Mission Failed"}>
+      <section className="hud-modal-card" style={{ borderLeft: `6px solid ${won ? "var(--sig)" : "var(--danger)"}` }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem" }}>
+          <div>
+            <span className={`badge ${won ? "live" : "bad"}`} style={{ fontSize: "0.82rem", padding: "0.28rem 0.7rem" }}>
+              {won ? <CheckCircle2 size={15} /> : <XCircle size={15} />}
+              {won
+                ? `${l === "pt" ? "MISSÃO CUMPRIDA" : "MISSION ACCOMPLISHED"} · ${outcome?.grade} (${outcome?.stars || 0}/3 ★)`
+                : l === "pt"
+                ? "ALERTA: MISSÃO FALHOU"
+                : "ALERT: MISSION FAILED"}
+            </span>
+            <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.32rem", marginTop: "0.45rem" }}>
+              {def[l].title}
+            </h3>
+          </div>
+
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <div className="badge sig">
+              <Star size={13} /> +{outcome?.xp || 0} XP
+            </div>
+            <div className="badge">
+              <Award size={13} /> {l === "pt" ? "Eficiência" : "Efficiency"}: {outcome?.efficiencyPct ?? 0}%
+            </div>
+            <div className="badge">
+              {l === "pt" ? "Integridade" : "Integrity"}: {Math.round(resources.integrity)}%
+            </div>
+          </div>
         </div>
 
-        <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
-          <div className="badge sig">
-            <Star size={13} /> +{outcome?.xp || 0} XP
+        {/* Prominent Failure Diagnosis Box OR Victory Next-Step Box */}
+        {!won ? (
+          <div
+            className="card-inset"
+            style={{
+              marginTop: "0.85rem",
+              borderColor: "var(--danger)",
+              background: "rgba(178, 58, 42, 0.08)",
+              display: "grid",
+              gap: "0.45rem",
+            }}
+          >
+            <div style={{ color: "var(--danger)", fontWeight: 700, fontSize: "0.95rem" }}>
+              {l === "pt" ? "Por que a missão falhou:" : "Why the mission failed:"}{" "}
+              {failReason ? failReason[l] : l === "pt" ? "Objetivo tático não concluído a tempo." : "Tactical objective not completed in time."}
+            </div>
+            <div style={{ fontSize: "0.86rem", color: "var(--ink)" }}>
+              <strong>{l === "pt" ? "Instrução Objetiva para Vencer:" : "Objective Instruction to Win:"}</strong>{" "}
+              {def[l].objectiveShort}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem", marginTop: "0.25rem" }}>
+              <button type="button" className="btn-primary" onClick={onRetry}>
+                <RotateCcw size={15} /> {l === "pt" ? "Começar Novamente Agora (Tecla R)" : "Retry Mission Now (Key R)"}
+              </button>
+              {onOpenQuiz && (
+                <button type="button" className="btn-secondary" onClick={onOpenQuiz}>
+                  <GraduationCap size={15} /> {l === "pt" ? "Abrir Questionário da Missão" : "Open Mission Quiz"}
+                </button>
+              )}
+            </div>
           </div>
-          <div className="badge">
-            <Award size={13} /> {l === "pt" ? "Eficiência" : "Efficiency"}: {outcome?.efficiencyPct ?? 0}%
+        ) : (
+          <div
+            className="card-inset"
+            style={{
+              marginTop: "0.85rem",
+              borderColor: "var(--sig)",
+              background: "rgba(42, 112, 71, 0.08)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "0.65rem",
+            }}
+          >
+            <div style={{ fontSize: "0.86rem" }}>
+              <strong>
+                {quizPassed
+                  ? l === "pt"
+                    ? "✓ Objetivo 3D + Questionário Científico desta missão concluídos!"
+                    : "✓ 3D Objective + Scientific Quiz for this mission completed!"
+                  : l === "pt"
+                  ? "Objetivo 3D concluído! Agora responda ao Questionário da Missão para liberar o Mérito e o Certificado:"
+                  : "3D Objective complete! Now answer the Mission Quiz right here to unlock your Merit & Diploma:"}
+              </strong>
+            </div>
+            {onOpenQuiz && (
+              <button type="button" className="btn-primary" onClick={onOpenQuiz}>
+                <GraduationCap size={15} />{" "}
+                {quizPassed
+                  ? l === "pt"
+                    ? "Revisar Questionário na Tela"
+                    : "Review In-Game Quiz"
+                  : l === "pt"
+                  ? "Responder Questionário Aqui no Jogo"
+                  : "Take Mission Quiz In-Game"}
+              </button>
+            )}
           </div>
-          <div className="badge">
-            {l === "pt" ? "Integridade" : "Integrity"}: {Math.round(resources.integrity)}%
-          </div>
-        </div>
-      </div>
+        )}
 
       {/* Comparative Timeline: Player Actions vs Optimal Oracle */}
       <div className="card-inset" style={{ marginTop: "1rem" }}>
@@ -233,12 +306,19 @@ export default function MissionDebrief({
       {/* Navigation Footer */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: "0.65rem", marginTop: "1rem" }}>
         <button type="button" className="btn-secondary" onClick={onRetry}>
-          <RotateCcw size={15} /> {l === "pt" ? "Jogar Novamente" : "Retry Mission"}
+          <RotateCcw size={15} /> {l === "pt" ? "Jogar Novamente (R)" : "Retry Mission (R)"}
         </button>
+
+        {onOpenQuiz && (
+          <button type="button" className="btn-secondary" onClick={onOpenQuiz}>
+            <GraduationCap size={15} />{" "}
+            {l === "pt" ? `Questionário Científico ${missionId}` : `Scientific Quiz ${missionId}`}
+          </button>
+        )}
 
         {won && nextId && (
           <button type="button" className="btn-primary" onClick={() => onNextMission(nextId)}>
-            {l === "pt" ? `Próxima: ${nextId}` : `Next: ${nextId}`} <ArrowRight size={15} />
+            {l === "pt" ? `Próxima Missão: ${nextId}` : `Next Mission: ${nextId}`} <ArrowRight size={15} />
           </button>
         )}
 
@@ -248,6 +328,7 @@ export default function MissionDebrief({
           </button>
         )}
       </div>
-    </section>
+      </section>
+    </div>
   );
 }

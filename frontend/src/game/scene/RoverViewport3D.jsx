@@ -326,14 +326,20 @@ export default function RoverViewport3D({
   lang = "en",
   camMode = "chase",
   onToggleCamMode,
+  onToggleFullscreen,
+  onRetry,
   touchInputRef,
   reducedMotion = false,
 }) {
   const hostRef = useRef(null);
   const camModeRef = useRef(camMode);
   const onToggleCamRef = useRef(onToggleCamMode);
+  const onToggleFullscreenRef = useRef(onToggleFullscreen);
+  const onRetryRef = useRef(onRetry);
   camModeRef.current = camMode;
   onToggleCamRef.current = onToggleCamMode;
+  onToggleFullscreenRef.current = onToggleFullscreen;
+  onRetryRef.current = onRetry;
   const [webglError, setWebglError] = useState(false);
 
   useEffect(() => {
@@ -585,6 +591,10 @@ export default function RoverViewport3D({
         soundEngine.playActionClick("dock");
       } else if (k === "c") {
         onToggleCamRef.current?.();
+      } else if (k === "f") {
+        onToggleFullscreenRef.current?.();
+      } else if (k === "r") {
+        onRetryRef.current?.();
       } else if (k === "p") {
         togglePauseRuntime();
       }
@@ -628,11 +638,16 @@ export default function RoverViewport3D({
     });
     ro.observe(container);
 
-    // Main 60 FPS Render & Sim Loop
+    // Main 60 FPS Render & Sim Loop (pre-allocated vectors/colors for zero GC churn)
     let raf = 0;
     let lastTime = performance.now();
     const camPos = new THREE.Vector3(0, 8, -14);
     const camTarget = new THREE.Vector3();
+    const desiredCamVec = new THREE.Vector3();
+    const dustyColor = new THREE.Color(HUD_3D_COLORS.solarDusty);
+    const tetherPtA = new THREE.Vector3();
+    const tetherPtB = new THREE.Vector3();
+    let lastSampledDecadesLen = 0;
     let wingAngle = 0;
     let chassisDrop = 0;
     let mastHeight = 1;
@@ -691,7 +706,7 @@ export default function RoverViewport3D({
       const soilMix = Math.min(1, rt.resources.soiling / 65);
       roverRig.solarMat.color
         .setHex(HUD_3D_COLORS.solarBlue)
-        .lerp(new THREE.Color(HUD_3D_COLORS.solarDusty), soilMix);
+        .lerp(dustyColor, soilMix);
 
       // Smooth suspension & mast height
       const targetDrop = rv.mastRaised ? 0 : -0.22;
@@ -730,10 +745,9 @@ export default function RoverViewport3D({
         if (dz) {
           tetherLine.visible = true;
           const zy = terrainHeight(missionId, dz.x, dz.z);
-          tetherGeo.setFromPoints([
-            new THREE.Vector3(rv.x, rv.y + 1.0, rv.z),
-            new THREE.Vector3(dz.x, zy + 1.4, dz.z),
-          ]);
+          tetherPtA.set(rv.x, rv.y + 1.0, rv.z);
+          tetherPtB.set(dz.x, zy + 1.4, dz.z);
+          tetherGeo.setFromPoints([tetherPtA, tetherPtB]);
         }
       } else {
         tetherLine.visible = false;
@@ -799,18 +813,22 @@ export default function RoverViewport3D({
         slipMesh.visible = false;
       }
 
-      // M4 dynamic decade biome color warming across sampled poles
+      // M4 dynamic decade biome color warming across sampled poles (dirty-flagged)
       if (missionId === "M4") {
-        const decFrac = Math.min(1, (rt.progress.sampledDecades?.length || 0) / 3);
-        const colAttr = terrainGeo.attributes.color;
-        if (decFrac > 0 && colAttr) {
-          const warmShift = decFrac * 0.14;
-          for (let i = 0; i < posAttr.count; i += 1) {
-            colAttr.array[i * 3] = Math.min(1, baseTerrainColors[i * 3] + warmShift);
-            colAttr.array[i * 3 + 1] = Math.max(0, baseTerrainColors[i * 3 + 1] - warmShift * 0.25);
-            colAttr.array[i * 3 + 2] = baseTerrainColors[i * 3 + 2];
+        const curSampledLen = rt.progress.sampledDecades?.length || 0;
+        if (curSampledLen !== lastSampledDecadesLen) {
+          lastSampledDecadesLen = curSampledLen;
+          const decFrac = Math.min(1, curSampledLen / 3);
+          const colAttr = terrainGeo.attributes.color;
+          if (colAttr) {
+            const warmShift = decFrac * 0.14;
+            for (let i = 0; i < posAttr.count; i += 1) {
+              colAttr.array[i * 3] = Math.min(1, baseTerrainColors[i * 3] + warmShift);
+              colAttr.array[i * 3 + 1] = Math.max(0, baseTerrainColors[i * 3 + 1] - warmShift * 0.25);
+              colAttr.array[i * 3 + 2] = baseTerrainColors[i * 3 + 2];
+            }
+            colAttr.needsUpdate = true;
           }
-          colAttr.needsUpdate = true;
         }
       }
 
@@ -824,7 +842,8 @@ export default function RoverViewport3D({
         camModeRef.current === "survey"
           ? Math.max(rv.y + 24, groundUnderCam + 22)
           : Math.max(rv.y + 5.2, groundUnderCam + 3.2);
-      camPos.lerp(new THREE.Vector3(desiredX, desiredY, desiredZ), Math.min(1, dt * 6.5));
+      desiredCamVec.set(desiredX, desiredY, desiredZ);
+      camPos.lerp(desiredCamVec, Math.min(1, dt * 6.5));
       camera.position.copy(camPos);
       camTarget.set(rv.x, rv.y + (camModeRef.current === "survey" ? 0.4 : 1.35), rv.z);
       camera.lookAt(camTarget);

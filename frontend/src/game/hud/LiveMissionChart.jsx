@@ -1,8 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { MISSION_DEFS } from "../missions/missionParams";
 
-export default function LiveMissionChart({ snapshot, lang = "en" }) {
+export default function LiveMissionChart({ snapshot, lang = "en", hudMode = false }) {
   const l = lang === "pt" ? "pt" : "en";
+  const [collapsed, setCollapsed] = useState(false);
   const missionId = snapshot?.missionId || "M2";
   const depth = snapshot?.depth || "explorer";
   const visibleSeries = snapshot?.visibleSeries || [];
@@ -13,7 +14,7 @@ export default function LiveMissionChart({ snapshot, lang = "en" }) {
 
   const def = MISSION_DEFS[missionId] || MISSION_DEFS.M2;
   const width = 620;
-  const height = 225;
+  const height = hudMode ? 168 : 225;
   const pad = { top: 20, right: missionId === "M3" && depth === "specialist" ? 42 : 24, bottom: 32, left: 52 };
   const plotW = width - pad.left - pad.right;
   const plotH = height - pad.top - pad.bottom;
@@ -104,30 +105,56 @@ export default function LiveMissionChart({ snapshot, lang = "en" }) {
       : { id: "B", label: l === "pt" ? "Fase B · Subindo" : "Phase B · Rising", cls: "null" };
 
   return (
-    <div className="card" style={{ padding: "1rem 1.15rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.45rem" }}>
-        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "0.38rem" }}>
-          <span className="badge sig" style={{ fontSize: "0.7rem" }}>
-            {l === "pt" ? "MODELO FÍSICO PARAMÉTRICO (MPTO)" : "PARAMETRIC PHYSICAL MODEL (MPTO)"}
+    <div className={hudMode ? "hud-chart-dock" : "card"} style={hudMode ? undefined : { padding: "1rem 1.15rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.35rem", marginBottom: collapsed ? 0 : "0.35rem" }}>
+        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "0.35rem" }}>
+          <span className="badge sig" style={{ fontSize: "0.66rem", padding: "0.1rem 0.42rem" }}>
+            {l === "pt" ? "MPTO AO VIVO" : "LIVE MPTO"}
           </span>
-          <span className={`badge ${cyclePhase.cls}`} style={{ fontSize: "0.68rem" }}>
+          <span className={`badge ${cyclePhase.cls}`} style={{ fontSize: "0.66rem", padding: "0.1rem 0.42rem" }}>
             {cyclePhase.label}
           </span>
-          <span className="mono" style={{ fontSize: "0.75rem", color: "var(--ink-soft)" }}>
+          <span className="mono" style={{ fontSize: "0.7rem", color: hudMode ? "var(--cockpit-soft)" : "var(--ink-soft)" }}>
             {def.primaryUnit} · {depth.toUpperCase()}
           </span>
         </div>
-        {currentPt && (
-          <div className="mono" style={{ fontSize: "0.82rem", fontWeight: 700, color: telemetry.sentinelPending ? "var(--danger)" : "var(--ink)" }}>
-            {currentPt.label}:{" "}
-            {telemetry.sentinelPending
-              ? "999999999.0 (!)"
-              : `${currentPt.primaryVal} ${def.primaryUnit}`}
-          </div>
-        )}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+          {currentPt && (
+            <div
+              className="mono"
+              style={{
+                fontSize: "0.78rem",
+                fontWeight: 700,
+                color: telemetry.sentinelPending
+                  ? "var(--hud-red)"
+                  : hudMode
+                  ? "var(--hud-cyan)"
+                  : "var(--ink)",
+              }}
+            >
+              {currentPt.label}:{" "}
+              {telemetry.sentinelPending
+                ? "999999999.0 (!)"
+                : `${currentPt.primaryVal} ${def.primaryUnit}`}
+            </div>
+          )}
+          {hudMode && (
+            <button
+              type="button"
+              className="hud-cam-btn"
+              style={{ padding: "0.12rem 0.42rem", fontSize: "0.66rem" }}
+              onClick={() => setCollapsed((c) => !c)}
+              title={l === "pt" ? "Minimizar/Expandir gráfico" : "Minimize/Expand chart"}
+            >
+              {collapsed ? "+" : "−"}
+            </button>
+          )}
+        </div>
       </div>
 
-      <svg viewBox={`0 0 ${width} ${height}`} className="live-chart-svg" role="img" aria-label="Live Telemetry Chart">
+      {!collapsed && (
+        <>
+          <svg viewBox={`0 0 ${width} ${height}`} className="live-chart-svg" role="img" aria-label="Live Telemetry Chart">
         {/* Horizontal grid lines */}
         {[0, 0.25, 0.5, 0.75, 1].map((frac) => {
           const val = minY + (maxY - minY) * frac;
@@ -272,12 +299,14 @@ export default function LiveMissionChart({ snapshot, lang = "en" }) {
           </span>
         )}
         {depth !== "explorer" && (
-          <span style={{ color: "var(--biome-n)" }}>
+          <span style={{ color: hudMode ? "var(--hud-cyan)" : "var(--biome-n)" }}>
             ▓ {l === "pt" ? "Faixa de incerteza" : "Uncertainty band"}
           </span>
         )}
-        <span style={{ marginLeft: "auto" }}>{def.sourceCite}</span>
+        <span style={{ marginLeft: "auto", opacity: 0.85 }}>{def.sourceCite}</span>
       </div>
+        </>
+      )}
     </div>
   );
 }

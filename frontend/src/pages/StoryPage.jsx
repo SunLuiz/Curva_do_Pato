@@ -333,10 +333,10 @@ export default function StoryPage({ onNavigate, lang = "en" }) {
                     className="btn-secondary"
                     onClick={() => {
                       setPresent(false);
-                      onNavigate("/academy");
+                      onNavigate("/game");
                     }}
                   >
-                    {l === "pt" ? "Treinar na Academy" : "Start in Academy"}
+                    {l === "pt" ? "Jogar Missões 3D & Academy" : "Play 3D Rover & Academy"}
                   </button>
                 </>
               )}

@@ -1,12 +1,11 @@
 import React from "react";
-import { Activity, Compass, Gamepad2, Globe, GraduationCap } from "lucide-react";
+import { Activity, Compass, Gamepad2, Globe } from "lucide-react";
 import { UI_TEXT } from "../content/i18n";
 
 const NAV_ITEMS = [
   { path: "/", key: "navStory", Icon: Compass },
-  { path: "/academy", key: "navAcademy", Icon: GraduationCap },
-  { path: "/cockpit", key: "navCockpit", Icon: Activity },
   { path: "/game", key: "navGame", Icon: Gamepad2 },
+  { path: "/cockpit", key: "navCockpit", Icon: Activity },
 ];
 
 export default function AppShell({ route, onNavigate, lang = "en", setLang, fullBleed = false, children }) {

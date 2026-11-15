@@ -1,18 +1,21 @@
 import React, { useEffect, useRef } from "react";
-import { Download } from "lucide-react";
+import { CheckCircle2, Download, Lock } from "lucide-react";
+
+const MISSION_IDS = ["M1", "M2", "M3", "M4", "M5"];
 
 /**
  * Renders a 1200x800 PNG diploma on an HTML5 <canvas> using live CSS design
  * tokens resolved from getComputedStyle (keeping zero hex constants in JSX).
+ * Unlocked strictly when both 3D Mission Objectives and Scientific Quiz Forms are completed.
  */
-export default function DiplomaCanvas({ profile }) {
+export default function DiplomaCanvas({ profile, lang = "en" }) {
+  const l = lang === "pt" ? "pt" : "en";
   const canvasRef = useRef(null);
-  const masteredModules = Object.entries(profile.mastery || {})
-    .filter(([, m]) => m?.passed)
-    .map(([id]) => id)
-    .sort();
-  const fullMastery = masteredModules.length === 5;
-  const eligible = masteredModules.length >= 1 && Boolean(profile.name?.trim());
+  const wonMissions = MISSION_IDS.filter((id) => Boolean(profile.game?.missions?.[id]?.won));
+  const masteredModules = MISSION_IDS.filter((id) => Boolean(profile.mastery?.[id]?.passed));
+  const fullMastery = wonMissions.length === 5 && masteredModules.length === 5;
+  const hasName = Boolean(profile.name?.trim());
+  const eligible = fullMastery && hasName;
 
   const drawDiploma = () => {
     const canvas = canvasRef.current;
@@ -90,9 +93,9 @@ export default function DiplomaCanvas({ profile }) {
 
     // Stats block
     ctx.fillStyle = inkSoft;
-    ctx.font = "500 22px 'DM Sans', system-ui, sans-serif";
+    ctx.font = "500 21px 'DM Sans', system-ui, sans-serif";
     ctx.fillText(
-      `Track: ${profile.depth.toUpperCase()}  ·  Modules Mastered: ${masteredModules.join(", ") || "None yet"} (${masteredModules.length}/5)`,
+      `Track: ${(profile.depth || "explorer").toUpperCase()}  ·  3D Missions Won: ${wonMissions.length}/5  ·  Quiz Forms Passed: ${masteredModules.length}/5`,
       96,
       424
     );
@@ -151,9 +154,10 @@ export default function DiplomaCanvas({ profile }) {
 
   useEffect(() => {
     drawDiploma();
-  }, [profile.name, profile.depth, profile.stars, profile.xp, masteredModules.join(",")]);
+  }, [profile.name, profile.depth, profile.stars, profile.xp, wonMissions.join(","), masteredModules.join(",")]);
 
   const handleDownload = () => {
+    if (!eligible) return;
     drawDiploma();
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -170,12 +174,16 @@ export default function DiplomaCanvas({ profile }) {
       <div className="section-header" style={{ marginBottom: "0.75rem" }}>
         <div>
           <h3 style={{ fontFamily: "var(--font-display)" }}>
-            1200×800 PNG Field Diploma
+            {l === "pt" ? "Certificado Oficial de Campo & Ciência (1200×800 PNG)" : "Official 3D Field & Science Diploma (1200×800 PNG)"}
           </h3>
           <div style={{ fontSize: "0.82rem", color: "var(--ink-soft)" }}>
-            {fullMastery
-              ? "All 5 modules mastered — Chief Detective seal unlocked!"
-              : "Master at least 1 module (with your codename set) to unlock preview & PNG export; pass all 5 for the Chief Detective seal."}
+            {eligible
+              ? l === "pt"
+                ? "Todos os 5 objetivos 3D e os 5 formulários científicos foram concluídos — Certificado liberado!"
+                : "All 5 3D mission objectives and all 5 scientific forms completed — Certificate unlocked!"
+              : l === "pt"
+              ? "O certificado só é liberado após concluir os 5 objetivos práticos no Rover 3D, aprovar os 5 formulários científicos e definir seu nome."
+              : "Locked until you complete all 5 3D Rover mission objectives, pass all 5 scientific quiz forms, and set your pilot name."}
           </div>
         </div>
         <button
@@ -184,8 +192,37 @@ export default function DiplomaCanvas({ profile }) {
           disabled={!eligible}
           onClick={handleDownload}
         >
-          <Download size={15} /> Download PNG diploma
+          {eligible ? <Download size={15} /> : <Lock size={15} />}{" "}
+          {l === "pt" ? "Baixar Certificado PNG" : "Download PNG Diploma"}
         </button>
+      </div>
+
+      {/* Explicit Unlock Requirements Bar */}
+      <div className="card-inset" style={{ marginBottom: "0.85rem", display: "grid", gap: "0.45rem", fontSize: "0.8rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.4rem" }}>
+          <span>
+            {hasName ? <CheckCircle2 size={14} color="var(--sig)" /> : <Lock size={14} color="var(--ink-soft)" />}{" "}
+            <strong>1. {l === "pt" ? "Identificação do Piloto:" : "Pilot Name:"}</strong>{" "}
+            {hasName ? profile.name : l === "pt" ? "Preencha no card de Perfil" : "Set in Profile card"}
+          </span>
+          <span className={`badge ${hasName ? "sig" : "ns"}`}>{hasName ? "OK" : l === "pt" ? "Pendente" : "Pending"}</span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.4rem" }}>
+          <span>
+            {wonMissions.length === 5 ? <CheckCircle2 size={14} color="var(--sig)" /> : <Lock size={14} color="var(--ink-soft)" />}{" "}
+            <strong>2. {l === "pt" ? "Objetivos de Missão 3D (Rover):" : "3D Rover Mission Objectives:"}</strong>{" "}
+            {wonMissions.length}/5 ({wonMissions.join(", ") || "—"})
+          </span>
+          <span className={`badge ${wonMissions.length === 5 ? "sig" : "ns"}`}>{wonMissions.length}/5</span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.4rem" }}>
+          <span>
+            {masteredModules.length === 5 ? <CheckCircle2 size={14} color="var(--sig)" /> : <Lock size={14} color="var(--ink-soft)" />}{" "}
+            <strong>3. {l === "pt" ? "Formulários de Validação Científica:" : "Scientific Validation Forms:"}</strong>{" "}
+            {masteredModules.length}/5 ({masteredModules.join(", ") || "—"})
+          </span>
+          <span className={`badge ${masteredModules.length === 5 ? "sig" : "ns"}`}>{masteredModules.length}/5</span>
+        </div>
       </div>
 
       <canvas
@@ -198,7 +235,8 @@ export default function DiplomaCanvas({ profile }) {
           borderRadius: "var(--radius-sm)",
           border: "1px solid var(--hairline)",
           display: "block",
-          opacity: eligible ? 1 : 0.65,
+          opacity: eligible ? 1 : 0.48,
+          filter: eligible ? "none" : "grayscale(0.35)",
         }}
       />
     </div>

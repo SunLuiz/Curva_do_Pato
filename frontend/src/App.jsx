@@ -2,7 +2,6 @@ import React, { Suspense, lazy, useCallback, useEffect, useState } from "react";
 import AppShell from "./components/AppShell";
 import AskPanel from "./components/AskPanel";
 import StoryPage from "./pages/StoryPage";
-import AcademyPage from "./pages/AcademyPage";
 import CockpitPage from "./pages/CockpitPage";
 import { API_BASE, getFires, getSpaceWeather, verifyTrendLive } from "./api";
 import { probeBackend } from "./engine/trend";
@@ -15,9 +14,10 @@ import {
 
 const GamePage = lazy(() => import("./pages/GamePage"));
 
-const VALID_ROUTES = ["/", "/academy", "/cockpit", "/game"];
+const VALID_ROUTES = ["/", "/cockpit", "/game"];
 const VALID_TABS = ["trend", "attribution", "sources", "live", "space"];
 const ALIAS_MAP = {
+  "/academy": "/game",
   "/trend": "/cockpit?tab=trend",
   "/attribution": "/cockpit?tab=attribution",
 };
@@ -31,7 +31,7 @@ function parseLocation() {
     const target = ALIAS_MAP[rawPath];
     const url = new URL(target, window.location.origin);
     return {
-      route: "/cockpit",
+      route: url.pathname,
       tab: url.searchParams.get("tab") || "trend",
       normalized: target,
     };
@@ -87,8 +87,10 @@ export default function App() {
     if (aliased) {
       const targetUrl = new URL(aliased, window.location.origin);
       window.history.replaceState({}, "", aliased);
-      setRoute("/cockpit");
-      setCockpitTab(targetUrl.searchParams.get("tab") || "trend");
+      setRoute(targetUrl.pathname);
+      if (targetUrl.pathname === "/cockpit") {
+        setCockpitTab(targetUrl.searchParams.get("tab") || "trend");
+      }
       window.scrollTo(0, 0);
       return;
     }
@@ -152,18 +154,6 @@ export default function App() {
     <AppShell route={route} onNavigate={navigate} lang={lang} setLang={setLang} fullBleed={route === "/"}>
       {route === "/" && <StoryPage onNavigate={navigate} lang={lang} />}
 
-      {route === "/academy" && (
-        <AcademyPage
-          profile={profile}
-          hallOfFame={hallOfFame}
-          onSaveProfile={handleSaveProfile}
-          onForgetProfile={handleForgetProfile}
-          onOpenCockpit={handleCockpitAction}
-          onOpenGame={() => navigate("/game")}
-          lang={lang}
-        />
-      )}
-
       {route === "/cockpit" && (
         <CockpitPage
           region={region}
@@ -190,14 +180,17 @@ export default function App() {
         >
           <GamePage
             profile={profile}
+            hallOfFame={hallOfFame}
             onSaveProfile={handleSaveProfile}
+            onForgetProfile={handleForgetProfile}
+            onOpenCockpit={handleCockpitAction}
             onNavigate={navigate}
             lang={lang}
           />
         </Suspense>
       )}
 
-      {(route === "/cockpit" || route === "/academy") && (
+      {route === "/cockpit" && (
         <AskPanel
           profile={profile}
           backendStatus={backendStatus}

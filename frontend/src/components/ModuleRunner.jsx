@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2, Compass, HelpCircle, RotateCcw, Sparkles, XCi
 import { getTrend } from "../api";
 import { creditFor, gate } from "../academy/mastery";
 import { starsFor, xpFor } from "../academy/xp";
+import { soundEngine } from "../game/soundEngine";
 
 /**
  * Deterministic option permutation per question id so the correct answer
@@ -179,6 +180,7 @@ export default function ModuleRunner({
     setAttemptsByQ((prev) => ({ ...prev, [q.id]: nextAttempt }));
 
     if (!opt.isCorrect) {
+      soundEngine.playAlertWarning();
       setFeedback({
         correct: false,
         text: "Not quite — inspect the units, p-value, or confidence bounds and try again cleanly.",
@@ -209,6 +211,7 @@ export default function ModuleRunner({
     };
 
     const nextItems = [...runItems.filter((it) => it.id !== q.id), itemRecord];
+    soundEngine.playActionClick("quiz_ok");
     setRunItems(nextItems);
     setSolvedByQ((prev) => ({ ...prev, [q.id]: itemRecord }));
     setFeedback({
@@ -237,6 +240,11 @@ export default function ModuleRunner({
       return;
     }
     const result = gate(runItems);
+    if (result.passed) {
+      soundEngine.playRingtone();
+    } else {
+      soundEngine.playAlertWarning();
+    }
     setFinishedResult(result);
     onCompleteModule(mod.id, result, runItems);
   };

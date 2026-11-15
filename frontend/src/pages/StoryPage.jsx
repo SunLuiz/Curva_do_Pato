@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Maximize2, Minimize2, Pause, Play, Sparkles } from "lucide-react";
 import { STORY, interpolatePoints, localizeSlide, smoothCurvePath } from "../content/story";
+import { soundEngine } from "../game/soundEngine";
 
 function ConceptualNoiseToggle({ lang = "en" }) {
   const l = lang === "pt" ? "pt" : "en";
@@ -27,7 +28,10 @@ function ConceptualNoiseToggle({ lang = "en" }) {
         <button
           type="button"
           className={`pill ${deseasonalized ? "active" : ""}`}
-          onClick={() => setDeseasonalized((v) => !v)}
+          onClick={() => {
+            soundEngine.playActionClick("preset");
+            setDeseasonalized((v) => !v);
+          }}
         >
           {deseasonalized
             ? l === "pt"
@@ -350,6 +354,7 @@ export default function StoryPage({ onNavigate, lang = "en" }) {
             className="btn-secondary"
             style={{ padding: "0.5rem 1rem" }}
             onClick={() => {
+              soundEngine.playActionClick("slide");
               setPlaying(false);
               go(safeIdx - 1);
             }}
@@ -367,6 +372,7 @@ export default function StoryPage({ onNavigate, lang = "en" }) {
                 aria-label={`Slide ${idx + 1}: ${s.kicker}`}
                 aria-current={idx === safeIdx ? "step" : undefined}
                 onClick={() => {
+                  soundEngine.playActionClick("slide");
                   setPlaying(false);
                   setIndex(idx);
                 }}
@@ -379,6 +385,7 @@ export default function StoryPage({ onNavigate, lang = "en" }) {
             className="btn-secondary"
             style={{ padding: "0.5rem 1rem" }}
             onClick={() => {
+              soundEngine.playActionClick("slide");
               setPlaying(false);
               go(safeIdx + 1);
             }}

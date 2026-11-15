@@ -40,6 +40,7 @@ import MissionDebrief from "../game/hud/MissionDebrief";
 import MissionLabPanel from "../game/hud/MissionLabPanel";
 import { MISSION_DEFS, MISSION_ORDER } from "../game/missions/missionParams";
 import { PLANETS } from "../game/sim/planetaryPhysics";
+import { computeSnapshotAgentState } from "../engine/mptoEngine";
 import {
   clearRuntime,
   dispatchAction,
@@ -220,9 +221,9 @@ export default function GamePage({
   const [depth, setDepth] = useState(initialQuery?.depth || profile.depth || "explorer");
   const [usedHint, setUsedHint] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const [volume, setVolume] = useState(0.78);
-  const [musicEnabled, setMusicEnabled] = useState(true);
+  const [muted, setMuted] = useState(() => soundEngine.getState().muted);
+  const [volume, setVolume] = useState(() => soundEngine.getState().volume);
+  const [musicEnabled, setMusicEnabled] = useState(() => soundEngine.getState().musicEnabled);
   const [camMode, setCamMode] = useState("chase"); // chase | survey
   const [runCounter, setRunCounter] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -281,6 +282,15 @@ export default function GamePage({
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches,
     []
   );
+
+  useEffect(() => {
+    const sync = (snap) => {
+      setMuted(snap.muted);
+      setVolume(snap.volume);
+      setMusicEnabled(snap.musicEnabled);
+    };
+    return soundEngine.subscribe(sync);
+  }, []);
 
   useEffect(() => {
     soundEngine.setMuted(muted);
@@ -548,6 +558,7 @@ export default function GamePage({
   const res = snapshot?.resources;
   const al = snapshot?.alert;
   const objectives = useMemo(() => getMissionObjectives(snapshot, l), [snapshot, l]);
+  const agentOrchestration = useMemo(() => computeSnapshotAgentState(snapshot), [snapshot]);
 
   return (
     <div className="game-shell">
@@ -829,6 +840,44 @@ export default function GamePage({
                   </div>
                 ))}
               </div>
+
+              {/* Read-Only 7-Agent OMNI Orchestrator + Statistical Auditor Live Consensus */}
+              {agentOrchestration && (
+                <div className="hud-agent-strip" aria-label="7-Agent OMNI Live Consensus">
+                  <span style={{ color: "var(--hud-cyan)", fontWeight: 700 }}>
+                    OMNI {Math.round((agentOrchestration.consensusScore || 0) * 100)}%
+                  </span>
+                  <span
+                    className={`hud-agent-chip ${
+                      agentOrchestration.activeVetoes?.length > 0 ? "is-veto" : "is-ok"
+                    }`}
+                    title={
+                      l === "pt"
+                        ? agentOrchestration.auditorRule.statusPt
+                        : agentOrchestration.auditorRule.statusEn
+                    }
+                  >
+                    {agentOrchestration.activeVetoes?.length > 0
+                      ? `VETO: ${agentOrchestration.activeVetoes.join(", ")}`
+                      : l === "pt"
+                        ? "Auditor: NOMINAL"
+                        : "Auditor: NOMINAL"}
+                  </span>
+                  {agentOrchestration.agents.map((ag) => {
+                    const cls = ag.veto ? "is-veto" : ag.vote >= 0.55 ? "is-watch" : "is-ok";
+                    const shortName = ag.name.split(" ")[0];
+                    return (
+                      <span
+                        key={ag.id}
+                        className={`hud-agent-chip ${cls}`}
+                        title={`${ag.name} (#${ag.frontierId}): ${l === "pt" ? ag.signalPt : ag.signalEn}`}
+                      >
+                        {shortName} {Math.round(ag.vote * 100)}%
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <div style={{ display: "flex", gap: "0.45rem", alignItems: "flex-start" }}>

@@ -15,6 +15,7 @@ import GeotechnicalSlipPanel from "./space/GeotechnicalSlipPanel";
 import WindStressDecisionPanel from "./space/WindStressDecisionPanel";
 import OpticalQualityPanel from "./space/OpticalQualityPanel";
 import AgentOrchestrationPanel from "./space/AgentOrchestrationPanel";
+import { soundEngine } from "../game/soundEngine";
 
 const FRONTIER_TO_MISSION = {
   1: "M1",
@@ -59,10 +60,12 @@ export default function SpaceAnalogTab({ lang = "en", onNavigate }) {
   const unified = useMemo(() => computeUnifiedMPTO(params), [params]);
 
   const handleSelectPlanet = (planetId) => {
+    soundEngine.playActionClick("preset");
     setParams(defaultParamsForPlanet(planetId));
   };
 
   const handleResetNominal = () => {
+    soundEngine.playActionClick("purge");
     setParams(defaultParamsForPlanet(params.planetId));
   };
 
@@ -71,6 +74,7 @@ export default function SpaceAnalogTab({ lang = "en", onNavigate }) {
   };
 
   const handleLaunchGame = (missionId) => {
+    soundEngine.playActionClick("dock");
     const targetUrl = buildGameDeepLink({
       missionId: missionId || params.recommendedMission || "M5",
       planetId: params.planetId,

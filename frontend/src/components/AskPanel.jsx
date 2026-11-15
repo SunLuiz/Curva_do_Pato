@@ -3,6 +3,7 @@ import { Compass, Loader2, MessageSquare, RotateCcw, Send, Sparkles, X } from "l
 import { formatPersonalNote } from "../content/faq";
 import { UI_TEXT } from "../content/i18n";
 import { answerEcosystemQuestion } from "../engine/askEngine";
+import { soundEngine } from "../game/soundEngine";
 
 export default function AskPanel({
   profile,
@@ -31,6 +32,7 @@ export default function AskPanel({
   async function submitQuestion() {
     const q = question.trim();
     if (!q || asking) return;
+    soundEngine.playActionClick("ask_send");
     setQuestion("");
     setMessages((prev) => [...prev, { id: `u-${Date.now()}`, role: "user", text: q }]);
     setAsking(true);
@@ -39,6 +41,7 @@ export default function AskPanel({
         context: cockpitContext,
         lang: l,
       });
+      soundEngine.playActionClick("ask_reply");
       setMessages((prev) => [
         ...prev,
         {
@@ -50,6 +53,7 @@ export default function AskPanel({
         },
       ]);
     } catch {
+      soundEngine.playAlertWarning();
       setMessages((prev) => [
         ...prev,
         {

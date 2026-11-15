@@ -1,11 +1,14 @@
 /**
  * Procedural Acoustic Engine (100% Web Audio API, zero external audio assets).
  * Synthesizes:
- *  1) 12-hole Transverse Ocarina (Helmholtz resonator: sine + subtle triangle + 5.5 Hz LFO breath + ADSR)
- *  2) Adaptive Chart Sonification (tempo/BPM, Dorian pitch, brightness & dynamic gain follow telemetry curve)
- *  3) Planetary Wind Generator (bandpass noise scaled by windMs * sqrt(rho) and attenuated inside shelter)
- *  4) Target Distance Sonar & Geotechnical Wheel-Slip Rumble
+ *  1) 12-hole Transverse Ocarina (Helmholtz resonator: sine + triangle + 5.5 Hz LFO breath + ADSR)
+ *  2) Classic 8/16-bit Chiptune & FM Synth Voices (NES square wave & arcade/gothic sawtooth brass)
+ *  3) Adaptive Chart Sonification (tempo/BPM, Dorian pitch, brightness & timbre-aware waveform)
+ *  4) Planetary Wind Generator (bandpass noise scaled by windMs * sqrt(rho) and attenuated inside shelter)
+ *  5) Target Distance Sonar, Wheel-Slip Rumble & Ecosystem-Wide Mechanism Feedback
  */
+
+const AUDIO_STORAGE_KEY = "cockpit-omni/audio/v1";
 
 export const OCARINA_NOTES = {
   D3: 146.83,
@@ -106,6 +109,234 @@ export const OCARINA_MELODIES = {
     [OCARINA_NOTES.D5, 1.28],
   ],
 };
+
+/**
+ * Classic 8-bit / 16-bit opening themes synthesized directly via Web Audio oscillators
+ * [frequencyHz, durationSec, stepDelaySec].
+ */
+export const CLASSIC_INTROS = {
+  mario: {
+    id: "mario",
+    wave: "square",
+    filterCutoffHz: 3400,
+    gain: 0.14,
+    labelEn: "Super Mario Bros. (8-Bit)",
+    labelPt: "Super Mario Bros. (8-Bit)",
+    chipEn: "Ricoh 2A03 · Square",
+    chipPt: "Ricoh 2A03 · Quadrada",
+    notes: [
+      [659.25, 0.12, 0.15],
+      [659.25, 0.12, 0.3],
+      [659.25, 0.12, 0.3],
+      [523.25, 0.12, 0.15],
+      [659.25, 0.12, 0.3],
+      [783.99, 0.25, 0.55],
+      [392.0, 0.25, 0.4],
+    ],
+  },
+  superman: {
+    id: "superman",
+    wave: "sawtooth",
+    filterCutoffHz: 3600,
+    gain: 0.14,
+    labelEn: "Superman (Fanfare)",
+    labelPt: "Superman (Fanfarra)",
+    chipEn: "Arcade Brass · Bright Sawtooth",
+    chipPt: "Metais Arcade · Sawtooth Aguda",
+    notes: [
+      [392.0, 0.15, 0.16],
+      [392.0, 0.15, 0.16],
+      [523.25, 0.65, 0.7],
+      [523.25, 0.18, 0.2],
+      [659.25, 0.18, 0.2],
+      [783.99, 0.75, 0.8],
+      [1046.5, 0.9, 0.95],
+    ],
+  },
+  batman: {
+    id: "batman",
+    wave: "sawtooth",
+    filterCutoffHz: 1180,
+    gain: 0.16,
+    labelEn: "Batman (Classic Theme)",
+    labelPt: "Batman (Tema Clássico)",
+    chipEn: "Gothic Brass · Low Sawtooth",
+    chipPt: "Metais Góticos · Sawtooth Grave",
+    notes: [
+      [261.63, 0.45, 0.48],
+      [293.66, 0.45, 0.48],
+      [311.13, 0.65, 0.7],
+      [415.3, 0.65, 0.7],
+      [392.0, 1.3, 1.35],
+    ],
+  },
+  spiderman: {
+    id: "spiderman",
+    wave: "square",
+    filterCutoffHz: 2500,
+    gain: 0.13,
+    labelEn: "Spider-Man ('67 Theme)",
+    labelPt: "Homem-Aranha (Tema '67)",
+    chipEn: "Blues-Rock · Snappy Square",
+    chipPt: "Blues-Rock · Quadrada Curta",
+    notes: [
+      [523.25, 0.22, 0.25],
+      [622.25, 0.22, 0.25],
+      [783.99, 0.65, 0.75],
+      [739.99, 0.22, 0.25],
+      [698.46, 0.22, 0.25],
+      [622.25, 0.45, 0.5],
+      [523.25, 0.65, 0.7],
+    ],
+  },
+};
+
+export const SOUND_THEMES = [
+  {
+    id: "title",
+    engine: "ocarina",
+    wave: "sine",
+    labelEn: "Ocarina · Title Theme",
+    labelPt: "Ocarina · Tema de Abertura",
+    chipEn: "Helmholtz Sine + Triangle",
+    chipPt: "Senoide + Triângulo",
+  },
+  {
+    id: "lullaby",
+    engine: "ocarina",
+    wave: "sine",
+    labelEn: "Ocarina · Zelda's Lullaby",
+    labelPt: "Ocarina · Zelda's Lullaby",
+    chipEn: "Helmholtz Sine + Breath",
+    chipPt: "Senoide Suave + Sopro",
+  },
+  {
+    id: "time",
+    engine: "ocarina",
+    wave: "sine",
+    labelEn: "Ocarina · Song of Time",
+    labelPt: "Ocarina · Song of Time",
+    chipEn: "Helmholtz Dorian",
+    chipPt: "Dórico Cerâmico",
+  },
+  {
+    id: "mario",
+    engine: "retro",
+    wave: "square",
+    labelEn: "Super Mario Bros. (8-Bit)",
+    labelPt: "Super Mario Bros. (8-Bit)",
+    chipEn: "Ricoh 2A03 · Square",
+    chipPt: "Ricoh 2A03 · Onda Quadrada",
+  },
+  {
+    id: "superman",
+    engine: "retro",
+    wave: "sawtooth",
+    labelEn: "Superman (Fanfare)",
+    labelPt: "Superman (Fanfarra)",
+    chipEn: "Arcade Brass · Sawtooth",
+    chipPt: "Metais Arcade · Sawtooth",
+  },
+  {
+    id: "batman",
+    engine: "retro",
+    wave: "sawtooth",
+    labelEn: "Batman (Classic Gothic)",
+    labelPt: "Batman (Tema Clássico)",
+    chipEn: "Gothic Brass · Low Sawtooth",
+    chipPt: "Metais Góticos · Sawtooth Grave",
+  },
+  {
+    id: "spiderman",
+    engine: "retro",
+    wave: "square",
+    labelEn: "Spider-Man ('67 Riff)",
+    labelPt: "Homem-Aranha (Tema '67)",
+    chipEn: "Blues-Rock · Snappy Square",
+    chipPt: "Blues-Rock · Quadrada Curta",
+  },
+];
+
+export const MECHANISM_TIMBRES = [
+  {
+    id: "ocarina",
+    wave: "sine",
+    secondaryWave: "triangle",
+    cutoffHz: 2600,
+    labelEn: "Ocarina Ceramic (Sine)",
+    labelPt: "Ocarina Cerâmica (Sine)",
+    descEn: "Soft breath resonator across tabs, rover actions & Dorian telemetry.",
+    descPt: "Sopro cerâmico suave para abas, ações do rover e telemetria Dórica.",
+  },
+  {
+    id: "square_mario",
+    wave: "square",
+    secondaryWave: "triangle",
+    cutoffHz: 3400,
+    labelEn: "8-Bit NES (Square · Mario)",
+    labelPt: "8-Bit NES (Quadrada · Mario)",
+    descEn: "Crisp percussive 8-bit square pulse for buttons, Ask OMNI & live curve.",
+    descPt: "Pulso 8-bit percussivo de Nintendinho em botões, Ask OMNI e curva.",
+  },
+  {
+    id: "brass_batman",
+    wave: "sawtooth",
+    secondaryWave: "sawtooth",
+    cutoffHz: 1180,
+    labelEn: "Gothic Brass (Low Sawtooth · Batman)",
+    labelPt: "Metais Góticos (Sawtooth Grave · Batman)",
+    descEn: "Warm low-passed sawtooth horns for tense alarms & telemetry.",
+    descPt: "Metais graves filtrados para alertas críticos e telemetria de risco.",
+  },
+  {
+    id: "brass_superman",
+    wave: "sawtooth",
+    secondaryWave: "triangle",
+    cutoffHz: 3600,
+    labelEn: "Heroic Fanfare (Bright Sawtooth · Superman)",
+    labelPt: "Fanfarra Heroica (Sawtooth Aguda · Superman)",
+    descEn: "Bright arcade trumpet stack on docks, module mastery & curve peaks.",
+    descPt: "Trompetes brilhantes de arcade ao acoplar, vencer e subir picos.",
+  },
+  {
+    id: "pulse_spiderman",
+    wave: "square",
+    secondaryWave: "sawtooth",
+    cutoffHz: 2500,
+    labelEn: "Arcade Synth-Rock (Square · Spider-Man)",
+    labelPt: "Arcade Synth-Rock (Quadrada · Aranha)",
+    descEn: "Fast-attack blues/synth pulse for switches, Quiz & cockpit presets.",
+    descPt: "Ataque curto energético em seletores, Quiz e presets do Cockpit.",
+  },
+];
+
+export const ECOSYSTEM_AUDIO_AUDIT = [
+  {
+    surface: "/ (StoryPage)",
+    mechanismsEn: "Slide navigation, pitch mode, Conceptual Noise Toggle",
+    mechanismsPt: "Navegação nos 7 slides, Modo Pitch, Lente Sazonal",
+    modeEn: "Active · Respects Mechanism Timbre & Mute",
+    modePt: "Ativo · Usa Timbre de Mecanismo & Mudo",
+  },
+  {
+    surface: "/cockpit + Ask OMNI",
+    mechanismsEn: "5 Action Presets, Tab switches, Space MPTO sliders, Ask OMNI query/reply",
+    mechanismsPt: "5 Presets, troca de abas, sliders MPTO e perguntas/respostas do Ask OMNI",
+    modeEn: "Active · Timbre clicks + Ringtone on verified insight",
+    modePt: "Ativo · Cliques por timbre + Toque no retorno verificado",
+  },
+  {
+    surface: "/game (Menu + 3D + Quiz)",
+    mechanismsEn: "Gear Sound Menu, 7 Themes, Live Curve BPM, Wind ρ, Sonar, Slip & Academy Quiz",
+    mechanismsPt: "Engrenagem no Menu Start, 7 temas, Curva BPM, Vento ρ, Sonar, Slip e Quiz",
+    modeEn: "Active · Full Web Audio Physics & Mastery Ringtone",
+    modePt: "Ativo · Acústica física completa + Toque ao concluir Quiz",
+  },
+];
+
+export function getTimbreProfile(timbreId = "ocarina") {
+  return MECHANISM_TIMBRES.find((t) => t.id === timbreId) || MECHANISM_TIMBRES[0];
+}
 
 // Simple 8-step melodic contour intervals modulated smoothly by telemetry level & slope
 const TELEMETRY_PHRASE_OFFSETS = [0, 2, 1, 3, 2, 4, 2, 1];
@@ -219,10 +450,14 @@ class GameSoundEngine {
     this.muted = false;
     this.masterVolume = 0.78;
     this.musicEnabled = true;
+    this.activeSongId = "title";
+    this.ringtoneId = "mario";
+    this.mechanismTimbre = "ocarina";
 
     this.activeTheme = null;
     this.themeLoopTimer = null;
     this.themeCancelFns = new Set();
+    this.listeners = new Set();
 
     // Adaptive telemetry scheduler timestamps (in AudioContext seconds)
     this.melodyStep = 0;
@@ -231,6 +466,72 @@ class GameSoundEngine {
     this.nextWheelAt = 0;
     this.lastCurveNorm = null;
     this.lastActiveGameAudioAt = 0;
+
+    this._loadPrefs();
+  }
+
+  _loadPrefs() {
+    if (typeof window === "undefined" || !window.localStorage) return;
+    try {
+      const raw = window.localStorage.getItem(AUDIO_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (typeof parsed.muted === "boolean") this.muted = parsed.muted;
+      if (typeof parsed.volume === "number" && Number.isFinite(parsed.volume)) {
+        this.masterVolume = clamp(parsed.volume, 0, 1);
+      }
+      if (typeof parsed.musicEnabled === "boolean") this.musicEnabled = parsed.musicEnabled;
+      if (typeof parsed.activeSongId === "string" && SOUND_THEMES.some((t) => t.id === parsed.activeSongId)) {
+        this.activeSongId = parsed.activeSongId;
+      }
+      if (typeof parsed.ringtoneId === "string" && SOUND_THEMES.some((t) => t.id === parsed.ringtoneId)) {
+        this.ringtoneId = parsed.ringtoneId;
+      }
+      if (
+        typeof parsed.mechanismTimbre === "string" &&
+        MECHANISM_TIMBRES.some((t) => t.id === parsed.mechanismTimbre)
+      ) {
+        this.mechanismTimbre = parsed.mechanismTimbre;
+      }
+    } catch {
+      // Ignore storage read failure
+    }
+  }
+
+  _savePrefs() {
+    if (typeof window === "undefined" || !window.localStorage) return;
+    try {
+      window.localStorage.setItem(
+        AUDIO_STORAGE_KEY,
+        JSON.stringify({
+          muted: this.muted,
+          volume: this.masterVolume,
+          musicEnabled: this.musicEnabled,
+          activeSongId: this.activeSongId,
+          ringtoneId: this.ringtoneId,
+          mechanismTimbre: this.mechanismTimbre,
+        })
+      );
+    } catch {
+      // Ignore storage write failure
+    }
+  }
+
+  subscribe(fn) {
+    if (typeof fn !== "function") return () => {};
+    this.listeners.add(fn);
+    return () => this.listeners.delete(fn);
+  }
+
+  _notify() {
+    const snap = this.getState();
+    for (const cb of Array.from(this.listeners)) {
+      try {
+        cb(snap);
+      } catch {
+        // Ignore subscriber error
+      }
+    }
   }
 
   getState() {
@@ -239,29 +540,64 @@ class GameSoundEngine {
       volume: this.masterVolume,
       musicEnabled: this.musicEnabled,
       activeTheme: this.activeTheme,
+      activeSongId: this.activeSongId,
+      ringtoneId: this.ringtoneId,
+      mechanismTimbre: this.mechanismTimbre,
     };
   }
 
   setMuted(val) {
-    this.muted = Boolean(val);
+    const next = Boolean(val);
+    if (this.muted === next) return;
+    this.muted = next;
     this._syncMasterOutput();
     if (this.muted) {
       this.stopMusic();
       this.silenceWind();
     }
+    this._savePrefs();
+    this._notify();
   }
 
   setVolume(val) {
-    const clamped = clamp(Number.isFinite(val) ? val : 0.78, 0, 1);
+    const clamped = Number(clamp(Number.isFinite(val) ? val : 0.78, 0, 1).toFixed(2));
+    if (this.masterVolume === clamped) return;
     this.masterVolume = clamped;
     this._syncMasterOutput();
+    this._savePrefs();
+    this._notify();
   }
 
   setMusicEnabled(val) {
-    this.musicEnabled = Boolean(val);
+    const next = Boolean(val);
+    if (this.musicEnabled === next) return;
+    this.musicEnabled = next;
     if (!this.musicEnabled) {
       this.stopMusic();
     }
+    this._savePrefs();
+    this._notify();
+  }
+
+  setActiveSongId(songId) {
+    if (!SOUND_THEMES.some((t) => t.id === songId)) return;
+    this.activeSongId = songId;
+    this._savePrefs();
+    this._notify();
+  }
+
+  setRingtoneId(ringId) {
+    if (!SOUND_THEMES.some((t) => t.id === ringId)) return;
+    this.ringtoneId = ringId;
+    this._savePrefs();
+    this._notify();
+  }
+
+  setMechanismTimbre(timbreId) {
+    if (!MECHANISM_TIMBRES.some((t) => t.id === timbreId)) return;
+    this.mechanismTimbre = timbreId;
+    this._savePrefs();
+    this._notify();
   }
 
   _syncMasterOutput() {
@@ -513,52 +849,158 @@ class GameSoundEngine {
       clearTimeout(this.themeLoopTimer);
       this.themeLoopTimer = null;
     }
+    const hadTheme = this.activeTheme !== null;
     this.activeTheme = null;
     for (const cancel of Array.from(this.themeCancelFns)) {
       cancel();
     }
     this.themeCancelFns.clear();
+    if (hadTheme) this._notify();
   }
 
-  playOcarinaSequence(songKey = "title", { loop = false } = {}) {
+  /**
+   * 8-bit / 16-bit Web Audio chiptune or brass voice ('square' or 'sawtooth').
+   */
+  playRetroNote(
+    freq = 523.25,
+    duration = 0.2,
+    startTimeOffset = 0,
+    waveType = "square",
+    { gain = 0.14, filterCutoffHz = 3200, registerCancel = false } = {}
+  ) {
+    const ctx = this.ensureCtx();
+    if (!ctx || !this.compressorNode) return;
+    try {
+      const now = ctx.currentTime + Math.max(0, startTimeOffset);
+      const dur = Math.max(0.05, duration);
+
+      const osc = ctx.createOscillator();
+      osc.type = waveType === "sawtooth" ? "sawtooth" : "square";
+      osc.frequency.setValueAtTime(freq, now);
+
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.setValueAtTime(filterCutoffHz, now);
+
+      const env = ctx.createGain();
+      env.gain.setValueAtTime(0.001, now);
+      env.gain.linearRampToValueAtTime(gain, now + 0.01);
+      env.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+
+      osc.connect(lp);
+      lp.connect(env);
+      env.connect(this.compressorNode);
+
+      osc.start(now);
+      osc.stop(now + dur + 0.03);
+
+      if (registerCancel) {
+        const cancelFn = () => {
+          try {
+            const t = ctx.currentTime;
+            env.gain.cancelScheduledValues(t);
+            env.gain.setTargetAtTime(0.0001, t, 0.02);
+            osc.stop(t + 0.07);
+          } catch {
+            // Ignore already stopped oscillators
+          }
+        };
+        this.themeCancelFns.add(cancelFn);
+        osc.onended = () => {
+          this.themeCancelFns.delete(cancelFn);
+        };
+      }
+    } catch {
+      // Ignore Web Audio errors
+    }
+  }
+
+  /**
+   * Dispatches a note using the currently selected Ecosystem Mechanism Timbre
+   * (Ocarina sine+triangle vs 8-bit square vs 16-bit sawtooth brass).
+   */
+  playMechanismNote(
+    freq = 587.33,
+    duration = 0.25,
+    startTimeOffset = 0,
+    { gain = 0.16, vibratoHz = 5.5, harmonicMix = 0.12, filterCutoffHz = null, registerCancel = false } = {}
+  ) {
+    const profile = getTimbreProfile(this.mechanismTimbre);
+    if (profile.id === "ocarina") {
+      this.playOcarinaNote(freq, duration, startTimeOffset, {
+        gain: gain * 1.15,
+        vibratoHz,
+        harmonicMix,
+        filterCutoffHz: filterCutoffHz || profile.cutoffHz,
+        withBreath: duration >= 0.18,
+        registerCancel,
+      });
+      return;
+    }
+    this.playRetroNote(freq, duration, startTimeOffset, profile.wave, {
+      gain: gain * (profile.wave === "square" ? 0.72 : 0.78),
+      filterCutoffHz: filterCutoffHz || profile.cutoffHz,
+      registerCancel,
+    });
+  }
+
+  playTheme(songKey = this.activeSongId || "title", { loop = false } = {}) {
     if (this.muted || !this.musicEnabled) return false;
-    const notes = OCARINA_MELODIES[songKey];
-    if (!notes) return false;
+    const ocarinaNotes = OCARINA_MELODIES[songKey];
+    const retroTrack = CLASSIC_INTROS[songKey];
+    if (!ocarinaNotes && !retroTrack) return false;
     const ctx = this.ensureCtx();
     if (!ctx) return false;
 
     this.stopMusic();
     this.activeTheme = songKey;
+    this.activeSongId = songKey;
+    this._savePrefs();
+    this._notify();
 
     const schedulePass = () => {
       if (this.muted || !this.musicEnabled || this.activeTheme !== songKey) return;
       let offset = 0.04;
-      for (let i = 0; i < notes.length; i += 1) {
-        const [freq, dur] = notes[i];
-        this.playOcarinaNote(freq, dur, offset, {
-          gain: 0.22,
-          vibratoHz: 5.5,
-          harmonicMix: 0.12,
-          filterCutoffHz: 2500,
-          withBreath: true,
-          registerCancel: true,
-        });
 
-        // Layer gentle harp arpeggio notes on title theme
-        if (songKey === "title") {
-          const chord = TITLE_CHORDS[i < 10 ? 0 : 1];
-          const chordFreq = chord[i % chord.length];
-          this.playHarpPadNote(chordFreq, dur + 0.45, offset, 0.05);
+      if (ocarinaNotes) {
+        for (let i = 0; i < ocarinaNotes.length; i += 1) {
+          const [freq, dur] = ocarinaNotes[i];
+          this.playOcarinaNote(freq, dur, offset, {
+            gain: 0.22,
+            vibratoHz: 5.5,
+            harmonicMix: 0.12,
+            filterCutoffHz: 2500,
+            withBreath: true,
+            registerCancel: true,
+          });
+          if (songKey === "title") {
+            const chord = TITLE_CHORDS[i < 10 ? 0 : 1];
+            const chordFreq = chord[i % chord.length];
+            this.playHarpPadNote(chordFreq, dur + 0.45, offset, 0.05);
+          }
+          offset += dur + 0.045;
         }
-        offset += dur + 0.045;
+      } else if (retroTrack) {
+        for (let i = 0; i < retroTrack.notes.length; i += 1) {
+          const [freq, dur, step] = retroTrack.notes[i];
+          this.playRetroNote(freq, dur, offset, retroTrack.wave, {
+            gain: retroTrack.gain,
+            filterCutoffHz: retroTrack.filterCutoffHz,
+            registerCancel: true,
+          });
+          offset += step;
+        }
       }
 
       if (loop) {
-        this.themeLoopTimer = setTimeout(schedulePass, Math.round((offset + 0.45) * 1000));
+        this.themeLoopTimer = setTimeout(schedulePass, Math.round((offset + 0.55) * 1000));
       } else {
         this.themeLoopTimer = setTimeout(() => {
-          if (this.activeTheme === songKey) this.activeTheme = null;
-        }, Math.round((offset + 0.1) * 1000));
+          if (this.activeTheme === songKey) {
+            this.activeTheme = null;
+            this._notify();
+          }
+        }, Math.round((offset + 0.12) * 1000));
       }
     };
 
@@ -566,9 +1008,47 @@ class GameSoundEngine {
     return true;
   }
 
+  playOcarinaSequence(songKey = "title", { loop = false } = {}) {
+    return this.playTheme(songKey, { loop });
+  }
+
   /**
-   * Synchronizes continuous planetary wind, adaptive Ocarina curve-following melody,
-   * target proximity sonar, and wheel-slip rumble during active 3D gameplay.
+   * Plays a concise, non-looping notification ringtone motif from the Ecosystem Ringtone catalog
+   * without cancelling long gameplay loops.
+   */
+  playRingtone(ringId = this.ringtoneId) {
+    if (this.muted) return false;
+    const key = SOUND_THEMES.some((t) => t.id === ringId) ? ringId : "mario";
+    const ctx = this.ensureCtx();
+    if (!ctx) return false;
+
+    const retro = CLASSIC_INTROS[key];
+    if (retro) {
+      let offset = 0.02;
+      for (const [freq, dur, step] of retro.notes) {
+        this.playRetroNote(freq, dur, offset, retro.wave, {
+          gain: retro.gain * 0.95,
+          filterCutoffHz: retro.filterCutoffHz,
+          registerCancel: false,
+        });
+        offset += step;
+      }
+      return true;
+    }
+
+    const ocarinaSlice = (OCARINA_MELODIES[key] || OCARINA_MELODIES.title).slice(0, 5);
+    let offset = 0.02;
+    for (const [freq, dur] of ocarinaSlice) {
+      const shortDur = Math.min(0.45, dur * 0.72);
+      this.playOcarinaNote(freq, shortDur, offset, { gain: 0.2, withBreath: false, registerCancel: false });
+      offset += shortDur + 0.04;
+    }
+    return true;
+  }
+
+  /**
+   * Synchronizes continuous planetary wind, adaptive curve-following melody
+   * (rendered with the selected Mechanism Timbre), distance sonar & wheel rumble.
    */
   updateGameplayAudio({
     normVal = 0.4,
@@ -606,7 +1086,7 @@ class GameSoundEngine {
     const slope = clamp((normVal - prevNorm) * 14, -1, 1);
     this.lastCurveNorm = normVal;
 
-    // 2) Adaptive Ocarina Song + Rhythm driven by chart rise/fall & level
+    // 2) Adaptive Telemetry Melody driven by chart rise/fall & selected mechanism timbre
     if (this.musicEnabled && this.activeTheme === null && now >= this.nextCurveNoteAt) {
       const curveAudio = computeCurveAudioParams({ normVal, slope, nearThreshold });
       const phraseDelta = TELEMETRY_PHRASE_OFFSETS[this.melodyStep % TELEMETRY_PHRASE_OFFSETS.length];
@@ -614,12 +1094,11 @@ class GameSoundEngine {
       const freq = DORIAN_SCALE[idx];
       const noteDur = clamp(curveAudio.stepIntervalSec * 0.86, 0.14, 0.54);
 
-      this.playOcarinaNote(freq, noteDur, 0, {
-        gain: 0.125 * curveAudio.gainScale,
+      this.playMechanismNote(freq, noteDur, 0, {
+        gain: 0.115 * curveAudio.gainScale,
         vibratoHz: curveAudio.vibratoHz,
         harmonicMix: curveAudio.harmonicMix,
         filterCutoffHz: curveAudio.filterCutoffHz,
-        withBreath: this.melodyStep % 2 === 0,
         registerCancel: false,
       });
 
@@ -713,37 +1192,69 @@ class GameSoundEngine {
   }
 
   playActionClick(kind = "servo") {
+    if (this.muted) return;
+    const timbre = getTimbreProfile(this.mechanismTimbre);
     if (kind === "purge") {
-      this.playTone({ freq: 720, endFreq: 1180, duration: 0.12, type: "triangle", gain: 0.08 });
+      this.playTone({
+        freq: 720,
+        endFreq: 1180,
+        duration: 0.12,
+        type: timbre.id === "ocarina" ? "triangle" : timbre.wave,
+        gain: 0.075,
+      });
       return;
     }
-    if (kind === "dock") {
-      this.playOcarinaNote(OCARINA_NOTES.A5, 0.24, 0, { gain: 0.18, withBreath: false });
+    if (kind === "dock" || kind === "quiz_ok") {
+      this.playMechanismNote(OCARINA_NOTES.A5, 0.2, 0, { gain: 0.14 });
+      if (kind === "quiz_ok") {
+        this.playMechanismNote(OCARINA_NOTES.D6, 0.22, 0.09, { gain: 0.14 });
+      }
       return;
     }
-    this.playTone({ freq: 290, endFreq: 190, duration: 0.09, type: "square", gain: 0.05 });
+    if (kind === "ask_send") {
+      this.playMechanismNote(OCARINA_NOTES.E5, 0.1, 0, { gain: 0.09 });
+      return;
+    }
+    if (kind === "ask_reply") {
+      this.playMechanismNote(OCARINA_NOTES.D5, 0.12, 0, { gain: 0.1 });
+      this.playMechanismNote(OCARINA_NOTES.A5, 0.18, 0.08, { gain: 0.11 });
+      return;
+    }
+    if (kind === "nav" || kind === "slide" || kind === "preset") {
+      const f = kind === "preset" ? OCARINA_NOTES.F5 : kind === "slide" ? OCARINA_NOTES.D5 : OCARINA_NOTES.C5;
+      this.playMechanismNote(f, 0.085, 0, { gain: 0.075 });
+      return;
+    }
+    this.playTone({ freq: 290, endFreq: 190, duration: 0.09, type: timbre.wave === "sine" ? "square" : timbre.wave, gain: 0.05 });
   }
 
   playAlertWarning() {
+    if (this.muted) return;
     this.playTone({ freq: 620, endFreq: 490, duration: 0.16, type: "sawtooth", gain: 0.055 });
   }
 
   playMorphHum() {
-    this.playOcarinaNote(OCARINA_NOTES.D5, 0.42, 0, { gain: 0.16 });
+    if (this.muted) return;
+    this.playMechanismNote(OCARINA_NOTES.D5, 0.42, 0, { gain: 0.15 });
   }
 
   playOutcome(won) {
     this.stopMusic();
     this.silenceWind();
+    if (this.muted) return;
     if (won) {
-      this.playOcarinaNote(OCARINA_NOTES.D5, 0.18, 0, { gain: 0.2 });
-      this.playOcarinaNote(OCARINA_NOTES.F5, 0.18, 0.15, { gain: 0.2 });
-      this.playOcarinaNote(OCARINA_NOTES.A5, 0.22, 0.3, { gain: 0.22 });
-      this.playOcarinaNote(OCARINA_NOTES.D6, 0.55, 0.48, { gain: 0.26 });
+      if (this.ringtoneId && CLASSIC_INTROS[this.ringtoneId]) {
+        this.playRingtone(this.ringtoneId);
+        return;
+      }
+      this.playMechanismNote(OCARINA_NOTES.D5, 0.18, 0, { gain: 0.18 });
+      this.playMechanismNote(OCARINA_NOTES.F5, 0.18, 0.15, { gain: 0.18 });
+      this.playMechanismNote(OCARINA_NOTES.A5, 0.22, 0.3, { gain: 0.2 });
+      this.playMechanismNote(OCARINA_NOTES.D6, 0.55, 0.48, { gain: 0.22 });
     } else {
-      this.playOcarinaNote(OCARINA_NOTES.F5, 0.22, 0, { gain: 0.2 });
-      this.playOcarinaNote(OCARINA_NOTES.E5, 0.22, 0.2, { gain: 0.18 });
-      this.playOcarinaNote(OCARINA_NOTES.D5, 0.52, 0.4, { gain: 0.2, vibratoHz: 3.5 });
+      this.playMechanismNote(OCARINA_NOTES.F5, 0.22, 0, { gain: 0.18 });
+      this.playMechanismNote(OCARINA_NOTES.E5, 0.22, 0.2, { gain: 0.16 });
+      this.playMechanismNote(OCARINA_NOTES.D5, 0.52, 0.4, { gain: 0.18, vibratoHz: 3.5 });
     }
   }
 }

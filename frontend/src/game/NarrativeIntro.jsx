@@ -66,21 +66,21 @@ const ACTS = [
   {
     id: "command",
     en: {
-      kicker: "Act 3 / 5 · Command Center · Orbital-to-Surface Fusion",
+      kicker: "Act 3 / 5 · 7-Agent OMNI Consensus & Statistical Auditor",
       title: "Why geometric distance is not energy distance (Wh/km).",
-      body: "A dust front sweeps Sector 4 while solar power sags. Optical vision spots rising opacity and suggests Position Alpha — until orbital thermal-inertia calibration reveals unconsolidated eolian sand.",
+      body: "Inside the OMNI Orchestrator, 7 physical Frontier agents vote in real time: Hebe Radiance (T⁴), Gemini Vision (ΔI & Beer-Lambert), Sol Invicta (IR albedo), Bios Guardian (SoC_bio), Grok Cratera (geotechnical slip), Storm Watcher (wind/DONKI), and Prudence (P10–P95), guarded by a non-LLM Statistical Auditor veto.",
       dialogue: [
-        'Gemini Vision (Optical): "Beer-Lambert opacity τ > 1.6 and |I_t - I_t-1| surging in Sector 4! Recall Rover-01 to Position Alpha!"',
-        'Grok Cratera (Geotechnical + Orbital): "Negative! Satellite nighttime thermal inertia calibrated by our Act 1 impulse test shows unconsolidated sand at Alpha (low τ_c). At 18° slope, wheel slip exceeds 40% (1 km = 1.8x Wh/km)! Rerouting via compact basalt (Green Vector)!"',
+        'Gemini Vision (#2 Optical): "Beer-Lambert opacity τ > 1.6 and |I_t - I_t-1| surging in Sector 4! Recall Rover-01 to Position Alpha!"',
+        'Grok Cratera (#5 Geotechnics · VETO): "Negative! Act 1 impulse test + orbital thermal inertia reveal unconsolidated sand at Alpha (>40% slip, 1.8x Wh/km). OMNI Orchestrator & Storm Watcher (#6) confirm Green Basalt bypass!"',
       ],
     },
     pt: {
-      kicker: "Ato 3 / 5 · Central de Comando · Fusão Orbital-Superfície",
+      kicker: "Ato 3 / 5 · Consenso dos 7 Agentes OMNI & Auditor Estatístico",
       title: "Por que distância em metros não é distância energética (Wh/km).",
-      body: "Uma frente de poeira avança pelo Setor 4 enquanto a geração solar cai. O canal óptico sugere abrigo na Posição Alpha — até a calibração orbital de inércia térmica revelar areia eólica sem coesão.",
+      body: "No Orquestrador OMNI, 7 agentes físicos votam sobre as fronteiras MPTO: Hebe Radiance (T⁴), Gemini Vision (ΔI e Beer-Lambert), Sol Invicta (albedo IR), Bios Guardian (SoC_bio), Grok Cratera (geotecnia), Storm Watcher (vento/DONKI) e Prudence (P10–P95), sob trava do Auditor Estatístico.",
       dialogue: [
-        'Gemini Vision (Óptico): "Opacidade Beer-Lambert τ > 1,6 e salto |I_t - I_t-1| no Setor 4! Recolher Rover-01 para Posição Alpha!"',
-        'Grok Cratera (Geotecnia + Satélite): "Negativo! A inércia térmica noturna orbital calibrada no pouso indica areia fofa em Alpha (baixo τ_c). Com 18° de inclinação, a patinagem (wheel slip) passa de 40% (1 km = 1,8x Wh/km)! Redirecionando pelo basalto compacto (Vetor Verde)!"',
+        'Gemini Vision (#2 Óptico): "Opacidade Beer-Lambert τ > 1,6 e salto |I_t - I_t-1| no Setor 4! Recolher Rover-01 para Posição Alpha!"',
+        'Grok Cratera (#5 Geotecnia · VETO): "Negativo! A inversão de pouso + satélite revela areia fofa em Alpha (>40% patinagem, 1,8x Wh/km). OMNI Orchestrator e Storm Watcher (#6) confirmam desvio pelo Basalto Verde!"',
       ],
     },
   },

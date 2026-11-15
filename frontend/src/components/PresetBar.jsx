@@ -1,6 +1,7 @@
 import React from "react";
 import { Compass, Droplets, Flame, Sparkles, Sun } from "lucide-react";
 import { UI_TEXT } from "../content/i18n";
+import { soundEngine } from "../game/soundEngine";
 
 const ICONS = {
   sun: Sun,
@@ -68,7 +69,10 @@ export default function PresetBar({
               key={preset.id}
               type="button"
               aria-pressed={active}
-              onClick={() => onSelectPreset(preset)}
+              onClick={() => {
+                soundEngine.playActionClick("preset");
+                onSelectPreset(preset);
+              }}
               style={{
                 textAlign: "left",
                 padding: "0.75rem 0.85rem",

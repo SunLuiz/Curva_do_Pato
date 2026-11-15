@@ -19,11 +19,16 @@ import { computeOraclePolicy, evaluateMissionOutcome } from "./oracle.js";
 import { createMissionRuntime, stepSimulation, triggerRoverAction } from "./roverSimulation.js";
 import { loadProfile, saveProfile, validatePilotName } from "../../academy/storage.js";
 import {
+  CLASSIC_INTROS,
+  ECOSYSTEM_AUDIO_AUDIT,
+  MECHANISM_TIMBRES,
   OCARINA_MELODIES,
   OCARINA_N64_PADS,
+  SOUND_THEMES,
   computeCurveAudioParams,
   computeProximityAudioParams,
   computeWindAudioParams,
+  soundEngine,
 } from "../soundEngine.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -400,4 +405,29 @@ test("validatePilotName enforces certificate-ready identity rules and normalizes
   assert.equal(accented.valid, true);
   assert.equal(accented.cleanName.length, 32);
   assert.equal(accented.cleanName, "João Pedro Santos — Operações Es");
+});
+
+test("Classic retro themes, selectable mechanism timbres & ecosystem audio state work cleanly", () => {
+  assert.deepEqual(Object.keys(CLASSIC_INTROS).sort(), ["batman", "mario", "spiderman", "superman"]);
+  assert.equal(CLASSIC_INTROS.mario.wave, "square");
+  assert.equal(CLASSIC_INTROS.spiderman.wave, "square");
+  assert.equal(CLASSIC_INTROS.batman.wave, "sawtooth");
+  assert.equal(CLASSIC_INTROS.superman.wave, "sawtooth");
+
+  assert.equal(SOUND_THEMES.length, 7);
+  assert.equal(MECHANISM_TIMBRES.length, 5);
+  assert.equal(ECOSYSTEM_AUDIO_AUDIT.length, 3);
+
+  soundEngine.setMechanismTimbre("square_mario");
+  soundEngine.setRingtoneId("batman");
+  soundEngine.setActiveSongId("superman");
+  const st = soundEngine.getState();
+  assert.equal(st.mechanismTimbre, "square_mario");
+  assert.equal(st.ringtoneId, "batman");
+  assert.equal(st.activeSongId, "superman");
+
+  // Restore defaults cleanly
+  soundEngine.setMechanismTimbre("ocarina");
+  soundEngine.setRingtoneId("mario");
+  soundEngine.setActiveSongId("title");
 });

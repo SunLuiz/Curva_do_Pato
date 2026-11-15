@@ -5,6 +5,7 @@ import AttributionPage from "./AttributionPage";
 import FiresMapSvg from "../components/FiresMapSvg";
 import SpaceAnalogTab from "../components/SpaceAnalogTab";
 import { UI_TEXT } from "../content/i18n";
+import { soundEngine } from "../game/soundEngine";
 
 export default function CockpitPage({
   region,
@@ -34,11 +35,14 @@ export default function CockpitPage({
   const [verifyDelta, setVerifyDelta] = useState(null);
 
   const handleVerifyNow = async () => {
+    soundEngine.playActionClick("purge");
     setVerifying(true);
     setVerifyDelta(null);
     try {
       const result = await onVerifyLive({ region, variable });
       setVerifyDelta(result);
+      if (result?.ok) soundEngine.playActionClick("ask_reply");
+      else soundEngine.playAlertWarning();
     } finally {
       setVerifying(false);
     }
@@ -125,7 +129,10 @@ export default function CockpitPage({
             role="tab"
             aria-selected={tab === id}
             className={`pill ${tab === id ? "active" : ""}`}
-            onClick={() => setTab(id)}
+            onClick={() => {
+              if (tab !== id) soundEngine.playActionClick("nav");
+              setTab(id);
+            }}
           >
             <Icon size={15} /> {label}
           </button>

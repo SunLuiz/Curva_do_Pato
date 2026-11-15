@@ -566,3 +566,84 @@ export function buildGameDeepLink({
   }
   return `/game?${qp.toString()}`;
 }
+
+/**
+ * Pure read-only adapter converting a live Rover Pilot 3D simulation snapshot
+ * into the 7-Agent + Statistical Auditor orchestration state without altering sim physics.
+ */
+export function computeSnapshotAgentState(snapshot) {
+  if (!snapshot) return null;
+  const planet = snapshot.planet || getPlanet(snapshot.planetId || "mars_jezero");
+  const res = snapshot.resources || {};
+  const rv = snapshot.rover || {};
+  const tel = snapshot.telemetry || {};
+  const pt = tel.currentPoint || {};
+
+  const inZones = rv.inZones || [];
+  const onCraterRim = inZones.includes("crater_rim");
+  const inShelter = inZones.includes("shelter_rock") || inZones.includes("lava_tube");
+  const inShadow = inZones.includes("shadow_rock");
+  const tau = Number.isFinite(pt.tau) ? pt.tau : planet.baseTau ?? 0.4;
+  const windMs = Number.isFinite(pt.windMs) ? pt.windMs : 0;
+  const thermalLoadPct = Math.round(res.thermalLoad ?? 42);
+  const radiatorSaturated = thermalLoadPct >= 82;
+  const pvYieldPct = computeSolarYieldPct({
+    irradianceNorm: snapshot.missionId === "M1" ? (pt.primaryVal || 550) / 1000 : 0.72,
+    tau,
+    planet,
+    wingsMode: rv.wingsMode || "open",
+    soilingFrac: (res.soiling || 0) / 100,
+    onCraterRim,
+  });
+
+  const windStress = Number(
+    res.windStress ??
+      computeWindStress({
+        windMs,
+        planet,
+        wingsMode: rv.wingsMode || "open",
+        mastRaised: Boolean(rv.mastRaised),
+        inShelter,
+      })
+  );
+  const windStatus =
+    planet.rho <= 0.001
+      ? "vacuum"
+      : windMs >= (planet.maxSafeWindMs ?? 4.2) || windStress >= 1.0
+        ? "danger"
+        : windMs >= (planet.dustCleanMinMs ?? 2.2)
+          ? "cleaning_window"
+          : "nominal";
+
+  const conductivityGainX = Number(((planet.kRegolith || 0.75) / 0.015).toFixed(1));
+  const heatingReductionPct = onCraterRim ? 13 : 0;
+  const socBioPct = Number.isFinite(res.socBio) ? res.socBio : 80;
+  const bioBufferHrs = Number(((socBioPct / 100) * 6.0).toFixed(2));
+  const sanitizedDelta = Number((res.frameDelta ?? 0.1).toFixed(3));
+
+  return computeAgentOrchestration({
+    params: {
+      planetId: snapshot.planetId || planet.id,
+      tau,
+      cpDust: planet.cpDust ?? 0.76,
+      onCraterRim,
+      inShadow,
+      sentinelActive: Boolean(tel.sentinelPending),
+    },
+    planet,
+    pvYieldPct,
+    thermalLoadPct,
+    radiatorSaturated,
+    conductivityGainX,
+    heatingReductionPct,
+    bioBufferHrs,
+    geotechnical: {
+      wheelSlipPct: Math.round(rv.wheelSlipPct ?? 6),
+      energyDistanceMult: Number((rv.energyCostMult ?? 1.0).toFixed(2)),
+      tauC_Pa: rv.tauC_Pa ?? 85,
+    },
+    windStress,
+    windStatus,
+    sanitizedDelta,
+  });
+}

@@ -12,9 +12,11 @@ import {
   computeThermalLoadPct,
   computeWindStress,
 } from "../game/sim/planetaryPhysics.js";
+import { createMissionRuntime, stepSimulation } from "../game/sim/roverSimulation.js";
 import {
   PLANET_LIST,
   buildGameDeepLink,
+  computeSnapshotAgentState,
   computeUnifiedMPTO,
   defaultParamsForPlanet,
   enrichFrontiersWithLiveState,
@@ -187,4 +189,15 @@ test("computeAgentOrchestration fuses all 7 MPTO agents, Statistical Auditor & V
   assert.ok(orch.activeVetoes.includes("Storm Watcher"));
   assert.equal(orch.status, "critical");
   assert.match(orch.auditorRule.statusEn, /WS2M/);
+});
+
+test("computeSnapshotAgentState mirrors 7-Agent orchestration cleanly from a live /game snapshot", () => {
+  const run = createMissionRuntime({ missionId: "M3", seed: 2026 });
+  run.rover.x = 8;
+  run.rover.z = -4;
+  stepSimulation(run, { throttle: 1, steer: 0 }, 0.1);
+  const state = computeSnapshotAgentState(run);
+  assert.equal(state.agents.length, 7);
+  assert.ok(state.activeVetoes.includes("Grok Cratera"));
+  assert.equal(state.status, "critical");
 });

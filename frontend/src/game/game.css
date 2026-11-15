@@ -948,3 +948,96 @@
   font-weight: 600;
 }
 
+/* Gear Audio Trigger in Start Menu (menu opens collapsed by default) */
+.start-gear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.48rem;
+  background: var(--cockpit-panel);
+  color: var(--cockpit-ink);
+  border: 1px solid var(--cockpit-border);
+  border-radius: var(--radius-pill);
+  padding: 0.44rem 0.78rem;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background-color 0.16s ease, transform 0.14s ease;
+}
+
+.start-gear-btn:hover {
+  border-color: var(--hud-cyan);
+  transform: translateY(-1px);
+}
+
+.start-gear-btn.is-open {
+  border-color: var(--hud-cyan);
+  background: rgba(76, 212, 232, 0.14);
+}
+
+.start-gear-btn .start-gear-icon {
+  color: var(--hud-cyan);
+  transition: transform 0.28s ease;
+}
+
+.start-gear-btn.is-open .start-gear-icon {
+  transform: rotate(90deg);
+}
+
+.start-gear-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0.14rem 0.45rem;
+  border-radius: var(--radius-pill);
+  background: var(--cockpit-bg);
+  border: 1px solid var(--cockpit-border);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--cockpit-soft);
+}
+
+/* Compact read-only 7-Agent OMNI Consensus Bar in 3D HUD */
+.hud-agent-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(17, 22, 28, 0.84);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--cockpit-border);
+  border-radius: var(--radius-sm);
+  padding: 0.34rem 0.56rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--cockpit-ink);
+}
+
+.hud-agent-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.24rem;
+  padding: 0.12rem 0.4rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--cockpit-border);
+  background: var(--cockpit-panel);
+  color: var(--cockpit-soft);
+}
+
+.hud-agent-chip.is-veto {
+  border-color: var(--hud-red);
+  color: var(--hud-red);
+  background: rgba(242, 95, 82, 0.14);
+  font-weight: 700;
+}
+
+.hud-agent-chip.is-watch {
+  border-color: var(--hud-amber);
+  color: var(--hud-amber);
+}
+
+.hud-agent-chip.is-ok {
+  border-color: rgba(69, 201, 122, 0.38);
+  color: var(--hud-green);
+}
+

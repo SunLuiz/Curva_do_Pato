@@ -1,8 +1,13 @@
+.git/
 .venv/
+.hermes/
 .env
 .env.*
 frontend/
 Documentos/
+docs/
+scripts/
 __pycache__/
 *.pyc
 .pytest_cache/
+*.md

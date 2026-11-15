@@ -208,6 +208,24 @@ test("Glossary and region summary respond cleanly in both EN and PT-BR", async (
   assert.match(summary.answer, /Precipitacao/);
 });
 
+test("Solar irradiance queries and attribution report MJ/m²/day rather than kWh/m²/day", async () => {
+  const trendRes = await answerEcosystemQuestion("What is the ALLSKY_SFC_SW_DWN solar radiation trend in Campinas?", {
+    loadJson: loadFromDisk,
+    lang: "en",
+  });
+  assert.equal(trendRes.action?.variable, "ALLSKY_SFC_SW_DWN");
+  assert.match(trendRes.answer, /MJ\/m²\/day/);
+  assert.doesNotMatch(trendRes.answer, /kWh\/m²\/day/);
+
+  const attrRes = await answerEcosystemQuestion("Explain solar attribution in Petrolina", {
+    loadJson: loadFromDisk,
+    lang: "en",
+  });
+  assert.equal(attrRes.detectedTopic, "attribution");
+  assert.match(attrRes.answer, /MJ\/m²\/day\/dec/);
+  assert.doesNotMatch(attrRes.answer, /kWh\/m²\/day/);
+});
+
 test("7-Agent Orchestration & Rover VCE/FPGA hardware queries return exact engineering facts", async () => {
   const agRes = await answerEcosystemQuestion("Como funcionam os 7 agentes e o Auditor Estatistico?", {
     loadJson: loadFromDisk,

@@ -70,7 +70,7 @@ def bake_power_ne():
             }
             for r in peak_rows
         ],
-        "demand_profile_note": "Grid demand curve is an illustrative typical residential/grid ramp profile because data/ons_search.json contains dataset catalog metadata rather than an hourly MW load series.",
+        "demand_profile_note": "Grid demand curve is an illustrative typical residential/grid ramp profile paired with empirical NASA POWER hourly solar/wind telemetry.",
     }
 
 

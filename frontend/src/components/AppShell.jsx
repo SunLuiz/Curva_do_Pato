@@ -44,9 +44,37 @@ export default function AppShell({ route, onNavigate, lang = "en", setLang, full
         <div className="topbar-inner" style={{ position: "relative" }}>
           <button className="brand" onClick={() => handleRouteClick("/")} type="button">
             <div className="brand-mark" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 16c4-6 7 2 11-5 2.5-4.4 4.5-4 7-3" strokeLinecap="round" />
-                <circle cx="21" cy="8" r="2" fill="currentColor" />
+              <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+                {/* Rover solar deck & chassis */}
+                <rect x="6" y="21" width="20" height="5" rx="2" fill="var(--surface-1)" stroke="var(--ink)" strokeWidth="1.4" />
+                <polygon points="5,19 25,19 27,21 4,21" fill="var(--biome-n)" stroke="var(--ink)" strokeWidth="1.1" />
+                {/* Rover NavCam mast */}
+                <rect x="25" y="13" width="2.2" height="8" rx="1" fill="var(--ink)" />
+                <rect x="23" y="10.5" width="6.5" height="3.5" rx="1.4" fill="var(--surface-1)" stroke="var(--ink)" strokeWidth="1.2" />
+                <circle cx="27.4" cy="12.2" r="1" fill="var(--biome-n)" />
+                {/* Rover bogie legs & 3 wheels */}
+                <line x1="10" y1="26" x2="8.5" y2="29" stroke="var(--ink)" strokeWidth="1.4" strokeLinecap="round" />
+                <line x1="16" y1="26" x2="16" y2="29" stroke="var(--ink)" strokeWidth="1.4" strokeLinecap="round" />
+                <line x1="22" y1="26" x2="23.5" y2="29" stroke="var(--ink)" strokeWidth="1.4" strokeLinecap="round" />
+                <circle cx="8.5" cy="30" r="3" fill="var(--ink)" />
+                <circle cx="16" cy="30" r="3" fill="var(--ink)" />
+                <circle cx="23.5" cy="30" r="3" fill="var(--ink)" />
+                <circle cx="8.5" cy="30" r="1.1" fill="var(--surface-2)" />
+                <circle cx="16" cy="30" r="1.1" fill="var(--surface-2)" />
+                <circle cx="23.5" cy="30" r="1.1" fill="var(--surface-2)" />
+                {/* Duck riding on top of the rover */}
+                <path
+                  d="M8.5 17 C8.5 13.8 12.2 13 15 13 L17.5 13 C19.4 13 20.5 14.5 20.5 16.5 C20.5 18.2 19 19 15 19 L11 19 C9.2 19 8.2 18.3 8.5 17 Z"
+                  fill="var(--biome-ne)"
+                  stroke="var(--ink)"
+                  strokeWidth="1.25"
+                />
+                <path d="M7.2 15.2 L9.5 16.8 L8.5 18.5 Z" fill="var(--biome-ne)" stroke="var(--ink)" strokeWidth="1" strokeLinejoin="round" />
+                <circle cx="17.5" cy="10.2" r="3.6" fill="var(--biome-ne)" stroke="var(--ink)" strokeWidth="1.25" />
+                {/* Space visor & duck beak */}
+                <rect x="16.2" y="8.6" width="4.2" height="2.2" rx="1.1" fill="var(--biome-n)" stroke="var(--ink)" strokeWidth="0.9" />
+                <path d="M20.6 10.6 L24.5 11.4 C24.8 11.8 24.4 12.6 23.6 12.6 L20.4 12.5 Z" fill="var(--danger)" stroke="var(--ink)" strokeWidth="0.9" strokeLinejoin="round" />
+                <circle cx="18.6" cy="9.7" r="0.7" fill="var(--surface-1)" />
               </svg>
             </div>
             <div>
@@ -166,8 +194,8 @@ export default function AppShell({ route, onNavigate, lang = "en", setLang, full
           </div>
           <div>
             Live demo:{" "}
-            <a href="https://frontend-rho-seven-69.vercel.app" target="_blank" rel="noreferrer">
-              frontend-rho-seven-69.vercel.app
+            <a href="https://www.curveofduck.xyz/" target="_blank" rel="noreferrer">
+              www.curveofduck.xyz
             </a>
             {" · "}
             Source:{" "}

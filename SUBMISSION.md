@@ -37,7 +37,7 @@ Cockpit-OMNI turns 42 years of NASA telemetry (1984–2025) into an audited Stor
 
 | Target | URL | Status |
 |---|---|---|
-| **Live demo (frontend)** | https://frontend-rho-seven-69.vercel.app | Live — HTTP 200, no login, no install |
+| **Live demo (frontend)** | https://www.curveofduck.xyz/ | Live — HTTP 200, no login, no install |
 | **Public source code** | https://github.com/SunLuiz/Curva_do_Pato | Public — HTTP 200 |
 | **Backend (optional)** | not deployed; frontend serves frozen NASA cache | Declared in the UI badge |
 

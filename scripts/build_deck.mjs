@@ -59,7 +59,7 @@ const slidesHtml = DECK_SLIDES.map((slide, idx) => {
   const extraLinks =
     slide.id === "future_space" || slide.id === "legacy"
       ? `<div class="links-bar mono">
-          <span>Live Demo: <a href="https://frontend-rho-seven-69.vercel.app">frontend-rho-seven-69.vercel.app</a></span>
+          <span>Live Demo: <a href="https://www.curveofduck.xyz/">www.curveofduck.xyz</a></span>
           <span>Source: <a href="https://github.com/SunLuiz/Curva_do_Pato">github.com/SunLuiz/Curva_do_Pato</a></span>
           <span>Sources: NASA POWER · FIRMS · DONKI · CMR MCP · DSN · OSDR · CelesTrak</span>
         </div>`

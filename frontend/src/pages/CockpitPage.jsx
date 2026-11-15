@@ -112,7 +112,13 @@ export default function CockpitPage({
           }}
         >
           <div className="mono" style={{ fontSize: "0.84rem", fontWeight: 700 }}>
-            {verifyDelta.ok ? "Live verification succeeded" : "Backend unreachable — frozen snapshot remains active"}
+            {verifyDelta.ok
+              ? l === "pt"
+                ? `Verificação ao vivo concluída (${verifyDelta.service || "NASA"})`
+                : `Live NASA verification succeeded (${verifyDelta.service || "NASA"})`
+              : l === "pt"
+                ? "NASA inacessível — snapshot congelado permanece ativo"
+                : "NASA upstream unreachable — frozen snapshot remains active"}
           </div>
           <div style={{ fontSize: "0.85rem", color: "var(--ink-soft)", marginTop: "0.25rem" }}>
             {verifyDelta.message}

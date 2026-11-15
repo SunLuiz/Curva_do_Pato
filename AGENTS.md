@@ -7,9 +7,10 @@ Welcome! This file provides operational, architectural, and scientific instructi
 ## 1. Project Identity & Core Rules
 
 - **Project:** **Cockpit-OMNI** (*Team Curva do Pato* — NASA Space Apps Challenge 2026, Challenge #2: *Be An Earth System Trend Detective!*).
+- **Live URL:** **https://www.curveofduck.xyz/** (Zero-Key Open Web App on Vercel + Open NASA CORS).
 - **4 Primary Routes (`frontend/src/App.jsx`):**
   1. `/` (`StoryPage.jsx`) — 7-slide interactive narrative deck (`frontend/src/content/story.js` -> `docs/pitch_deck.html`).
-  2. `/academy` (`AcademyPage.jsx`) — 5-module unassisted mastery Academy (`localStorage` only, zero login).
+  2. `/academy` (`App.jsx` alias -> `GamePage.jsx` / `ModuleRunner.jsx`) — 5-module unassisted mastery Academy (`localStorage` only, zero login).
   3. `/cockpit` (`CockpitPage.jsx`) — 5-tab Earth & Planetary Observation Workbench + Open Natural-Language Assistant (`AskPanel.jsx` powered by `frontend/src/engine/askEngine.js`).
   4. `/game` (`GamePage.jsx`) — *Curve of Duck: Rover Pilot 3D* (Three.js + Web Audio + deterministic physics in `frontend/src/game/sim/planetaryPhysics.js`).
 
@@ -30,9 +31,9 @@ Welcome! This file provides operational, architectural, and scientific instructi
   ```
 - **Run Optional FastAPI Backend (`port 8000`):**
   Copy `.env.example` to `.env`. Optional free NASA keys are wired as follows:
-  - `NASA_API_KEY` -> `backend/app/clients/nasa_open_client.py` (`https://api.nasa.gov/DONKI` -> `/api/space-weather`, fallback: `data/cache/donki_7d.json`).
-  - `FIRMS_MAP_KEY` -> `backend/app/clients/firms_client.py` (`https://firms.modaps.eosdis.nasa.gov` -> `/api/fires`, fallback: `data/cache/fires_br_1d.geojson`).
-  - `NASA_POWER_BASE` -> `backend/app/clients/power_client.py` & `frontend/src/engine/askEngine.js` (`https://power.larc.nasa.gov/api`, zero key required).
+  - `NASA_API_KEY` -> `backend/app/clients/nasa_open_client.py` (`https://api.nasa.gov/DONKI` -> `/api/spaceweather`, fallback: `data/cache/donki_7d.json`).
+  - `FIRMS_MAP_KEY` -> `backend/app/clients/firms_client.py` (`https://firms.modaps.eosdis.nasa.gov` -> `/api/fires`, fallback: `data/firms_br_24h.csv` & `data/cache/fires_br_1d.geojson`).
+  - `NASA_POWER_BASE` -> `backend/app/clients/power_client.py` (`https://power.larc.nasa.gov/api`, zero key required; browser queries `frontend/src/engine/powerCors.js` directly).
   - Full operational matrix: see **[docs/OPERATIONAL_GUIDE.md](./docs/OPERATIONAL_GUIDE.md)**.
 
 ---
@@ -60,7 +61,7 @@ For complete reference $\vec{\Theta}$ tables and code snippets for **Mars**, **J
 ## 4. Mandatory Verification Commands Before Finishing Any Task
 
 ```bash
-node --test frontend/src/engine/askEngine.test.mjs frontend/src/content/story.test.mjs frontend/src/engine/trend.test.mjs frontend/src/academy/mastery.test.mjs frontend/src/engine/presets.test.mjs frontend/src/game/sim/sim.test.mjs
+node --test frontend/src/engine/askEngine.test.mjs frontend/src/engine/mptoEngine.test.mjs frontend/src/content/story.test.mjs frontend/src/engine/trend.test.mjs frontend/src/academy/mastery.test.mjs frontend/src/engine/presets.test.mjs frontend/src/game/sim/sim.test.mjs
 node scripts/verify_answers.mjs
 node scripts/check_contrast.mjs --css frontend/src/styles.css
 npm --prefix frontend run build

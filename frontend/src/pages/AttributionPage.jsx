@@ -21,11 +21,13 @@ export default function AttributionPage({ region, setRegion }) {
   const [cmr, setCmr] = useState(null);
   const [sw, setSw] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       setLoading(true);
+      setError(null);
       try {
         const [a, c, s] = await Promise.all([
           getAttribution({ region }),
@@ -36,6 +38,11 @@ export default function AttributionPage({ region, setRegion }) {
           setAttr(a);
           setCmr(c);
           setSw(s);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setAttr(null);
+          setError(err?.message || "Failed to load attribution vectors.");
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -74,7 +81,13 @@ export default function AttributionPage({ region, setRegion }) {
         </div>
       )}
 
-      {!loading && attr && (
+      {!loading && error && (
+        <div className="card" style={{ color: "var(--danger)", padding: "1.25rem" }}>
+          Unable to load physical attribution data: {error}
+        </div>
+      )}
+
+      {!loading && !error && attr && (
         <>
           <div className="card" style={{ marginBottom: "1.15rem", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem", alignItems: "center" }}>
             <div>

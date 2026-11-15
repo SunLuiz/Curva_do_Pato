@@ -1,3 +1,5 @@
+import { fetchPowerTrendPayload } from "./engine/powerCors.js";
+
 export const API_BASE = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
 
 async function fetchJsonWithTimeout(url, timeoutMs = 10000) {
@@ -32,7 +34,7 @@ export function getRegions() {
   return fetchWithFallback("/api/regions", "/cache/regions.json", 5000);
 }
 
-export function getTrend({ region, lat, lon, variable = "T2M", start = 1984, end = 2025 }) {
+export async function getTrend({ region, lat, lon, variable = "T2M", start = 1984, end = 2025 }) {
   const params = new URLSearchParams({ variable, start: String(start), end: String(end) });
   if (region) {
     params.set("region", region);
@@ -41,7 +43,14 @@ export function getTrend({ region, lat, lon, variable = "T2M", start = 1984, end
     params.set("lon", String(lon));
   }
   const cachePath = region ? `/cache/trend_${region}_${variable}.json` : null;
-  return fetchWithFallback(`/api/trend?${params.toString()}`, cachePath, 15000);
+  try {
+    return await fetchWithFallback(`/api/trend?${params.toString()}`, cachePath, 15000);
+  } catch (err) {
+    if (!region && lat !== undefined && lon !== undefined) {
+      return fetchPowerTrendPayload({ lat: Number(lat), lon: Number(lon), variable, start, end });
+    }
+    throw err;
+  }
 }
 
 export function getAttribution({ region, lat, lon }) {
@@ -69,45 +78,62 @@ export function getCmrEvidence() {
 }
 
 /**
- * Queries the live backend directly (never silently falling back to static cache)
- * and compares live slope_per_decade / p_value against the frozen 2026-11-14 snapshot.
+ * Verifies frozen 2026-11-14 snapshot against live telemetry: prefers FastAPI /api/trend
+ * when `/healthz` reports `status: "ok"`, and seamlessly falls back to open zero-key
+ * NASA POWER browser CORS verification otherwise.
  */
 export async function verifyTrendLive({ region = "campinas", variable = "T2M" } = {}) {
+  let health = null;
   try {
-    const health = await fetchJsonWithTimeout(`${API_BASE}/healthz`, 4000);
-    if (health?.status !== "ok") {
+    health = await fetchJsonWithTimeout(`${API_BASE}/healthz`, 4000);
+  } catch {
+    health = null;
+  }
+
+  try {
+    const cachedPromise = fetchJsonWithTimeout(`/cache/trend_${region}_${variable}.json`, 5000);
+    if (health?.status === "ok") {
+      const params = new URLSearchParams({
+        region,
+        variable,
+        start: "1984",
+        end: "2025",
+      });
+      const [liveData, cachedData] = await Promise.all([
+        fetchJsonWithTimeout(`${API_BASE}/api/trend?${params.toString()}`, 12000),
+        cachedPromise,
+      ]);
+      const liveSlope = Number(liveData?.stats?.slope_per_decade ?? 0);
+      const cacheSlope = Number(cachedData?.stats?.slope_per_decade ?? 0);
+      const delta = (liveSlope - cacheSlope).toFixed(4);
       return {
-        ok: false,
-        live: false,
-        message: "Health endpoint did not confirm live status; frozen snapshot remains active.",
+        ok: true,
+        live: true,
+        mode: "backend",
+        service: health.service || "Cockpit-OMNI",
+        message: `${region}/${variable}: live backend slope = ${liveSlope} vs frozen snapshot = ${cacheSlope} (delta ${Number(delta) >= 0 ? "+" : ""}${delta}/decade · n=${liveData?.stats?.n ?? "?"}).`,
       };
     }
 
-    const params = new URLSearchParams({
-      region,
-      variable,
-      start: "1984",
-      end: "2025",
-    });
-    const [liveData, cachedData] = await Promise.all([
-      fetchJsonWithTimeout(`${API_BASE}/api/trend?${params.toString()}`, 12000),
-      fetchJsonWithTimeout(`/cache/trend_${region}_${variable}.json`, 5000),
+    const [liveCorsData, cachedData] = await Promise.all([
+      fetchPowerTrendPayload({ region, variable, start: 1984, end: 2025 }),
+      cachedPromise,
     ]);
-
-    const liveSlope = Number(liveData?.stats?.slope_per_decade ?? 0);
+    const liveSlope = Number(liveCorsData?.stats?.slope_per_decade ?? 0);
     const cacheSlope = Number(cachedData?.stats?.slope_per_decade ?? 0);
     const delta = (liveSlope - cacheSlope).toFixed(4);
     return {
       ok: true,
-      live: true,
-      service: health.service || "Cockpit-OMNI",
-      message: `${region}/${variable}: live backend slope = ${liveSlope} vs frozen snapshot = ${cacheSlope} (delta ${Number(delta) >= 0 ? "+" : ""}${delta}/decade · n=${liveData?.stats?.n ?? "?"}).`,
+      live: false,
+      mode: "browser_cors",
+      service: "NASA POWER (Open CORS)",
+      message: `${region}/${variable}: live NASA POWER (open CORS) slope = ${liveSlope} vs frozen snapshot = ${cacheSlope} (delta ${Number(delta) >= 0 ? "+" : ""}${delta}/decade · n=${liveCorsData?.stats?.n ?? "?"}).`,
     };
   } catch (err) {
     return {
       ok: false,
       live: false,
-      message: `Live backend unavailable (${err?.message || "unreachable"}). Verified 2026-11-14 15:04 UTC snapshot remains active.`,
+      message: `Live verification unavailable (${err?.message || "unreachable"}). Verified 2026-11-14 15:04 UTC snapshot remains active.`,
     };
   }
 }

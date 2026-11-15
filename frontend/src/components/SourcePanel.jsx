@@ -3,6 +3,7 @@ import { ExternalLink } from "lucide-react";
 
 export default function SourcePanel({ data, stats }) {
   const isCached = data?._transport === "offline_cache";
+  const isCors = data?._transport === "live_cors";
   const frozenAt = data?.frozen_at_utc ? data.frozen_at_utc.slice(0, 19).replace("T", " ") + " UTC" : "2026-11-14 15:04 UTC";
   const powerUrl = `https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=${encodeURIComponent(
     data?.variable === "CLOUD_ATTEN_PCT" ? "ALLSKY_SFC_SW_DWN,CLRSKY_SFC_SW_DWN" : data?.variable || "T2M"
@@ -14,12 +15,18 @@ export default function SourcePanel({ data, stats }) {
         <div className="card-inset">
           <div className="stat-label">Data Transport</div>
           <div style={{ marginTop: "0.35rem", fontWeight: 700, color: isCached ? "var(--biome-ne)" : "var(--sig)" }}>
-            {isCached ? `Frozen Cache Snapshot (${frozenAt})` : "Live FastAPI Backend Telemetry"}
+            {isCached
+              ? `Frozen Cache Snapshot (${frozenAt})`
+              : isCors
+                ? "Live Open NASA POWER (Zero-Key Browser CORS)"
+                : "Live FastAPI Backend Telemetry"}
           </div>
           <div style={{ fontSize: "0.82rem", color: "var(--ink-soft)", marginTop: "0.25rem" }}>
             {isCached
               ? "Served directly from verified local JSON snapshot so the demo works with zero network latency or login."
-              : "Computed dynamically from NASA POWER upstream API."}
+              : isCors
+                ? "Fetched directly from power.larc.nasa.gov in the browser and processed with client-side Seasonal Mann-Kendall."
+                : "Computed dynamically from NASA POWER upstream API."}
           </div>
         </div>
 

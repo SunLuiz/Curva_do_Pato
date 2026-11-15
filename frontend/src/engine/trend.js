@@ -275,24 +275,41 @@ export function humanVerdict(stats, regionName, variableLabel, unit) {
   };
 }
 
-export async function probeBackend(base = "", timeoutMs = 4000) {
+export async function probeBackend(base = "", timeoutMs = 4000, fetchImpl = globalThis.fetch) {
   const cleanBase = String(base || "").replace(/\/$/, "");
   const ac = new AbortController();
   const t = setTimeout(() => ac.abort(), timeoutMs);
   try {
-    const r = await fetch(`${cleanBase}/healthz`, { signal: ac.signal });
+    const r = await fetchImpl(`${cleanBase}/healthz`, { signal: ac.signal });
+    const ct = r.headers?.get?.("content-type") || "";
+    let body = null;
+    if (ct.includes("application/json")) {
+      try {
+        body = await r.json();
+      } catch {
+        body = null;
+      }
+    }
+
     if (!r.ok) {
       return {
         live: false,
-        reason: r.status === 500 && !cleanBase ? "no backend server attached" : `HTTP ${r.status}`,
+        reason:
+          body?.reason ||
+          body?.detail ||
+          (r.status === 500 && !cleanBase ? "no backend server attached" : `HTTP ${r.status}`),
       };
     }
-    const ct = r.headers.get("content-type") || "";
     if (!ct.includes("application/json")) {
       return { live: false, reason: "static SPA rewrite (no backend)" };
     }
-    const body = await r.json();
-    return body?.status === "ok" ? { live: true, service: body.service || "Cockpit-OMNI" } : { live: false, reason: "unexpected payload" };
+    if (body?.status === "ok") {
+      return { live: true, service: body.service || "Cockpit-OMNI" };
+    }
+    return {
+      live: false,
+      reason: body?.reason || "open zero-key browser telemetry (no FastAPI server attached)",
+    };
   } catch (_err) {
     return { live: false, reason: "unreachable" };
   } finally {

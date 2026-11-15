@@ -507,7 +507,13 @@ export default function RoverViewport3D({
     const height = container.clientHeight || 420;
     const camera = new THREE.PerspectiveCamera(54, width / height, 0.2, 360);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+    } catch (_err) {
+      setWebglError(true);
+      return undefined;
+    }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(width, height);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -762,8 +768,11 @@ export default function RoverViewport3D({
 
     const onKeyDown = (e) => {
       const tag = e.target?.tagName;
-      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || e.target?.isContentEditable) return;
+      const onInteractiveControl =
+        tag === "BUTTON" || tag === "A" || Boolean(e.target?.closest?.("button, a, [role='button'], [role='menuitem']"));
       const k = e.key.toLowerCase();
+      if (onInteractiveControl && (k === " " || k === "enter")) return;
       if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) {
         e.preventDefault();
       }

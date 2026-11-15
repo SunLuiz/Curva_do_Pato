@@ -1,6 +1,7 @@
 import { GLOSSARY } from "../content/glossary.js";
 import { tVar } from "../content/i18n.js";
 import { PRESET_DEFINITIONS } from "./presets.js";
+import { fetchPowerMonthlySeries } from "./powerCors.js";
 import { computeTrend, fmtP } from "./trend.js";
 
 const CACHE_BASE = "/cache";
@@ -79,8 +80,8 @@ const GLOSSARY_ALIASES = {
 const UNIT_MAP = {
   T2M: "°C",
   PRECTOTCORR: "mm/day",
-  ALLSKY_SFC_SW_DWN: "kWh/m²/day",
-  CLRSKY_SFC_SW_DWN: "kWh/m²/day",
+  ALLSKY_SFC_SW_DWN: "MJ/m²/day",
+  CLRSKY_SFC_SW_DWN: "MJ/m²/day",
   CLOUD_ATTEN_PCT: "%",
   RH2M: "%",
   WS2M: "m/s",
@@ -492,7 +493,10 @@ async function handleDonki(parsed, loadJson) {
   const isDonki = matchesAny(norm, [
     "donki", "solar", "flare", "flares", "cme", "coronal", "geomagnetic", "geomagnetica",
     "tempestade solar", "space weather", "clima espacial", "rbe", "radiation belt", "mancha solar",
-  ]) && !matchesAny(norm, ["irradian", "allsky", "clrsky", "solar radiation", "radiacao solar", "fotovoltaic", "photovoltaic", "kwh"]);
+  ]) && !matchesAny(norm, [
+    "irradian", "allsky", "clrsky", "solar radiation", "radiacao solar", "fotovoltaic", "photovoltaic",
+    "kwh", "mj/m", "attribution", "atribuicao", "brightening", "dimming", "clouds", "nuvens",
+  ]);
 
   if (!isDonki) return null;
 
@@ -734,8 +738,8 @@ async function handleAttribution(parsed, loadJson) {
   const fd = fire?.details || {};
 
   const answer = l === "pt"
-    ? `Atribuicao Multifonte — ${regionName} (${attr.period || "1984-2025"}):\n• Temperatura T2M: +${ht?.slope_per_decade?.toFixed(3)} °C/decada (${ht?.total_change >= 0 ? "+" : ""}${ht?.total_change?.toFixed(2)} °C total, p=${fmtP(ht?.p_value)}).\n• Hidrometeorologia & Nuvens: Chuva ${hd.precip_slope_per_decade?.toFixed(3)} mm/dia/dec (p=${fmtP(hd.precip_p_value)}), Atenuacao por Nuvens ${hd.cloud_attenuation_slope_per_decade?.toFixed(3)} %/dec (p=${fmtP(hd.cloud_attenuation_p_value)}), Irradiancia All-Sky ${hd.allsky_slope_per_decade >= 0 ? "+" : ""}${hd.allsky_slope_per_decade?.toFixed(3)} kWh/m²/dia/dec.\n• Fogo & Aerossol (Clear-Sky): Clear-Sky SW slope ${fd.clrsky_slope_per_decade >= 0 ? "+" : ""}${fd.clrsky_slope_per_decade?.toFixed(3)} (p=${fmtP(fd.clrsky_p_value)}, significativo=${fd.clrsky_significant ? "sim" : "nao"}); ${fd.nearby_24h_detections ?? "-"} focos em 150 km (${fd.brazil_24h_detections} no BR).\n• Clima Espacial (DONKI 7d): ${helio?.value || "-"}.\nVeredito: ${hydro?.interpretation || ""} ${fire?.interpretation || ""}`.trim()
-    : `Multi-Vector Attribution — ${regionName} (${attr.period || "1984-2025"}):\n• Temperature T2M: +${ht?.slope_per_decade?.toFixed(3)} °C/decade (${ht?.total_change >= 0 ? "+" : ""}${ht?.total_change?.toFixed(2)} °C total, p=${fmtP(ht?.p_value)}).\n• Hydrometeorology & Clouds: Precip ${hd.precip_slope_per_decade?.toFixed(3)} mm/day/dec (p=${fmtP(hd.precip_p_value)}), Cloud Attenuation ${hd.cloud_attenuation_slope_per_decade?.toFixed(3)} %/dec (p=${fmtP(hd.cloud_attenuation_p_value)}), All-Sky SW ${hd.allsky_slope_per_decade >= 0 ? "+" : ""}${hd.allsky_slope_per_decade?.toFixed(3)} kWh/m²/day/dec.\n• Fire & Aerosol (Clear-Sky): Clear-Sky SW slope ${fd.clrsky_slope_per_decade >= 0 ? "+" : ""}${fd.clrsky_slope_per_decade?.toFixed(3)} (p=${fmtP(fd.clrsky_p_value)}, significant=${fd.clrsky_significant ? "yes" : "no"}); ${fd.nearby_24h_detections ?? "-"} fires within 150 km (${fd.brazil_24h_detections} in BR).\n• Space Weather (DONKI 7d): ${helio?.value || "-"}.\nVerdict: ${hydro?.interpretation || ""} ${fire?.interpretation || ""}`.trim();
+    ? `Atribuicao Multifonte — ${regionName} (${attr.period || "1984-2025"}):\n• Temperatura T2M: +${ht?.slope_per_decade?.toFixed(3)} °C/decada (${ht?.total_change >= 0 ? "+" : ""}${ht?.total_change?.toFixed(2)} °C total, p=${fmtP(ht?.p_value)}).\n• Hidrometeorologia & Nuvens: Chuva ${hd.precip_slope_per_decade?.toFixed(3)} mm/dia/dec (p=${fmtP(hd.precip_p_value)}), Atenuacao por Nuvens ${hd.cloud_attenuation_slope_per_decade?.toFixed(3)} %/dec (p=${fmtP(hd.cloud_attenuation_p_value)}), Irradiancia All-Sky ${hd.allsky_slope_per_decade >= 0 ? "+" : ""}${hd.allsky_slope_per_decade?.toFixed(3)} MJ/m²/dia/dec.\n• Fogo & Aerossol (Clear-Sky): Clear-Sky SW slope ${fd.clrsky_slope_per_decade >= 0 ? "+" : ""}${fd.clrsky_slope_per_decade?.toFixed(3)} (p=${fmtP(fd.clrsky_p_value)}, significativo=${fd.clrsky_significant ? "sim" : "nao"}); ${fd.nearby_24h_detections ?? "-"} focos em 150 km (${fd.brazil_24h_detections} no BR).\n• Clima Espacial (DONKI 7d): ${helio?.value || "-"}.\nVeredito: ${hydro?.interpretation || ""} ${fire?.interpretation || ""}`.trim()
+    : `Multi-Vector Attribution — ${regionName} (${attr.period || "1984-2025"}):\n• Temperature T2M: +${ht?.slope_per_decade?.toFixed(3)} °C/decade (${ht?.total_change >= 0 ? "+" : ""}${ht?.total_change?.toFixed(2)} °C total, p=${fmtP(ht?.p_value)}).\n• Hydrometeorology & Clouds: Precip ${hd.precip_slope_per_decade?.toFixed(3)} mm/day/dec (p=${fmtP(hd.precip_p_value)}), Cloud Attenuation ${hd.cloud_attenuation_slope_per_decade?.toFixed(3)} %/dec (p=${fmtP(hd.cloud_attenuation_p_value)}), All-Sky SW ${hd.allsky_slope_per_decade >= 0 ? "+" : ""}${hd.allsky_slope_per_decade?.toFixed(3)} MJ/m²/day/dec.\n• Fire & Aerosol (Clear-Sky): Clear-Sky SW slope ${fd.clrsky_slope_per_decade >= 0 ? "+" : ""}${fd.clrsky_slope_per_decade?.toFixed(3)} (p=${fmtP(fd.clrsky_p_value)}, significant=${fd.clrsky_significant ? "yes" : "no"}); ${fd.nearby_24h_detections ?? "-"} fires within 150 km (${fd.brazil_24h_detections} in BR).\n• Space Weather (DONKI 7d): ${helio?.value || "-"}.\nVerdict: ${hydro?.interpretation || ""} ${fire?.interpretation || ""}`.trim();
 
   return {
     answer,
@@ -789,39 +793,16 @@ async function handleCustomCoordsPower(parsed, fetchLive, timeoutMs) {
     ? `${customCoords.label} (${customCoords.lat.toFixed(2)}, ${customCoords.lon.toFixed(2)})`
     : `${customCoords.lat.toFixed(2)}, ${customCoords.lon.toFixed(2)}`;
 
-  const queryParams =
-    variableId === "CLOUD_ATTEN_PCT" ? "ALLSKY_SFC_SW_DWN,CLRSKY_SFC_SW_DWN" : variableId;
-  const url =
-    `https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=${encodeURIComponent(queryParams)}` +
-    `&community=AG&longitude=${customCoords.lon.toFixed(4)}&latitude=${customCoords.lat.toFixed(4)}` +
-    `&start=${MIN_YEAR}&end=${MAX_YEAR}&format=JSON`;
-
   try {
-    const res = await fetchWithTimeout(fetchLive, url, timeoutMs);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const payload = await res.json();
-    const paramBag = payload?.properties?.parameter || {};
-
-    let series = [];
-    if (variableId === "CLOUD_ATTEN_PCT") {
-      const allMap = paramBag.ALLSKY_SFC_SW_DWN || {};
-      const clrMap = paramBag.CLRSKY_SFC_SW_DWN || {};
-      for (const key of Object.keys(allMap).sort()) {
-        if (key.endsWith("13")) continue;
-        const a = Number(allMap[key]);
-        const c = Number(clrMap[key]);
-        if (a <= -900 || c <= -900 || c <= 0) continue;
-        series.push({ t: `${key.slice(0, 4)}-${key.slice(4, 6)}`, v: (1 - a / c) * 100 });
-      }
-    } else {
-      const map = paramBag[variableId] || {};
-      for (const key of Object.keys(map).sort()) {
-        if (key.endsWith("13")) continue;
-        const v = Number(map[key]);
-        if (v <= -900 || !Number.isFinite(v)) continue;
-        series.push({ t: `${key.slice(0, 4)}-${key.slice(4, 6)}`, v });
-      }
-    }
+    const series = await fetchPowerMonthlySeries({
+      lat: customCoords.lat,
+      lon: customCoords.lon,
+      variable: variableId,
+      start: MIN_YEAR,
+      end: MAX_YEAR,
+      fetchImpl: fetchLive,
+      timeoutMs,
+    });
 
     const answer = formatSeriesAnswer({
       series,

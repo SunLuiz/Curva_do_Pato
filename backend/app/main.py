@@ -145,8 +145,17 @@ def get_trend(
     except Exception as exc:
         cached = _read_cached_json(f"trend_{region_info['id']}_{variable}.json")
         if cached is not None:
-            cached["status"] = "cached"
-            return cached
+            out = dict(cached)
+            if (start != 1984 or end != 2025) and isinstance(out.get("series"), list):
+                out["series"] = [
+                    pt
+                    for pt in out["series"]
+                    if isinstance(pt, dict)
+                    and str(pt.get("t", ""))[:4].isdigit()
+                    and start <= int(str(pt["t"])[:4]) <= end
+                ]
+            out["status"] = "cached"
+            return out
         raise HTTPException(status_code=502, detail=f"NASA POWER upstream error: {exc}") from exc
 
 
@@ -394,6 +403,7 @@ def get_attribution(
 
 _ASK_RATE_LIMIT: dict[str, list[float]] = {}
 _ASK_MAX_PER_MIN = 5
+_ASK_MAX_IPS = 512
 _VALID_DEPTHS = {"explorer", "analyst", "specialist"}
 
 
@@ -408,6 +418,13 @@ class AskRequest(BaseModel):
 
 def _check_ask_rate_limit(client_ip: str, now: Optional[float] = None) -> None:
     ts = now if now is not None else time.monotonic()
+    if len(_ASK_RATE_LIMIT) > _ASK_MAX_IPS:
+        stale = [ip for ip, times in _ASK_RATE_LIMIT.items() if not any(ts - t < 60.0 for t in times)]
+        for ip in stale:
+            _ASK_RATE_LIMIT.pop(ip, None)
+        while len(_ASK_RATE_LIMIT) > _ASK_MAX_IPS:
+            _ASK_RATE_LIMIT.pop(next(iter(_ASK_RATE_LIMIT)), None)
+
     recent = [t for t in _ASK_RATE_LIMIT.get(client_ip, []) if ts - t < 60.0]
     if len(recent) >= _ASK_MAX_PER_MIN:
         _ASK_RATE_LIMIT[client_ip] = recent

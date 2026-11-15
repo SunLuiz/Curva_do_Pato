@@ -2,24 +2,13 @@ fastapi
 uvicorn[standard]
 httpx
 pydantic
-pydantic-settings
 python-dotenv
 
-# Data
+# Scientific & Statistical Analysis
 numpy
 pandas
 scipy
-scikit-learn
-statsmodels
-pyarrow
-
-# NASA POWER (via pvlib iotools)
-pvlib
-
-# Trend / significance
 pymannkendall
 
-# ML quantile
-lightgbm
-
-# Web (landing served by backend later, React separate)
+# Test Suite
+pytest

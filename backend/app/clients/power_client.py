@@ -4,13 +4,14 @@ Solar irradiance (CERES) and wind (MERRA-2), hourly/daily point time series.
 """
 from __future__ import annotations
 
+import os
 import httpx
 import pandas as pd
 from typing import Dict, List, Optional
 
 
 class PowerClient:
-    BASE = "https://power.larc.nasa.gov/api"
+    BASE = os.getenv("NASA_POWER_BASE", "https://power.larc.nasa.gov/api").strip().rstrip("/")
 
     def __init__(self, timeout: float = 30.0):
         self.client = httpx.Client(timeout=timeout)

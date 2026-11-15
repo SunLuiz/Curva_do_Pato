@@ -1,6 +1,7 @@
 """Cockpit-OMNI — trend engine: Seasonal & Original Mann-Kendall + Theil-Sen slope over NASA POWER."""
 from __future__ import annotations
 
+from collections import OrderedDict
 from typing import Any
 import httpx
 import numpy as np
@@ -85,7 +86,8 @@ VARIABLE_META: dict[str, dict[str, Any]] = {
     },
 }
 
-_POWER_CACHE: dict[tuple[float, float, int, int, str, str], pd.DataFrame] = {}
+_POWER_CACHE_MAX = 64
+_POWER_CACHE: OrderedDict[tuple[float, float, int, int, str, str], pd.DataFrame] = OrderedDict()
 
 
 def resolve_region(
@@ -123,6 +125,7 @@ def fetch_monthly(
     """Fetch monthly NASA POWER point series (1984..end), dropping month-13 annual rows."""
     key = (round(float(lat), 2), round(float(lon), 2), int(start), int(end), params, community)
     if use_cache and key in _POWER_CACHE:
+        _POWER_CACHE.move_to_end(key)
         return _POWER_CACHE[key].copy()
 
     response = httpx.get(
@@ -151,6 +154,9 @@ def fetch_monthly(
 
     if use_cache:
         _POWER_CACHE[key] = df.copy()
+        _POWER_CACHE.move_to_end(key)
+        while len(_POWER_CACHE) > _POWER_CACHE_MAX:
+            _POWER_CACHE.popitem(last=False)
     return df
 
 

@@ -4,13 +4,18 @@ export default function handler(_req, res) {
       (process.env.GROQ_API_KEY || "").trim() ||
       (process.env.OPENROUTER_API_KEY || "").trim()
   );
-  const enableLive = hasKey || process.env.ENABLE_LIVE_BACKEND === "1";
+  // Only declare "ok" (live FastAPI routes attached) when ENABLE_LIVE_BACKEND === "1".
+  // Returning HTTP 200 in open snapshot mode avoids spurious 503 console/banner errors.
+  const enableLive = process.env.ENABLE_LIVE_BACKEND === "1";
 
   res.setHeader("Cache-Control", "no-store");
   if (!enableLive) {
-    res.status(503).json({
+    res.status(200).json({
       status: "offline_snapshot",
-      reason: "static snapshot mode (no AI key configured in environment)",
+      mode: "open_zero_key_browser",
+      service: "Cockpit-OMNI Static + Open CORS",
+      live_ai: hasKey,
+      reason: "open zero-key browser mode (no FastAPI backend attached)",
     });
     return;
   }

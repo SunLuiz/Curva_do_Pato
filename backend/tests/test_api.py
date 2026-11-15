@@ -252,3 +252,63 @@ def test_api_ask_validation_and_no_keys(monkeypatch: pytest.MonkeyPatch) -> None
 
     missing_keys = client.post("/api/ask", json={"question": "Is Manaus drying?"})
     assert missing_keys.status_code == 503
+
+
+def test_horizons_client_targets_sun_from_body_and_parses_csv_and_text() -> None:
+    from app.clients.horizons_client import HorizonsClient, parse_ephem
+
+    csv_sample = "\n".join(
+        [
+            "Date__(UT)__HR:MN, , ,R.A._____(ICRF), DEC____(ICRF),  delta,",
+            "$$SOE",
+            " 2026-Nov-14 00:00, *, , 229.1234, -18.4321, 1.482,",
+            " 2026-Nov-14 06:00,  , , 229.3000, -18.4900, 1.483,",
+            "$$EOE",
+        ]
+    )
+    parsed_csv = parse_ephem(csv_sample)
+    assert parsed_csv["n"] == 2
+    assert parsed_csv["rows"][0]["utc"] == "2026-Nov-14 00:00"
+    assert parsed_csv["rows"][0]["az"] == pytest.approx(229.1234)
+    assert parsed_csv["rows"][0]["el"] == pytest.approx(-18.4321)
+
+    text_sample = "\n".join(
+        [
+            " Date__(UT)__HR:MN     R.A._____(ICRF) DEC____(ICRF) delta",
+            "$$SOE",
+            " 2026-Nov-14 00:00  *   229.1000       -18.4000     1.480",
+            "$$EOE",
+        ]
+    )
+    parsed_txt = parse_ephem(text_sample)
+    assert parsed_txt["n"] == 1
+    assert parsed_txt["rows"][0]["az"] == pytest.approx(229.1)
+    assert parsed_txt["rows"][0]["el"] == pytest.approx(-18.4)
+
+    mock_resp = MagicMock()
+    mock_resp.text = csv_sample
+    mock_resp.raise_for_status.return_value = None
+    hc = HorizonsClient()
+    with patch.object(hc.client, "get", return_value=mock_resp) as mock_get:
+        res = hc.sun_observer_angles(body="499")
+    hc.close()
+
+    sent_params = mock_get.call_args.kwargs["params"]
+    assert sent_params["COMMAND"] == "'10'"
+    assert sent_params["CENTER"] == "'500@499'"
+    assert sent_params["CSV_FORMAT"] == "'YES'"
+    assert res["n"] == 2
+
+
+def test_api_trend_cached_fallback_respects_start_end_bounds() -> None:
+    client = TestClient(app_main.app)
+    with patch("app.main.fetch_monthly", side_effect=RuntimeError("offline")):
+        r = client.get("/api/trend?region=campinas&variable=T2M&start=2020&end=2025")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["status"] == "cached"
+    years = {int(pt["t"][:4]) for pt in body["series"]}
+    assert min(years) >= 2020
+    assert max(years) <= 2025
+    assert len(body["series"]) == 72
+

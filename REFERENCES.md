@@ -53,5 +53,5 @@ All external datasets, APIs, and open-source components used or referenced in **
 ## 3. Pedagogy, Core Scientific & Web Libraries
 
 - **HKUDS/DeepTutor (`HKUDS/DeepTutor`):** Pedagogy inspiration for Cockpit-OMNI Academy's unassisted mastery gate, recency weighting, and auditable 3-layer browser memory (https://github.com/HKUDS/DeepTutor, **Apache-2.0 License**).
-- **Python:** `FastAPI`, `Uvicorn`, `httpx`, `pandas`, `numpy`, `scipy` (`theilslopes`), `pymannkendall` (`original_test`, `seasonal_test`), `statsmodels`, `pydantic`.
+- **Python:** `FastAPI`, `Uvicorn`, `httpx`, `pandas`, `numpy`, `scipy` (`theilslopes`), `pymannkendall` (`original_test`, `seasonal_test`), `pydantic`.
 - **Frontend:** `Vite`, `React`, `lucide-react`, plus browser-native `<canvas>` diploma rendering and pure JavaScript Seasonal Mann-Kendall + Theil-Sen engine (`frontend/src/engine/trend.js`). Typography: Google Fonts (`Fraunces`, `DM Sans`, `JetBrains Mono`).

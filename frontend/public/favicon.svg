@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Curve of Duck Rover Icon">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#142333" />
+      <stop offset="68%" stop-color="#1F4A5C" />
+      <stop offset="100%" stop-color="#8F5D15" />
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2889AC" />
+      <stop offset="100%" stop-color="#16566E" />
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded Cosmic Badge -->
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#sky)" stroke="#E4DCCF" stroke-width="2" />
+  <circle cx="14" cy="14" r="1.4" fill="#FAF7F2" opacity="0.85" />
+  <circle cx="51" cy="12" r="1.8" fill="#FAF7F2" opacity="0.7" />
+  <circle cx="44" cy="21" r="1" fill="#FAF7F2" opacity="0.65" />
+
+  <!-- Ground Horizon Arc -->
+  <path d="M4 50 Q32 45 60 50 L60 59 Q60 60 58 60 L6 60 Q4 60 4 59 Z" fill="#A66B2A" />
+
+  <!-- Rover Mast & Optical Sensor -->
+  <rect x="43" y="25" width="3.5" height="13" rx="1.4" fill="#E4DCCF" />
+  <rect x="40" y="21" width="11" height="5.5" rx="2.2" fill="#FAF7F2" stroke="#1C1B19" stroke-width="1.3" />
+  <circle cx="47.5" cy="23.8" r="1.6" fill="#2DD4BF" />
+
+  <!-- Rover Solar Deck & Chassis -->
+  <polygon points="10,36 45,36 48,39 8,39" fill="url(#panel)" stroke="#FAF7F2" stroke-width="1" />
+  <rect x="14" y="38" width="30" height="8.5" rx="3" fill="#FAF7F2" stroke="#1C1B19" stroke-width="1.5" />
+  <line x1="21" y1="46.5" x2="17" y2="51" stroke="#CFC4B2" stroke-width="2.2" stroke-linecap="round" />
+  <line x1="29" y1="46.5" x2="29" y2="51" stroke="#CFC4B2" stroke-width="2.2" stroke-linecap="round" />
+  <line x1="38" y1="46.5" x2="43" y2="51" stroke="#CFC4B2" stroke-width="2.2" stroke-linecap="round" />
+
+  <!-- 3 Rover Bogie Wheels -->
+  <g stroke="#FAF7F2" stroke-width="1.3">
+    <circle cx="17" cy="52" r="5" fill="#1C1B19" />
+    <circle cx="29" cy="52" r="5" fill="#1C1B19" />
+    <circle cx="43" cy="52" r="5" fill="#1C1B19" />
+  </g>
+  <circle cx="17" cy="52" r="1.8" fill="#E4DCCF" />
+  <circle cx="29" cy="52" r="1.8" fill="#E4DCCF" />
+  <circle cx="43" cy="52" r="1.8" fill="#E4DCCF" />
+
+  <!-- Pilot Duck Perched on Top of Rover -->
+  <path d="M16 32 C16 26 23 25 27 25 L31 25 C34 25 36 28 36 31.5 C36 34.8 33 36 27 36 L20 36 C17 36 15.5 34.5 16 32 Z" fill="#F4B41A" stroke="#1C1B19" stroke-width="1.4" />
+  <path d="M14 29 L18 31.5 L16 34.5 Z" fill="#E09A12" stroke="#1C1B19" stroke-width="1.1" stroke-linejoin="round" />
+  <!-- Duck Wing -->
+  <path d="M21 30.5 C24.5 29.5 28.5 31 28 33.5 C26.5 34.8 22 34.5 21 30.5 Z" fill="#E09A12" stroke="#1C1B19" stroke-width="1.1" />
+  <!-- Duck Head -->
+  <circle cx="31" cy="20.5" r="6.3" fill="#F4B41A" stroke="#1C1B19" stroke-width="1.4" />
+  <!-- Space Goggles / Helmet Visor -->
+  <rect x="28.5" y="17.4" width="7.2" height="3.8" rx="1.9" fill="#6ED3E8" stroke="#1C1B19" stroke-width="1.1" />
+  <!-- Duck Beak -->
+  <path d="M36 21.5 L42.5 22.8 C43.2 23.2 42.8 24.7 41.5 24.8 L35.8 24.6 Z" fill="#E85D04" stroke="#1C1B19" stroke-width="1.1" stroke-linejoin="round" />
+  <!-- Eye Spark -->
+  <circle cx="32.5" cy="19.3" r="1.1" fill="#1C1B19" />
+</svg>

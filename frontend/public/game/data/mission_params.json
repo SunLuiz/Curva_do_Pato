@@ -164,7 +164,7 @@
         "ws2m": 3.94
       }
     ],
-    "demand_profile_note": "Grid demand curve is an illustrative typical residential/grid ramp profile because data/ons_search.json contains dataset catalog metadata rather than an hourly MW load series."
+    "demand_profile_note": "Grid demand curve is an illustrative typical residential/grid ramp profile paired with empirical NASA POWER hourly solar/wind telemetry."
   },
   "meda_sol40_wind": {
     "source": "PDS Mars 2020 Perseverance MEDA Sol 40 (DER_WS)",

@@ -75,8 +75,8 @@ Instead of treating trends as isolated numbers, Cockpit-OMNI evaluates four phys
    - **Action Presets & Traffic-Light Layer:** 5 everyday decision presets (`Prepare for Heatwaves`, `Why Is It Drying?`, `Do Wildfires Reach Me?`, `Solar Storm Today?`, `How Is My City's Climate?`), deterministic `GREEN / AMBER / RED` briefings computed identically in `backend/app/presets.py` and `frontend/src/engine/presets.js`, Simple Language vs. Technical toggle, and interactive `<GlossaryTooltip />` popovers (`Seasonal Mann-Kendall`, `Theil-Sen`, `p-value`, `Tau`, `MPTO`, `SoC_bio`, `k_reg`).
    - **Time-Series & Provenance:** Client-side Seasonal Mann-Kendall & Deseasonalized Theil-Sen (~50 ms per 504-month series) with decade sliders & month filters, `Chart | Raw data | Source` tabs per chart (100-row paginated table + CSV/JSON download), and honest `Live backend connected` vs. `Showing frozen snapshot — 2026-11-14 15:04 UTC` banner.
    - **Space Analog (MPTO) (`/cockpit?tab=space`):** Connects real zero-key feeds (**NASA DSN Now**, **NASA OSDR `OSD-615`**, **CelesTrak GP**) alongside JPL Horizons / Mars 2020 MEDA clients and an interactive parametric 7-Frontier MPTO simulator ($\tau$, $C_p$, sintered regolith $k_{\text{reg}}$, and crater IR albedo gain `10–15%`).
-   - **Grounded Assistant (`Ask OMNI`):** Shared `<AskPanel />` (10 cache-verified answers offline + server-side `POST /api/ask` proxy in both FastAPI `backend/app/main.py` and Vercel `frontend/api/ask.js` routing GonkaRouter / Groq / OpenRouter without exposing keys to the browser). Legacy `/trend` and `/attribution` routes resolve cleanly to `/cockpit?tab=...`.
-4. **3D Game · *Curve of Duck: Rover Pilot 3D* (`/game`):** Lazy-loaded (`React.lazy` + Three.js) 3rd-person educational rover simulation grounded in the **"O Planeta Respira"** planetary vector $\vec{\Theta} = [g, \rho, c_p, k_{\text{reg}}, \tau_0]$ and **Active Impulse-Response Inversion & Orbital-to-Surface Calibration** ([Documentos/arquitetura_game3d_rover_pilot.md](./Documentos/arquitetura_game3d_rover_pilot.md)):
+   - **Open Natural-Language Assistant (`Ask OMNI`):** `<AskPanel />` powered by the 100% open client-side natural-language engine (`frontend/src/engine/askEngine.js`), answering free-form questions in `EN` or `PT-BR` across all cached NASA series, custom year slices (`computeTrend`), FIRMS Haversine radius, DONKI alerts, MPTO frontiers, glossary terms, and live zero-key CORS queries to **NASA POWER** (`lat, lon`) and **NASA Earthdata CMR** (`collections.json`). Legacy `/trend` and `/attribution` routes resolve cleanly to `/cockpit?tab=...`.
+4. **3D Game · *Curve of Duck: Rover Pilot 3D* (`/game`):** Lazy-loaded (`React.lazy` + Three.js) 3rd-person educational rover simulation grounded in the **"The Planet Breathes" (*"O Planeta Respira"*)** planetary vector $\vec{\Theta} = [g, \rho, c_p, k_{\text{reg}}, \tau_0, \text{IR}_{\text{albedo}}]$ and **Active Impulse-Response Inversion & Orbital-to-Surface Calibration** ([docs/arquitetura_game3d_rover_pilot.md](./docs/arquitetura_game3d_rover_pilot.md) & [docs/AGENTIC_PLANETARY_GUIDE.md](./docs/AGENTIC_PLANETARY_GUIDE.md)):
    - **5-Act Interactive SVG Prologue (`NarrativeIntro.jsx`):** Clickable vector narrative with Web Audio synthesizer covering (1) 64 m EDL retro-rocket impulse calibration ($\tau_{\text{jet}} \ge \tau_c$ + $\lvert I_t - I_{t-1}\rvert$), (2) Jezero settlement & `OSD-615` domes, (3) Sector 4 multi-sensor fusion (*Gemini Vision* optical $\tau$ vs. *Grok Cratera* orbital thermal inertia & `>40%` wheel-slip / `1.8x Wh/km` energy-distance routing), (4) Mars $\to$ Moon $\to$ Earth curve morphing, and (5) 3D Rover command handover.
    - **5 Sequential Real-Data Missions (`M1–M5`) + 3 Literacy Levels (`Explorer | Analyst | Specialist`):** Covers hourly solar Duck Curve + $T^4$ thermal saturation (`M1`), MEDA Sol 40 `2 Hz` gusts vs. monthly `WS2M` null $p = 0.489$ (`M2`), `999999999.0` sentinel filtering + $\lvert I_t - I_{t-1}\rvert$ + Alpha Crater wheel-slip avoidance (`M3`), 42-year Campinas vs. Manaus Seasonal Mann-Kendall falsification (`M4`), and conjugated DONKI + `OSD-615` `SoC_bio` + Lunar Lava Tube survival (`M5`).
    - **5 Physical Rover Controls (`[1]`–`[5]`), Mission Lab & Audited Debrief:** Articulates solar wings, mast/suspension, $35^\circ$ wind-cleaning tilt, optical sanitizer, and BESS/Beacon/Greenhouse cable coupling; compares player timing against `computeOraclePolicy()` and awards unified Academy stars (`starsFor`) & XP (`xpFor`).
@@ -105,10 +105,14 @@ Curva_do_Pato/                     # repository root (this is what you clone)
 │   │   └── main.py                # FastAPI endpoints (/healthz, /api/trend, /api/presets, /api/insight, /api/space-analog, /api/ask)
 │   └── tests/                     # API, statistical engine & presets/MPTO tests
 ├── data/                          # Sample & frozen fallback JSON/CSV snapshots (incl. space_analog.json)
-├── Documentos/                    # Architecture & Game Design specs (incl. arquitetura_game3d_rover_pilot.md)
-├── frontend/                      # Vite + React app + Vercel serverless /api proxy (Story · Academy · Cockpit · 3D Game)
+├── docs/                          # 100% English technical & operational documentation:
+│   ├── OPERATIONAL_GUIDE.md       # Step-by-step runbook & local API key / endpoint routing matrix
+│   ├── AGENTIC_PLANETARY_GUIDE.md # Agentic playbook for adding planets (Mars, Jupiter/Europa, Neptune/Triton)
+│   ├── arquitetura_game3d_rover_pilot.md # 3D Rover Game Design & Multi-Physics Inversion spec
+│   └── pitch_deck.html            # 7-slide demo deck (generated from frontend/src/content/story.js)
+├── frontend/                      # Vite + React app (Story · Academy · Cockpit + Open AskEngine · 3D Game)
 ├── scripts/                       # bake_game_data.py, build_deck.mjs, check_contrast.mjs (WCAG AA), verify_answers.mjs
-├── docs/pitch_deck.html           # 7-slide demo deck (generated from frontend/src/content/story.js)
+├── AGENTS.md / CLAUDE.md          # Auto-loaded instructions for Antigravity, Claude Code, Codex & Cursor
 ├── Dockerfile                     # Hugging Face Space (Docker, port 7860)
 ├── requirements.txt
 ├── REFERENCES.md                  # Full NASA & external dataset citations
@@ -117,22 +121,32 @@ Curva_do_Pato/                     # repository root (this is what you clone)
 
 ---
 
-## Quickstart (Local Backend)
+## Quickstart & Operational Guides
 
-Clone the repository and you land directly in the project root — no `cd` into a subfolder:
+- **Full Operational & API Key Wiring Guide:** [docs/OPERATIONAL_GUIDE.md](./docs/OPERATIONAL_GUIDE.md)
+- **Agentic Engineering & New Planets Guide (Mars, Jupiter/Europa, Neptune/Triton):** [docs/AGENTIC_PLANETARY_GUIDE.md](./docs/AGENTIC_PLANETARY_GUIDE.md) & [AGENTS.md](./AGENTS.md)
+
+### 1. Run Frontend Immediately (Zero API Keys Required)
 
 ```bash
 git clone https://github.com/SunLuiz/Curva_do_Pato.git
 cd Curva_do_Pato
-cp .env.example .env           # Optional keys: NASA_API_KEY, FIRMS_MAP_KEY, GONKA_API_KEY / GROQ_API_KEY
+npm --prefix frontend install
+npm --prefix frontend run dev
+```
+
+### 2. Run Optional Local FastAPI Backend (`port 8000`)
+
+```bash
+cp .env.example .env           # Optional free NASA keys: NASA_API_KEY, FIRMS_MAP_KEY (see docs/OPERATIONAL_GUIDE.md)
 .venv/Scripts/python.exe -m uvicorn app.main:app --app-dir backend --reload --port 8000
 ```
 
-Run tests & verification checks:
+### 3. Run Verification & Audit Suite
 
 ```bash
 .venv/Scripts/python.exe -m pytest backend/tests -q
-node --test frontend/src/content/story.test.mjs frontend/src/engine/trend.test.mjs frontend/src/academy/mastery.test.mjs frontend/src/engine/presets.test.mjs frontend/src/game/sim/sim.test.mjs
+node --test frontend/src/engine/askEngine.test.mjs frontend/src/engine/mptoEngine.test.mjs frontend/src/content/story.test.mjs frontend/src/engine/trend.test.mjs frontend/src/academy/mastery.test.mjs frontend/src/engine/presets.test.mjs frontend/src/game/sim/sim.test.mjs
 node scripts/check_contrast.mjs --css frontend/src/styles.css
 node scripts/verify_answers.mjs
 ```

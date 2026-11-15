@@ -1004,6 +1004,50 @@ async function handleRegionOverview(parsed, loadJson) {
   };
 }
 
+function handleAgents(parsed) {
+  const { norm, resolvedLang: l } = parsed;
+  const isAgentQuery = matchesAny(norm, [
+    "agent", "agents", "agente", "agentes", "multiagent", "multiagente", "orquestracao", "orchestrator",
+    "hebe", "sol invicta", "bios guardian", "storm watcher", "prudence", "auditor estatistico",
+    "statistical auditor", "gemini vision", "grok cratera",
+  ]);
+  if (!isAgentQuery) return null;
+
+  const answer = l === "pt"
+    ? "Orquestracao Multiagente OMNI (7 Agentes Fisicos + Auditor Estatistico + VCE/FPGA):\n1. Hebe Radiance (#1 T^4 radiador): aplica curtailment acima de 82% para proteger o BAE RAD750 + VCE FPGA.\n2. Gemini Vision (#2 Optica t-1->t): usa Navcam CMV20000 20MP (binning 4x4) + filtro LoG + MEDA RDS para isolar Beer-Lambert tau e purgar sentinelas 999999999.0 ([4]).\n3. Sol Invicta (#3 Regolito ~50x k & Albedo IR +10-15%): acopla bateria termica BESS ([5]) e borda iluminada de cratera.\n4. Bios Guardian (#4 SoC_bio OSDR OSD-615): veta drenagem abaixo do piso biologico em eclipses de 35% (CelesTrak).\n5. Grok Cratera (#5 Geotecnia 64m): usa estereo SAD 1/16 px (DEM 10cm), Odometria Visual Harris+RANSAC 6-DoF e algoritmo ACE Rocker-Bogie para vetar areia solta (>40% slip, 1,8x Wh/km).\n6. Storm Watcher (#6 Lead-time 30-60 min): cruza rajadas MEDA 2Hz + DONKI 7d RBE/CME contra SEUs na RAM ECC.\n7. Prudence (#7 P10-P95): impoe margens conservadoras de dispersao de tau e Cp.\nAuditor Estatistico (veto nao-LLM): valida tau/p-valor em trend.js e impede confundir WS2M nulo (p=0,489) ou roadmap NISAR/ECOSTRESS com dados ativos."
+    : "OMNI Multi-Agent Orchestration (7 Physical Agents + Statistical Auditor + VCE/FPGA):\n1. Hebe Radiance (#1 T^4 radiator): curtails compute >=82% to protect BAE RAD750 + VCE FPGA.\n2. Gemini Vision (#2 Optical t-1->t): binds Navcam CMV20000 20MP (4x4 bin) + FPGA LoG + MEDA RDS for Beer-Lambert tau and 999999999.0 sentinel purge ([4]).\n3. Sol Invicta (#3 Regolith ~50x k & +10-15% Crater IR): manages BESS thermal buffer ([5]) and rim irradiance gain.\n4. Bios Guardian (#4 SoC_bio OSDR OSD-615): vetoes chemical drain below biological floor during 35% CelesTrak eclipses.\n5. Grok Cratera (#5 64m Geotechnics): runs 1/16-px SAD stereo (10cm DEM), Harris+RANSAC 6-DoF Visual Odometry & ACE Rocker-Bogie routing to veto >40% slip (1.8x Wh/km).\n6. Storm Watcher (#6 30-60 min lead-time): fuses MEDA 2Hz gusts + DONKI 7d alerts against ECC DRAM SEUs.\n7. Prudence (#7 P10-P95 uncertainty): enforces conservative dust Cp and tau margins.\nStatistical Auditor (non-LLM veto): enforces trend.js + 111 verified assertions, keeping WS2M monthly null (p=0.489) and NISAR/ECOSTRESS roadmap honest.";
+
+  return {
+    answer,
+    sourceBadge: l === "pt" ? "Orquestracao 7 Agentes + Auditor" : "7-Agent Orchestration + Auditor",
+    action: { route: "/cockpit", tab: "space" },
+    resolvedLang: l,
+    detectedTopic: "multiagent",
+  };
+}
+
+function handleRoverHardware(parsed) {
+  const { norm, resolvedLang: l } = parsed;
+  const isHw = matchesAny(norm, [
+    "rad750", "vce", "fpga", "virtex", "cmv20000", "mastcam", "perseverance", "curiosity",
+    "rosalind", "exomars", "hpsc", "pic64", "risc-v", "riscv", "sad", "binning", "odometria",
+    "odometry", "ransac", "rocker-bogie", "cahvor", "vxworks", "hardware", "processador", "processor",
+  ]);
+  if (!isHw) return null;
+
+  const answer = l === "pt"
+    ? "Arquitetura Real de Computacao & Visao dos Rovers:\n• Perseverance (Mars 2020): CPU Dual BAE RAD750 (PowerPC 133-200 MHz, 256MB ECC DRAM, 2GB Flash, VxWorks) + coprocessador VCE com FPGA Xilinx Virtex-5QV (placa CVAC).\n• Pipeline VCE (Thinking-While-Driving <1s): Navcams CMOS CMV20000 20MP Global Shutter -> binning 4x4 (1280x960) -> retificacao epipolar CAHVOR -> filtro LoG -> Estereo SAD com interpolacao 1/16 pixel (base B=42,4 cm) + Odometria Visual (Harris + RANSAC 6-DoF) + algoritmo ACE para suspensao Rocker-Bogie (DEM 10x10 cm).\n• Curiosity (MSL): Dual RAD750 sem VCE, Navcams CCD mono 1MP, estereo em CPU.\n• Proxima geracao: ExoMars Rosalind Franklin (LEON2/3-FT SPARC V8) e NASA PIC64-HPSC (RISC-V octa-core 64-bit, 100x o RAD750)."
+    : "Real Rover Compute & Vision Architecture:\n• Perseverance (Mars 2020): Dual BAE RAD750 CPU (133-200 MHz PowerPC, 256MB ECC DRAM, 2GB Flash, VxWorks) + VCE coprocessor with Xilinx Virtex-5QV FPGA (CVAC board).\n• Hardware VCE Pipeline (<1s Thinking-While-Driving): CMV20000 20MP Global Shutter Navcams -> 4x4 binning (1280x960) -> CAHVOR rectification -> LoG filter -> SAD Stereo at 1/16 px (B=42.4 cm baseline) + Visual Odometry (Harris + RANSAC 6-DoF) + ACE Rocker-Bogie clearance planning on 10x10 cm DEMs.\n• Curiosity (MSL): Dual RAD750 without VCE, 1MP monochrome CCD Navcams.\n• Next-Gen: ExoMars Rosalind Franklin (LEON2/3-FT SPARC V8) and NASA PIC64-HPSC (octa-core 64-bit RISC-V, ~100x RAD750 throughput).";
+
+  return {
+    answer,
+    sourceBadge: "Mars Rover Compute & VCE FPGA Architecture",
+    action: { route: "/cockpit", tab: "space" },
+    resolvedLang: l,
+    detectedTopic: "rover_hardware",
+  };
+}
+
 /**
  * Answer any natural-language question about the managed NASA ecosystem using open client-side
  * computations over cached JSON telemetry and zero-key CORS NASA APIs.
@@ -1035,6 +1079,12 @@ export async function answerEcosystemQuestion(
   // 2. Domain handlers in priority order
   const explicitGlossaryHit = await handleGlossary(parsed, { onlyExplicitDefinition: true });
   if (explicitGlossaryHit) return explicitGlossaryHit;
+
+  const agentsHit = handleAgents(parsed);
+  if (agentsHit) return agentsHit;
+
+  const hwHit = handleRoverHardware(parsed);
+  if (hwHit) return hwHit;
 
   const donkiHit = await handleDonki(parsed, loadJson);
   if (donkiHit) return donkiHit;

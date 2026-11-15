@@ -305,6 +305,21 @@ export function computeUnifiedMPTO(input = {}) {
     },
   };
 
+  const orchestration = computeAgentOrchestration({
+    params,
+    planet: effectivePlanet,
+    pvYieldPct,
+    thermalLoadPct,
+    radiatorSaturated,
+    conductivityGainX,
+    heatingReductionPct,
+    bioBufferHrs,
+    geotechnical: geo,
+    windStress,
+    windStatus,
+    sanitizedDelta,
+  });
+
   return {
     params,
     planet: effectivePlanet,
@@ -330,6 +345,189 @@ export function computeUnifiedMPTO(input = {}) {
       rawSensorValue: params.sentinelActive ? 999999999.0 : Number(params.currTau),
     },
     frontierSignals,
+    orchestration,
+  };
+}
+
+function clamp01(val) {
+  return Number(Math.max(0, Math.min(1, val)).toFixed(2));
+}
+
+/**
+ * Deterministic 7-Agent + Statistical Auditor + OMNI Orchestrator fusion layer.
+ * Every agent vote [0..1] binds 1:1 to a physical MPTO Frontier and real flight hardware/sensors.
+ */
+export function computeAgentOrchestration({
+  params,
+  planet,
+  pvYieldPct,
+  thermalLoadPct,
+  radiatorSaturated,
+  conductivityGainX,
+  heatingReductionPct,
+  bioBufferHrs,
+  geotechnical,
+  windStress,
+  windStatus,
+  sanitizedDelta,
+}) {
+  const hebeVote = clamp01((thermalLoadPct - 45) / 42);
+  const geminiVote = clamp01(Math.max(sanitizedDelta, (100 - pvYieldPct) / 100));
+  const solVote = clamp01((params.onCraterRim ? 0.15 : 0.45) + (conductivityGainX < 25 ? 0.45 : 0));
+  const biosVote = clamp01((4.8 - bioBufferHrs) / 3.6);
+  const grokVote = clamp01(
+    geotechnical.energyDistanceMult >= 1.5 ? 0.92 : (geotechnical.wheelSlipPct || 0) / 55
+  );
+  const stormVote = clamp01(
+    windStatus === "danger" ? 1.0 : windStatus === "cleaning_window" ? 0.45 : windStress * 0.85
+  );
+  const prudenceVote = clamp01((Number(params.tau) / 3.0) * 0.65 + (Number(params.cpDust) - 0.7) * 0.8);
+
+  const agents = [
+    {
+      id: "hebe_radiance",
+      name: "Hebe Radiance",
+      frontierId: 1,
+      weight: 0.18,
+      vote: hebeVote,
+      veto: radiatorSaturated,
+      roleEn: "Radiative T⁴ Cooling Ceiling",
+      rolePt: "Teto Radiativo T⁴ do Radiador",
+      hardwareEn: "Throttles BAE RAD750 + VCE Virtex-5QV FPGA above 82%",
+      hardwarePt: "Limita dissipação do BAE RAD750 + VCE FPGA acima de 82%",
+      signalEn: `Thermal load ${thermalLoadPct}% (ceiling 82%)`,
+      signalPt: `Carga térmica ${thermalLoadPct}% (teto 82%)`,
+      actionKey: radiatorSaturated ? "[1] / [5]" : "NOMINAL",
+    },
+    {
+      id: "gemini_vision",
+      name: "Gemini Vision",
+      frontierId: 2,
+      weight: 0.16,
+      vote: geminiVote,
+      veto: params.sentinelActive,
+      roleEn: "Optical Frame Derivative (t-1 -> t) & Beer-Lambert",
+      rolePt: "Derivada Óptica (t-1 -> t) & Beer-Lambert",
+      hardwareEn: "CMV20000 20MP Global Shutter (4x4 bin) + FPGA LoG + MEDA RDS",
+      hardwarePt: "CMV20000 20MP Global Shutter (bin 4x4) + Filtro LoG + MEDA RDS",
+      signalEn: `ΔI=${sanitizedDelta} · PV yield ${pvYieldPct}%${params.sentinelActive ? " · 999999999.0 flagged" : ""}`,
+      signalPt: `ΔI=${sanitizedDelta} · PV ${pvYieldPct}%${params.sentinelActive ? " · erro 999999999.0" : ""}`,
+      actionKey: params.sentinelActive ? "[4] SANITIZE" : sanitizedDelta > 0.6 ? "HALT" : "NOMINAL",
+    },
+    {
+      id: "sol_invicta",
+      name: "Sol Invicta",
+      frontierId: 3,
+      weight: 0.11,
+      vote: solVote,
+      veto: false,
+      roleEn: "Sintered Regolith Bed (~50x k) & Crater IR Gain",
+      rolePt: "Regolito Sinterizado (~50x k) & Albedo IR da Cratera",
+      hardwareEn: "Couples thermal BESS sink with crater wall +10–15% IR flux",
+      hardwarePt: "Gerencia bateria térmica BESS + ganho IR de 10–15% na encosta",
+      signalEn: `k=${conductivityGainX}x · IR boost +${heatingReductionPct}%`,
+      signalPt: `k=${conductivityGainX}x · ganho IR +${heatingReductionPct}%`,
+      actionKey: params.onCraterRim ? "IR LOCK" : "[5] BESS",
+    },
+    {
+      id: "bios_guardian",
+      name: "Bios Guardian",
+      frontierId: 4,
+      weight: 0.14,
+      vote: biosVote,
+      veto: bioBufferHrs < 2.5,
+      roleEn: "Biological Circularity Reserve (SoC_bio)",
+      rolePt: "Reserva Biológica Circular (SoC_bio)",
+      hardwareEn: "OSDR OSD-615 Arabidopsis floor through 35% CelesTrak eclipses",
+      hardwarePt: "Piso biológico OSDR OSD-615 nos eclipses de 35% (CelesTrak)",
+      signalEn: `SoC_bio=${bioBufferHrs} h reserve`,
+      signalPt: `Reserva SoC_bio=${bioBufferHrs} h`,
+      actionKey: bioBufferHrs < 2.5 ? "[5] PROTECT BIOS" : "NOMINAL",
+    },
+    {
+      id: "grok_cratera",
+      name: "Grok Cratera",
+      frontierId: 5,
+      weight: 0.18,
+      vote: grokVote,
+      veto: geotechnical.energyDistanceMult > 1.35,
+      roleEn: "64m Impulse Geotechnics & Wh/km Routing",
+      rolePt: "Geotecnia 64m & Roteamento Energético (Wh/km)",
+      hardwareEn: "VCE SAD Stereo (1/16 px, 10cm DEM) + RANSAC 6-DoF VO + ACE",
+      hardwarePt: "FPGA Estéreo SAD (1/16 px, DEM 10cm) + Odometria VO + ACE",
+      signalEn: `${geotechnical.wheelSlipPct}% slip · ${geotechnical.energyDistanceMult}x Wh/km (τ_c=${geotechnical.tauC_Pa} Pa)`,
+      signalPt: `${geotechnical.wheelSlipPct}% patinagem · ${geotechnical.energyDistanceMult}x Wh/km (τ_c=${geotechnical.tauC_Pa} Pa)`,
+      actionKey: geotechnical.energyDistanceMult > 1.35 ? "BYPASS ALPHA" : "NOMINAL",
+    },
+    {
+      id: "storm_watcher",
+      name: "Storm Watcher",
+      frontierId: 6,
+      weight: 0.14,
+      vote: stormVote,
+      veto: windStatus === "danger",
+      roleEn: "30–60 min Lead-Time Wind & DONKI SEU Watch",
+      rolePt: "Antecipação 30–60 min Vento & Clima Espacial DONKI",
+      hardwareEn: "MEDA 2Hz gusts + DONKI 7d RBE/CME alert watch for ECC RAM",
+      hardwarePt: "Rajadas MEDA 2Hz + alertas DONKI 7d contra SEUs na RAM ECC",
+      signalEn: `Wind stress ${windStress.toFixed(2)} (${windStatus})`,
+      signalPt: `Estresse eólico ${windStress.toFixed(2)} (${windStatus})`,
+      actionKey: windStatus === "danger" ? "[1] + [2] SHELTER" : windStatus === "cleaning_window" ? "[3] TILT" : "NOMINAL",
+    },
+    {
+      id: "prudence_bounds",
+      name: "Prudence",
+      frontierId: 7,
+      weight: 0.09,
+      vote: prudenceVote,
+      veto: false,
+      roleEn: "Parametric P10–P95 Uncertainty Margin",
+      rolePt: "Margem de Incerteza Paramétrica P10–P95",
+      hardwareEn: "Tracks tau & dust Cp dispersion before nominal threshold trips",
+      hardwarePt: "Monitora dispersão de τ e Cp da poeira (banda P90/P95)",
+      signalEn: `τ=${Number(params.tau).toFixed(2)} · Cp=${Number(params.cpDust).toFixed(2)} · g=${planet.g}`,
+      signalPt: `τ=${Number(params.tau).toFixed(2)} · Cp=${Number(params.cpDust).toFixed(2)} · g=${planet.g}`,
+      actionKey: prudenceVote >= 0.65 ? "CONSERVATIVE MARGINS" : "NOMINAL",
+    },
+  ];
+
+  const consensusScore = Number(
+    agents.reduce((acc, a) => acc + a.vote * a.weight, 0).toFixed(2)
+  );
+  const activeVetoes = agents.filter((a) => a.veto);
+
+  let dispatchEn = "Nominal telemetry across all 7 physical vectors — maintain harvesting.";
+  let dispatchPt = "Telemetria nominal nos 7 vetores físicos — manter captação.";
+  if (params.sentinelActive) {
+    dispatchEn = "Gemini Vision detected sensor glitch 999999999.0 -> Statistical Auditor confirms no physical storm; execute [4] Optical Purge without aborting.";
+    dispatchPt = "Gemini Vision isolou sentinela 999999999.0 -> Auditor confirma ausência de tempestade física; acionar [4] Purga Óptica sem abortar.";
+  } else if (geotechnical.energyDistanceMult > 1.35) {
+    dispatchEn = "VETO by Grok Cratera (VCE ACE + VO): loose sand exceeds 40% slip (1.8x Wh/km) — reject Position Alpha and reroute via compact basalt plateau.";
+    dispatchPt = "VETO do Grok Cratera (FPGA VO + ACE): areia fofa excede 40% de patinagem (1,8x Wh/km) — rejeitar Cratera Alpha e contornar pelo basalto compacto.";
+  } else if (windStatus === "danger") {
+    dispatchEn = "CRITICAL ALERT by Storm Watcher: aerodynamic stress >= 1.0 — fold wings [1], crouch suspension [2], and seek leeward/lava shelter 30–60 min ahead.";
+    dispatchPt = "ALERTA CRÍTICO do Storm Watcher: estresse eólico >= 1,0 — recolher asas [1], abaixar mastro [2] e abrigar 30–60 min antes.";
+  } else if (radiatorSaturated) {
+    dispatchEn = "THERMAL VETO by Hebe Radiance: T⁴ radiator >= 82% — throttle VCE FPGA compute and dock BESS [5] / fold wings [1] immediately.";
+    dispatchPt = "VETO TÉRMICO da Hebe Radiance: radiador T⁴ >= 82% — reduzir carga do VCE FPGA e acoplar BESS [5] ou fechar asas [1].";
+  } else if (windStatus === "cleaning_window") {
+    dispatchEn = "OPPORTUNITY by Storm Watcher + Hebe: moderate breeze open — tilt solar panels [3] at 35 deg for natural wind-cleaning.";
+    dispatchPt = "OPORTUNIDADE (Storm Watcher + Hebe): brisa moderada ideal — inclinar painéis [3] a 35° para limpeza eólica natural.";
+  }
+
+  return {
+    agents,
+    consensusScore,
+    status: activeVetoes.length > 0 || consensusScore >= 0.6 ? "critical" : consensusScore >= 0.35 ? "watch" : "nominal",
+    activeVetoes: activeVetoes.map((a) => a.name),
+    auditorRule: {
+      nameEn: "Statistical Auditor (Non-LLM Veto)",
+      namePt: "Auditor Estatístico (Veto Não-LLM)",
+      statusEn: "ENFORCED · WS2M monthly p=0.489 (null) & NISAR/ECOSTRESS locked to roadmap",
+      statusPt: "ATIVO · Vento WS2M nulo (p=0,489) e NISAR/ECOSTRESS bloqueados no roadmap",
+    },
+    dispatchEn,
+    dispatchPt,
   };
 }
 

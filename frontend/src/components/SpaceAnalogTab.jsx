@@ -14,6 +14,7 @@ import MPTOUnifiedSimulator from "./space/MPTOUnifiedSimulator";
 import GeotechnicalSlipPanel from "./space/GeotechnicalSlipPanel";
 import WindStressDecisionPanel from "./space/WindStressDecisionPanel";
 import OpticalQualityPanel from "./space/OpticalQualityPanel";
+import AgentOrchestrationPanel from "./space/AgentOrchestrationPanel";
 
 const FRONTIER_TO_MISSION = {
   1: "M1",
@@ -376,6 +377,9 @@ export default function SpaceAnalogTab({ lang = "en", onNavigate }) {
           </div>
         </div>
       </section>
+
+      {/* Block 8: 7-Agent + Statistical Auditor + VCE/FPGA Orchestration */}
+      <AgentOrchestrationPanel unified={unified} lang={l} />
     </div>
   );
 }

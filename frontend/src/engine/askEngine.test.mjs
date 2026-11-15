@@ -207,3 +207,26 @@ test("Glossary and region summary respond cleanly in both EN and PT-BR", async (
   assert.match(summary.answer, /Petrolina-PE/);
   assert.match(summary.answer, /Precipitacao/);
 });
+
+test("7-Agent Orchestration & Rover VCE/FPGA hardware queries return exact engineering facts", async () => {
+  const agRes = await answerEcosystemQuestion("Como funcionam os 7 agentes e o Auditor Estatistico?", {
+    loadJson: loadFromDisk,
+    lang: "en",
+  });
+  assert.equal(agRes.resolvedLang, "pt");
+  assert.equal(agRes.detectedTopic, "multiagent");
+  assert.match(agRes.answer, /Hebe Radiance/);
+  assert.match(agRes.answer, /Grok Cratera/);
+  assert.match(agRes.answer, /Bios Guardian/);
+  assert.match(agRes.answer, /Storm Watcher/);
+  assert.match(agRes.answer, /Auditor Estatistico/);
+
+  const hwRes = await answerEcosystemQuestion("Explain Perseverance RAD750, VCE FPGA and PIC64-HPSC", {
+    loadJson: loadFromDisk,
+    lang: "en",
+  });
+  assert.equal(hwRes.detectedTopic, "rover_hardware");
+  assert.match(hwRes.answer, /Virtex-5QV/);
+  assert.match(hwRes.answer, /CMV20000/);
+  assert.match(hwRes.answer, /PIC64-HPSC/);
+});

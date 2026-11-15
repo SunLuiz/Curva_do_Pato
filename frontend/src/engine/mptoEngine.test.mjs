@@ -166,3 +166,25 @@ test("buildGameDeepLink builds deterministic query strings for GamePage", () => 
   });
   assert.equal(url, "/game?mission=M5&planet=moon_artemis&depth=specialist&tau=0.45");
 });
+
+test("computeAgentOrchestration fuses all 7 MPTO agents, Statistical Auditor & VCE FPGA cues", () => {
+  const sandAlert = computeUnifiedMPTO({
+    planetId: "mars_jezero",
+    terrainProfile: "eolian_sand",
+    slope: 0.1,
+    windMs: 5.0,
+    wingsMode: "open",
+    mastRaised: true,
+    inShelter: false,
+  });
+  const orch = sandAlert.orchestration;
+  assert.equal(orch.agents.length, 7);
+  for (const agent of orch.agents) {
+    assert.ok(agent.vote >= 0 && agent.vote <= 1);
+    assert.ok(agent.frontierId >= 1 && agent.frontierId <= 7);
+  }
+  assert.ok(orch.activeVetoes.includes("Grok Cratera"));
+  assert.ok(orch.activeVetoes.includes("Storm Watcher"));
+  assert.equal(orch.status, "critical");
+  assert.match(orch.auditorRule.statusEn, /WS2M/);
+});

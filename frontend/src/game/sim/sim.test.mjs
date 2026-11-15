@@ -18,6 +18,13 @@ import { AUDITED_PARAMS, MISSION_ORDER, generateMissionTelemetry } from "../miss
 import { computeOraclePolicy, evaluateMissionOutcome } from "./oracle.js";
 import { createMissionRuntime, stepSimulation, triggerRoverAction } from "./roverSimulation.js";
 import { loadProfile, saveProfile } from "../../academy/storage.js";
+import {
+  OCARINA_MELODIES,
+  OCARINA_N64_PADS,
+  computeCurveAudioParams,
+  computeProximityAudioParams,
+  computeWindAudioParams,
+} from "../soundEngine.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "../../../..");
@@ -320,4 +327,49 @@ test("Active Impulse-Response geotechnical slip calibration (>40% slip & 1.8x Wh
   const customTauRun = createMissionRuntime({ missionId: "M5", planetId: "mars_jezero", tauOverride: 2.35, seed: 2026 });
   assert.equal(customTauRun.planet.baseTau, 2.35);
   assert.equal(customTauRun.planetId, "mars_jezero");
+});
+
+test("Ocarina synth, chart sonification, planetary wind & proximity sonar map telemetry physics", () => {
+  // 5 classical N64 Ocarina notes + 3 built-in melodies
+  assert.equal(OCARINA_N64_PADS.length, 5);
+  assert.deepEqual(
+    OCARINA_N64_PADS.map((p) => p.note),
+    ["D5", "F5", "A5", "B5", "D6"]
+  );
+  for (const key of ["title", "lullaby", "time"]) {
+    assert.ok(OCARINA_MELODIES[key].length >= 8);
+    for (const [freq, dur] of OCARINA_MELODIES[key]) {
+      assert.ok(freq > 400 && dur > 0);
+    }
+  }
+
+  // Rising curve near threshold accelerates BPM, shortens step interval, raises pitch & gain
+  const calm = computeCurveAudioParams({ normVal: 0.1, slope: -0.5, nearThreshold: false });
+  const spike = computeCurveAudioParams({ normVal: 0.9, slope: 0.85, nearThreshold: true });
+  assert.ok(spike.bpm > calm.bpm, `Expected rising BPM (${spike.bpm}) > calm (${calm.bpm})`);
+  assert.ok(spike.stepIntervalSec < calm.stepIntervalSec);
+  assert.ok(spike.baseFreqHz > calm.baseFreqHz);
+  assert.ok(spike.gainScale > calm.gainScale);
+  assert.ok(spike.filterCutoffHz > calm.filterCutoffHz);
+  assert.ok(spike.vibratoHz > calm.vibratoHz);
+
+  // Vacuum Moon has zero wind noise; Mars/Earth wind attenuates inside Shelter
+  const moonVacuum = computeWindAudioParams({ windMs: 9.5, rho: 0, sheltered: false });
+  assert.equal(moonVacuum.active, false);
+  assert.equal(moonVacuum.windGain, 0);
+
+  const marsExposed = computeWindAudioParams({ windMs: 4.5, rho: PLANETS.mars_jezero.rho, sheltered: false });
+  const marsSheltered = computeWindAudioParams({ windMs: 4.5, rho: PLANETS.mars_jezero.rho, sheltered: true });
+  assert.equal(marsExposed.active, true);
+  assert.ok(marsExposed.windGain > marsSheltered.windGain * 2.5);
+
+  // Target distance sonar speeds up and raises pitch closer to goal; slip>=30 triggers traction alert
+  const far = computeProximityAudioParams({ targetDist: 44, speed: 4.0, slipPct: 8 });
+  const near = computeProximityAudioParams({ targetDist: 4, speed: 3.5, slipPct: 44 });
+  assert.ok(near.pingIntervalSec < far.pingIntervalSec);
+  assert.ok(near.pingFreqHz > far.pingFreqHz);
+  assert.ok(near.pingGain > far.pingGain);
+  assert.equal(far.highSlip, false);
+  assert.equal(near.highSlip, true);
+  assert.ok(near.slipGain > far.slipGain);
 });

@@ -112,10 +112,11 @@ const ACTS = [
   },
 ];
 
-export default function NarrativeIntro({ lang = "en", onFinish }) {
+export default function NarrativeIntro({ lang = "en", muted: controlledMuted, onToggleMute, onFinish }) {
   const l = lang === "pt" ? "pt" : "en";
   const [step, setStep] = useState(0);
-  const [muted, setMuted] = useState(false);
+  const [localMuted, setLocalMuted] = useState(soundEngine.getState().muted);
+  const isMuted = controlledMuted !== undefined ? controlledMuted : localMuted;
   const [morphT, setMorphT] = useState(0);
   const [parallax, setParallax] = useState({ x: 0, y: 0 });
 
@@ -123,8 +124,8 @@ export default function NarrativeIntro({ lang = "en", onFinish }) {
   const copy = act[l];
 
   useEffect(() => {
-    soundEngine.setMuted(muted);
-  }, [muted]);
+    soundEngine.setMuted(isMuted);
+  }, [isMuted]);
 
   // Continuous Mars -> Moon -> Earth morph animation on Act 4
   useEffect(() => {
@@ -286,11 +287,11 @@ export default function NarrativeIntro({ lang = "en", onFinish }) {
             <button
               type="button"
               className="btn-hud-ghost"
-              onClick={() => setMuted((m) => !m)}
-              aria-label={muted ? "Unmute sound" : "Mute sound"}
+              onClick={() => (onToggleMute ? onToggleMute() : setLocalMuted((m) => !m))}
+              aria-label={isMuted ? "Unmute sound" : "Mute sound"}
             >
-              {muted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-              <span>{muted ? (l === "pt" ? "Mudo" : "Muted") : (l === "pt" ? "Áudio Synth" : "Synth Audio")}</span>
+              {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+              <span>{isMuted ? (l === "pt" ? "Mudo" : "Muted") : (l === "pt" ? "Áudio Synth" : "Synth Audio")}</span>
             </button>
             <button type="button" className="btn-hud-ghost" onClick={onFinish}>
               <SkipForward size={15} />

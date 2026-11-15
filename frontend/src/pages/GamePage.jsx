@@ -8,11 +8,14 @@ import {
   Eye,
   FlaskConical,
   Gamepad2,
+  Globe,
   GraduationCap,
   HelpCircle,
+  Home,
   Lock,
   Maximize,
   Minimize,
+  Music,
   Pause,
   Play,
   RotateCcw,
@@ -28,6 +31,7 @@ import {
 } from "lucide-react";
 import "../game/game.css";
 import NarrativeIntro from "../game/NarrativeIntro";
+import StartMenuModal from "../game/StartMenuModal";
 import RoverViewport3D from "../game/scene/RoverViewport3D";
 import LiveMissionChart from "../game/hud/LiveMissionChart";
 import NavCamMini from "../game/hud/NavCamMini";
@@ -202,20 +206,21 @@ export default function GamePage({
   onNavigate,
   launchSearch = "",
   lang = "en",
+  setLang,
 }) {
   const l = lang === "pt" ? "pt" : "en";
   const gameState = profile.game || {};
   const initialQuery = parseGameLaunchQuery(
     launchSearch || (typeof window !== "undefined" ? window.location.search : "")
   );
-  const [viewMode, setViewMode] = useState(
-    initialQuery ? "play" : gameState.introSeen ? "play" : "intro"
-  ); // intro | play | lab
+  const [viewMode, setViewMode] = useState(initialQuery ? "play" : "start"); // start | intro | play | lab
   const [selectedMissionId, setSelectedMissionId] = useState(initialQuery?.missionId || "M1");
   const [depth, setDepth] = useState(initialQuery?.depth || profile.depth || "explorer");
   const [usedHint, setUsedHint] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [volume, setVolume] = useState(0.78);
+  const [musicEnabled, setMusicEnabled] = useState(true);
   const [camMode, setCamMode] = useState("chase"); // chase | survey
   const [runCounter, setRunCounter] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -272,6 +277,45 @@ export default function GamePage({
   useEffect(() => {
     soundEngine.setMuted(muted);
   }, [muted]);
+
+  useEffect(() => {
+    soundEngine.setVolume(volume);
+  }, [volume]);
+
+  useEffect(() => {
+    soundEngine.setMusicEnabled(musicEnabled);
+  }, [musicEnabled]);
+
+  useEffect(() => {
+    if (viewMode !== "play" && viewMode !== "start") {
+      soundEngine.stopAllLoops();
+    }
+  }, [viewMode]);
+
+  useEffect(() => () => soundEngine.stopAllLoops(), []);
+
+  const handleToggleMute = useCallback(() => {
+    setMuted((m) => !m);
+  }, []);
+
+  const handleChangeVolume = useCallback(
+    (nextVol) => {
+      setVolume(nextVol);
+      if (nextVol > 0 && muted) setMuted(false);
+    },
+    [muted]
+  );
+
+  const handleToggleMusic = useCallback(() => {
+    setMusicEnabled((prev) => !prev);
+  }, []);
+
+  const handleChangeLang = useCallback(
+    (nextLang) => {
+      setLang?.(nextLang === "pt" ? "pt" : "en");
+    },
+    [setLang]
+  );
 
   const launchRun = useCallback(
     (cfg) => {
@@ -529,6 +573,15 @@ export default function GamePage({
 
           <button
             type="button"
+            className={viewMode === "start" ? "btn-primary" : "btn-secondary"}
+            style={{ padding: "0.45rem 0.8rem", fontSize: "0.8rem" }}
+            onClick={() => setViewMode("start")}
+          >
+            <Home size={14} /> {l === "pt" ? "Menu Start" : "Start Menu"}
+          </button>
+
+          <button
+            type="button"
             className={viewMode === "intro" ? "btn-primary" : "btn-secondary"}
             style={{ padding: "0.45rem 0.8rem", fontSize: "0.8rem" }}
             onClick={() => setViewMode("intro")}
@@ -625,8 +678,30 @@ export default function GamePage({
         })}
       </div>
 
+      {/* View 0: Start Menu with Ocarina Theme, Sound & Language Settings */}
+      {viewMode === "start" && (
+        <StartMenuModal
+          lang={l}
+          onChangeLang={handleChangeLang}
+          muted={muted}
+          onToggleMute={handleToggleMute}
+          volume={volume}
+          onChangeVolume={handleChangeVolume}
+          musicEnabled={musicEnabled}
+          onToggleMusic={handleToggleMusic}
+          selectedMissionId={selectedMissionId}
+          onStartPlay={() => launchRun({ ...runConfig, missionId: selectedMissionId })}
+          onOpenIntro={() => {
+            soundEngine.stopMusic();
+            setViewMode("intro");
+          }}
+        />
+      )}
+
       {/* View 1: 5-Act Interactive SVG Vector Intro */}
-      {viewMode === "intro" && <NarrativeIntro lang={l} onFinish={handleFinishIntro} />}
+      {viewMode === "intro" && (
+        <NarrativeIntro lang={l} muted={muted} onToggleMute={handleToggleMute} onFinish={handleFinishIntro} />
+      )}
 
       {/* View 2: Custom Difficulty Mission Lab */}
       {viewMode === "lab" && (
@@ -648,6 +723,7 @@ export default function GamePage({
             camMode={camMode}
             onToggleCamMode={toggleCamMode}
             onToggleFullscreen={toggleFullscreen}
+            onToggleMute={handleToggleMute}
             onRetry={() => launchRun(runConfig)}
             touchInputRef={touchInputRef}
             reducedMotion={reducedMotion}
@@ -734,17 +810,54 @@ export default function GamePage({
                   style={{ padding: "0.28rem 0.55rem", fontSize: "0.74rem" }}
                   onClick={togglePauseRuntime}
                   aria-label="Pause or Resume"
+                  title={l === "pt" ? "Play / Pause [P]" : "Play / Pause [P]"}
                 >
                   {snapshot.paused ? <Play size={13} /> : <Pause size={13} />}
                 </button>
                 <button
                   type="button"
-                  className="btn-hud-ghost"
-                  style={{ padding: "0.28rem 0.55rem", fontSize: "0.74rem" }}
-                  onClick={() => setMuted((m) => !m)}
+                  className={`hud-cam-btn ${!muted ? "active-cyan" : ""}`}
+                  style={{ padding: "0.28rem 0.52rem", fontSize: "0.72rem" }}
+                  onClick={handleToggleMute}
                   aria-label="Toggle Sound"
+                  title={l === "pt" ? "Ligar / Desligar Som [M]" : "Toggle Sound [M]"}
                 >
                   {muted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+                  <span>{muted ? "OFF" : "ON"}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`hud-cam-btn ${musicEnabled && !muted ? "active-cyan" : ""}`}
+                  style={{ padding: "0.28rem 0.5rem", fontSize: "0.72rem" }}
+                  onClick={handleToggleMusic}
+                  aria-label="Toggle Ocarina Melody"
+                  title={l === "pt" ? "Ligar / Desligar Canção Adaptativa" : "Toggle Adaptive Song"}
+                >
+                  <Music size={12} />
+                </button>
+                <button
+                  type="button"
+                  className="hud-cam-btn"
+                  style={{ padding: "0.28rem 0.52rem", fontSize: "0.72rem" }}
+                  onClick={() => handleChangeLang(l === "pt" ? "en" : "pt")}
+                  aria-label="Toggle Language"
+                  title={l === "pt" ? "Mudar idioma PT-BR / EN" : "Switch language EN / PT-BR"}
+                >
+                  <Globe size={12} />
+                  <span>{l === "pt" ? "PT" : "EN"}</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn-hud-ghost"
+                  style={{ padding: "0.28rem 0.52rem", fontSize: "0.74rem" }}
+                  onClick={() => {
+                    if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+                    setViewMode("start");
+                  }}
+                  aria-label="Start Menu"
+                  title={l === "pt" ? "Voltar ao Menu Start" : "Back to Start Menu"}
+                >
+                  <Home size={13} />
                 </button>
                 <button
                   type="button"

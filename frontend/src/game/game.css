@@ -648,3 +648,221 @@
   align-items: center;
   gap: 0.4rem;
 }
+
+/* Start Menu & Helmholtz Ocarina Audio Console */
+.start-menu-stage {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(76, 212, 232, 0.16), transparent 48%),
+    radial-gradient(circle at 18% 82%, rgba(69, 201, 122, 0.12), transparent 52%),
+    var(--cockpit-bg);
+  color: var(--cockpit-ink);
+  border: 1px solid var(--cockpit-border);
+  border-radius: var(--radius-lg);
+  padding: 1.45rem 1.65rem;
+  display: grid;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-lift);
+}
+
+.start-menu-hero {
+  display: grid;
+  gap: 0.72rem;
+}
+
+.start-menu-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--hud-cyan);
+  text-transform: uppercase;
+}
+
+.start-menu-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.38rem, 2.7vw, 1.95rem);
+  line-height: 1.18;
+  color: var(--cockpit-ink);
+  margin: 0;
+}
+
+.start-menu-desc {
+  font-size: 0.94rem;
+  color: var(--cockpit-soft);
+  line-height: 1.56;
+  max-width: 78ch;
+  margin: 0;
+}
+
+.start-menu-action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding-top: 0.35rem;
+}
+
+.btn-start-play {
+  background: linear-gradient(135deg, var(--hud-green), var(--hud-cyan));
+  color: var(--cockpit-bg);
+  border: none;
+  padding: 0.74rem 1.45rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: 0.96rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 8px 24px rgba(76, 212, 232, 0.28);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.btn-start-play:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(69, 201, 122, 0.38);
+}
+
+.start-settings-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(25, 34, 43, 0.88);
+  border: 1px solid var(--cockpit-border);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.7rem;
+}
+
+.start-setting-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--cockpit-soft);
+}
+
+.start-vol-slider {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--cockpit-ink);
+}
+
+.start-vol-slider input[type="range"] {
+  width: 76px;
+  accent-color: var(--hud-cyan);
+  cursor: pointer;
+}
+
+.start-lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(17, 22, 28, 0.9);
+  border: 1px solid var(--cockpit-border);
+  border-radius: var(--radius-pill);
+  padding: 0.18rem 0.35rem;
+  color: var(--cockpit-soft);
+}
+
+.lang-pill-btn {
+  border: none;
+  background: transparent;
+  color: var(--cockpit-soft);
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  font-weight: 700;
+  padding: 0.22rem 0.48rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.lang-pill-btn.active {
+  background: var(--hud-cyan);
+  color: var(--cockpit-bg);
+}
+
+.hud-cam-btn.active-cyan {
+  border-color: var(--hud-cyan);
+  color: var(--hud-cyan);
+  background: rgba(76, 212, 232, 0.16);
+}
+
+.start-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.start-card-panel {
+  background: rgba(25, 34, 43, 0.78);
+  border: 1px solid var(--cockpit-border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.15rem;
+  display: grid;
+  gap: 0.72rem;
+  align-content: start;
+}
+
+.ocarina-pad-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.ocarina-note-btn {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.82rem;
+  line-height: 1.15;
+  cursor: pointer;
+  transition: transform 0.09s ease, box-shadow 0.09s ease;
+}
+
+.ocarina-note-btn small {
+  font-size: 0.65rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.ocarina-note-btn.variant-a {
+  background: #2f6fe4;
+  color: var(--cockpit-ink);
+}
+
+.ocarina-note-btn.variant-c {
+  background: var(--hud-amber);
+  color: var(--cockpit-bg);
+}
+
+.ocarina-note-btn:active,
+.ocarina-note-btn.pressed {
+  transform: scale(0.92);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.75);
+}
+
+.start-sonic-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.52rem;
+  font-size: 0.83rem;
+  color: var(--cockpit-soft);
+  line-height: 1.46;
+}
+
+.start-sonic-list strong {
+  color: var(--cockpit-ink);
+}

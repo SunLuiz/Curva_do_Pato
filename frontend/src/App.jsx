@@ -202,6 +202,7 @@ export default function App() {
             onNavigate={navigate}
             launchSearch={routeSearch}
             lang={lang}
+            setLang={setLang}
           />
         </Suspense>
       )}

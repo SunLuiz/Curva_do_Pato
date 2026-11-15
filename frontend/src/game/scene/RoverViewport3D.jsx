@@ -468,6 +468,7 @@ export default function RoverViewport3D({
   camMode = "chase",
   onToggleCamMode,
   onToggleFullscreen,
+  onToggleMute,
   onRetry,
   touchInputRef,
   reducedMotion = false,
@@ -476,10 +477,12 @@ export default function RoverViewport3D({
   const camModeRef = useRef(camMode);
   const onToggleCamRef = useRef(onToggleCamMode);
   const onToggleFullscreenRef = useRef(onToggleFullscreen);
+  const onToggleMuteRef = useRef(onToggleMute);
   const onRetryRef = useRef(onRetry);
   camModeRef.current = camMode;
   onToggleCamRef.current = onToggleCamMode;
   onToggleFullscreenRef.current = onToggleFullscreen;
+  onToggleMuteRef.current = onToggleMute;
   onRetryRef.current = onRetry;
   const [webglError, setWebglError] = useState(false);
 
@@ -789,6 +792,8 @@ export default function RoverViewport3D({
         onRetryRef.current?.();
       } else if (k === "p") {
         togglePauseRuntime();
+      } else if (k === "m") {
+        onToggleMuteRef.current?.();
       }
     };
 
@@ -1147,6 +1152,39 @@ export default function RoverViewport3D({
       camTarget.set(rv.x, rv.y + (camModeRef.current === "survey" ? 0.4 : 2.05), rv.z);
       camera.lookAt(camTarget);
 
+      // Continuous live acoustic telemetry feedback (Ocarina tempo/pitch + wind + distance sonar + wheel slip)
+      if (rt.timeline && rt.timeline.length > 0) {
+        let minP = Infinity;
+        let maxP = -Infinity;
+        for (let t = 0; t < rt.timeline.length; t += 1) {
+          const v = rt.timeline[t].primaryVal;
+          if (Number.isFinite(v)) {
+            if (v < minP) minP = v;
+            if (v > maxP) maxP = v;
+          }
+        }
+        const spanP = Math.max(1e-5, maxP - minP);
+        const currVal = Number.isFinite(pt?.primaryVal) ? pt.primaryVal : minP;
+        const normVal = Math.max(0, Math.min(1, (currVal - minP) / spanP));
+        const inSafeZone = findZonesAt(missionId, rv.x, rv.z).some(
+          (z) => z.kind === "shelter" || z.kind === "crater_safe"
+        );
+        const distToGoal = targetZone ? Math.hypot(targetZone.x - rv.x, targetZone.z - rv.z) : 75;
+        soundEngine.updateGameplayAudio({
+          normVal,
+          nearThreshold:
+            rt.alert.level === "danger" || rt.alert.level === "warn" || Boolean(rt.telemetry.sentinelPending),
+          windMs: wind,
+          rho: rt.planet.rho,
+          sheltered: inSafeZone,
+          targetDist: distToGoal,
+          speed: rv.effectiveSpeed ?? rv.speed,
+          slipPct: rv.wheelSlipPct || 0,
+          paused: rt.paused,
+          status: rt.status,
+        });
+      }
+
       renderer.render(scene, camera);
     };
 
@@ -1154,6 +1192,7 @@ export default function RoverViewport3D({
 
     return () => {
       cancelAnimationFrame(raf);
+      soundEngine.stopAllLoops();
       ro.disconnect();
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);

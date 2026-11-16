@@ -829,6 +829,7 @@ export default function RoverViewport3D({
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
     const domEl = renderer.domElement;
+    domEl.style.touchAction = "none";
     domEl.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("pointerup", onPointerUp);

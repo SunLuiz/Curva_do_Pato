@@ -1084,14 +1084,22 @@ export default function GamePage({
               </div>
 
               {/* Dpad for touch & mouse */}
-              <div className="dpad-cluster" aria-label="Touch Steering Controls">
+              <div
+                className="dpad-cluster"
+                aria-label="Touch Steering Controls"
+                onContextMenu={(e) => e.preventDefault()}
+              >
                 <span />
                 <button
                   type="button"
                   className="dpad-key"
                   aria-label="Drive Forward"
-                  onPointerDown={() => setTouch(1, 0)}
+                  onPointerDown={(e) => {
+                    e.currentTarget.setPointerCapture?.(e.pointerId);
+                    setTouch(1, 0);
+                  }}
                   onPointerUp={() => setTouch(0, 0)}
+                  onPointerCancel={() => setTouch(0, 0)}
                   onPointerLeave={() => setTouch(0, 0)}
                 >
                   ▲
@@ -1101,8 +1109,12 @@ export default function GamePage({
                   type="button"
                   className="dpad-key"
                   aria-label="Turn Left"
-                  onPointerDown={() => setTouch(0.8, 1)}
+                  onPointerDown={(e) => {
+                    e.currentTarget.setPointerCapture?.(e.pointerId);
+                    setTouch(0.8, 1);
+                  }}
                   onPointerUp={() => setTouch(0, 0)}
+                  onPointerCancel={() => setTouch(0, 0)}
                   onPointerLeave={() => setTouch(0, 0)}
                 >
                   ◀
@@ -1111,8 +1123,12 @@ export default function GamePage({
                   type="button"
                   className="dpad-key"
                   aria-label="Reverse"
-                  onPointerDown={() => setTouch(-0.7, 0)}
+                  onPointerDown={(e) => {
+                    e.currentTarget.setPointerCapture?.(e.pointerId);
+                    setTouch(-0.7, 0);
+                  }}
                   onPointerUp={() => setTouch(0, 0)}
+                  onPointerCancel={() => setTouch(0, 0)}
                   onPointerLeave={() => setTouch(0, 0)}
                 >
                   ▼
@@ -1121,8 +1137,12 @@ export default function GamePage({
                   type="button"
                   className="dpad-key"
                   aria-label="Turn Right"
-                  onPointerDown={() => setTouch(0.8, -1)}
+                  onPointerDown={(e) => {
+                    e.currentTarget.setPointerCapture?.(e.pointerId);
+                    setTouch(0.8, -1);
+                  }}
                   onPointerUp={() => setTouch(0, 0)}
+                  onPointerCancel={() => setTouch(0, 0)}
                   onPointerLeave={() => setTouch(0, 0)}
                 >
                   ▶

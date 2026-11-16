@@ -3,7 +3,9 @@ import { MISSION_DEFS } from "../missions/missionParams";
 
 export default function LiveMissionChart({ snapshot, lang = "en", hudMode = false }) {
   const l = lang === "pt" ? "pt" : "en";
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() =>
+    Boolean(hudMode && typeof window !== "undefined" && window.innerWidth <= 760)
+  );
   const missionId = snapshot?.missionId || "M2";
   const depth = snapshot?.depth || "explorer";
   const visibleSeries = snapshot?.visibleSeries || [];

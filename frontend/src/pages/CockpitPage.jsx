@@ -167,7 +167,7 @@ export default function CockpitPage({
               <h2>Who Acts on These Numbers</h2>
               <span className="badge">Persona → Decision → Evidence</span>
             </div>
-            <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+            <div className="card persona-table-wrap" style={{ padding: 0, overflowX: "auto" }}>
               <table className="persona-table">
                 <thead>
                   <tr>

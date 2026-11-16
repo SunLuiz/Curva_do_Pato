@@ -165,6 +165,8 @@ export default function AppShell({ route, onNavigate, lang = "en", setLang, full
                 top: "calc(100% + 0.5rem)",
                 right: 0,
                 width: "min(620px, calc(100vw - 1.5rem))",
+                maxHeight: "calc(100dvh - 5.2rem)",
+                overflowY: "auto",
                 zIndex: 60,
               }}
             >

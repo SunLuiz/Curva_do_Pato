@@ -112,7 +112,9 @@ export default function TrendChart({
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const relX = ((e.clientX - rect.left) / rect.width) * width;
+    const clientX = e.touches?.[0]?.clientX ?? e.clientX;
+    if (clientX === undefined) return;
+    const relX = ((clientX - rect.left) / rect.width) * width;
     const norm = Math.min(1, Math.max(0, (relX - pad.left) / plotW));
     const idx = Math.round(norm * (series.length - 1));
     setHoverIdx(idx);
@@ -122,8 +124,10 @@ export default function TrendChart({
     <div className="chart-wrap">
       <svg
         viewBox={`0 0 ${width} ${height}`}
-        style={{ width: "100%", height: "auto", display: "block" }}
+        style={{ width: "100%", height: "auto", display: "block", touchAction: "pan-y" }}
         onMouseMove={handleMouseMove}
+        onTouchStart={handleMouseMove}
+        onTouchMove={handleMouseMove}
         onMouseLeave={() => setHoverIdx(null)}
         role="img"
         aria-label={`Monthly time series chart in ${unit}`}

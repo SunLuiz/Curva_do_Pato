@@ -55,9 +55,10 @@ export default function GlossaryTooltip({ termKey, lang = "en", children }) {
           style={{
             position: "absolute",
             bottom: "calc(100% + 8px)",
-            left: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
             zIndex: 60,
-            width: "min(300px, 76vw)",
+            width: "min(290px, 78vw)",
             padding: "0.75rem 0.85rem",
             background: "var(--surface-1)",
             color: "var(--ink)",

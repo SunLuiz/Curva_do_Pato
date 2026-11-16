@@ -1,7 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Maximize2, Minimize2, Pause, Play, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink, Maximize2, Minimize2, Pause, Play, Sparkles, Video } from "lucide-react";
 import { STORY, interpolatePoints, localizeSlide, smoothCurvePath } from "../content/story";
 import { soundEngine } from "../game/soundEngine";
+
+const PITCH_VIDEO_URL = "https://youtu.be/yqT6piEvZmE";
+const PITCH_VIDEO_EMBED_URL = "https://www.youtube-nocookie.com/embed/yqT6piEvZmE?rel=0";
 
 function ConceptualNoiseToggle({ lang = "en" }) {
   const l = lang === "pt" ? "pt" : "en";
@@ -181,10 +184,11 @@ export default function StoryPage({ onNavigate, lang = "en" }) {
   const strokeVar = `var(${current.tone})`;
 
   return (
-    <section
-      className="story-shell"
-      style={{ backgroundColor: current.bgTint }}
-      aria-label="Cockpit-OMNI Story Presentation"
+    <>
+      <section
+        className="story-shell"
+        style={{ backgroundColor: current.bgTint }}
+        aria-label="Cockpit-OMNI Story Presentation"
       onTouchStart={(e) => {
         touchStartX.current = e.touches?.[0]?.clientX ?? null;
       }}
@@ -342,6 +346,21 @@ export default function StoryPage({ onNavigate, lang = "en" }) {
                   >
                     {l === "pt" ? "Jogar Missões 3D & Academy" : "Play 3D Rover & Academy"}
                   </button>
+                  {!present && (
+                    <a
+                      href="#presentation-video"
+                      className="btn-secondary"
+                      onClick={(e) => {
+                        const target = document.getElementById("presentation-video");
+                        if (target) {
+                          e.preventDefault();
+                          target.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }
+                      }}
+                    >
+                      <Video size={15} /> {l === "pt" ? "Vídeo de Apresentação" : "Presentation Video"}
+                    </a>
+                  )}
                 </>
               )}
             </div>
@@ -396,5 +415,74 @@ export default function StoryPage({ onNavigate, lang = "en" }) {
         </div>
       </div>
     </section>
+
+    <section className="story-video-section" id="presentation-video" aria-labelledby="story-video-heading">
+      <div className="story-video-inner">
+        <div className="story-video-card">
+          <div className="story-video-copy">
+            <span className="badge live">
+              <Video size={13} />{" "}
+              {l === "pt" ? "Apresentação Oficial · NASA Space Apps 2026" : "Official Pitch · NASA Space Apps 2026"}
+            </span>
+            <h2 id="story-video-heading" className="story-video-title">
+              {l === "pt"
+                ? "Assista à Apresentação: Curve of Duck · Cockpit-OMNI"
+                : "Watch the Official Curve of Duck Presentation"}
+            </h2>
+            <p className="story-video-lead">
+              {l === "pt"
+                ? "Veja em poucos minutos como o mesmo motor Seasonal Mann-Kendall + Theil-Sen encontra causas climáticas opostas entre Campinas-SP, Petrolina-PE e Manaus-AM, valida limites honestos no vento WS2M e conecta a Curva do Pato solar da Terra à física 3D de Marte e da Lua."
+                : "See how one Seasonal Mann-Kendall + Theil-Sen statistical engine exposes opposite causal drivers across Campinas-SP, Petrolina-PE, and Manaus-AM, flags null monthly wind limits honestly, and bridges Earth's solar Duck Curve to Mars and Lunar 3D rover physics — with zero API keys."}
+            </p>
+            <div className="story-video-actions">
+              <a
+                href={PITCH_VIDEO_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-primary"
+              >
+                {l === "pt" ? "Assistir no YouTube" : "Watch on YouTube"} <ExternalLink size={15} />
+              </a>
+              <a
+                href="/cockpit"
+                className="btn-secondary"
+                onClick={(e) => {
+                  if (!e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && e.button === 0) {
+                    e.preventDefault();
+                    onNavigate("/cockpit");
+                  }
+                }}
+              >
+                {l === "pt" ? "Abrir Cockpit & Ask OMNI" : "Explore Cockpit & Ask OMNI"}
+              </a>
+              <a href="/science/" className="btn-secondary">
+                {l === "pt" ? "Artigos Científicos" : "Science Monographs"}
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <div className="story-video-frame-wrap">
+              <iframe
+                className="story-video-iframe"
+                src={PITCH_VIDEO_EMBED_URL}
+                title="Curve of Duck | NASA Space Apps Challenge 2026"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
+            <div className="story-video-caption">
+              <span>{l === "pt" ? "Curve of Duck | NASA Space Apps Challenge 2026" : "Curve of Duck | NASA Space Apps Challenge 2026"}</span>
+              <a href={PITCH_VIDEO_URL} target="_blank" rel="noreferrer">
+                youtu.be/yqT6piEvZmE
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    </>
   );
 }

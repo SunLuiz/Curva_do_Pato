@@ -6,7 +6,8 @@ Cockpit-OMNI retrieves 42 years of monthly NASA POWER telemetry (1984–2025, n 
 
 ## Core Application Routes
 
-- [Story & 7-Slide Narrative Deck](https://www.curveofduck.xyz/): Interactive bilingual (EN | PT-BR) overview, architecture, and key 42-year trend findings.
+- [Story & 7-Slide Narrative Deck](https://www.curveofduck.xyz/): Interactive bilingual (EN | PT-BR) overview, embedded pitch presentation video, architecture, and key 42-year trend findings.
+- [Official Presentation Video (YouTube)](https://youtu.be/yqT6piEvZmE): Project pitch walkthrough covering Campinas-SP, Petrolina-PE, Manaus-AM causal attribution and 3D Earth-to-Mars physics.
 - [Earth System Trend Cockpit & Ask OMNI](https://www.curveofduck.xyz/cockpit): Interactive 504-month Seasonal Mann-Kendall + Theil-Sen workbench, 5 citizen Action Presets (GREEN/AMBER/RED), live/cached NASA FIRMS & DONKI feeds, Earthdata CMR provenance, Space Analog (MPTO), CSV/JSON download, and zero-key natural-language Q&A.
 - [Curve of Duck: Rover Pilot 3D & Academy](https://www.curveofduck.xyz/game): Three.js 3D rover simulator across Earth (Campinas, Petrolina, Manaus), Mars (Jezero Crater), and Moon (South Pole Artemis), plus 5-module zero-login Detective Academy (`>= 0.80` unassisted mastery gate).
 

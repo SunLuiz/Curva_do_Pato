@@ -146,6 +146,10 @@ function buildHomeBody() {
         <p>Cockpit-OMNI (Curve of Duck) is an open, zero-key NASA Earth observation platform analyzing 42 years of monthly NASA POWER telemetry (1984–2025, n = 504 months) using Seasonal Mann-Kendall (period = 12) and deseasonalized Theil-Sen slopes with 95% confidence intervals.</p>
         ${renderBenchmarkTable()}
         ${slidesHtml}
+        <section id="presentation-video">
+          <h2>Official Presentation Video — Curve of Duck | NASA Space Apps Challenge 2026</h2>
+          <p>Watch the project walkthrough demonstrating 42-year NASA POWER trends across Campinas-SP, Petrolina-PE, and Manaus-AM, causal hypothesis falsification, Ask OMNI, and 3D Mars/Moon rover physics: <a href="https://youtu.be/yqT6piEvZmE">https://youtu.be/yqT6piEvZmE</a>.</p>
+        </section>
         <section>
           <h2>Citable Research Monographs</h2>
           <ul>
